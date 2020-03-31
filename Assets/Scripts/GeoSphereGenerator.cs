@@ -7,23 +7,26 @@ public class GeoSphereGenerator : MonoBehaviour
 {
     public GameObject Hex, Pent;
 
-    // Positive integer. Controls how many face center-points the geodesic sphere has.
+    // Positive integer. Controls how many tile center-points the geodesic sphere has.
     // In the end there will be:
     // 12 pentagons
     // 30*(2^EHN-1) edge hexes
     // 20*(2^EHN-1)(2^(EHN-1)-1) triangle hexes
     public int expHexNumber;
 
-    // Radius of the sphere - distance from the center to any center of any face.
+    // Radius of the sphere - distance from the center to any center of any tile.
     public float radius;
 
-    // The edges of the hexagons/faces vary depending on their locations on the sphere,
+    // The initial height of the tiles, as a percentage of the radius
+    public float initialHeight;
+
+    // The edges of the tiles vary depending on their locations on the sphere,
     // but the "base" edge length should be proportional to radius/2^EHN. Trial and error
     // gives a constant of 0.6, but we can change in the future.
     public float baseEdgeMultiplier = 0.6f;
     private float prevEdgeMultiplier;
 
-    // Edge length of faces also depend on degree.
+    // Edge length of tiles also depend on degree.
     // Use this constant to control how intense the dependency is.
     public float edgeDegreeMultiplier = 0.02f;
     public float pentEdgeMultiplier = 1.2f;
@@ -34,7 +37,7 @@ public class GeoSphereGenerator : MonoBehaviour
     float epsilon;        // Used as an ADDITIVE "close enough" value for floats
     const float X = 0.525731112119133606f;
     const float Z = 0.850650808352039932f;
-    long expectedFaces;
+    long expectedTiles;
     List<Vector3> spherePoints;
     List<Vector3> pentCenters;  // Locations of the 12 pentagons
     List<Vector3> pentCentersNormalized = new List<Vector3> {
@@ -42,9 +45,9 @@ public class GeoSphereGenerator : MonoBehaviour
             new Vector3(0.0f, Z, X),  new Vector3(0.0f, Z, -X), new Vector3(0.0f, -Z, X),  new Vector3(0.0f, -Z, -X),
             new Vector3(Z, X, 0.0f),  new Vector3(-Z, X, 0.0f), new Vector3(Z, -X, 0.0f),  new Vector3(-Z, -X, 0.0f)
         };
-    List<GameObject> faces;                // Updated in addFaces(). First 12 items are the pentagons.
+    List<TileBehaviour> tiles;                // Updated in addTiles(). First 12 items are the pentagons.
     Dictionary<(int, int), Plane> planes;  // Indexed by pentagon-index pairs, updated in initializePlanes()
-    List<List<int>> neighbors;             // Lists of face IDs that touch the respective face (lists are of length 5 or 6)
+    List<List<int>> neighbors;             // Lists of tile IDs that touch the respective tile (lists are of length 5 or 6)
     int updateInterval;                    // Temporary (hopefully). For debugging purposes
     int updateCounter;
     System.Random rng;
@@ -56,12 +59,12 @@ public class GeoSphereGenerator : MonoBehaviour
         prevPentEdgeMultiplier = pentEdgeMultiplier;
         updateCounter = 0;
         updateInterval = 1000;
-        faces = new List<GameObject>();
+        tiles = new List<TileBehaviour>();
         planes = new Dictionary<(int, int), Plane>();
         neighbors = new List<List<int>>();
         origin = new Vector3(0, 0, 0);
         spherePoints = new List<Vector3>();
-        expectedFaces = 12 +
+        expectedTiles = 12 +
             30 * (Tools.IntPow(2, expHexNumber) - 1) +
             20 * (Tools.IntPow(2, expHexNumber) - 1) * (Tools.IntPow(2, expHexNumber - 1) - 1);
         epsilon = baseEdgeLength() / 100f;
@@ -72,26 +75,26 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         GetComponent<SphereCollider>().radius = radius;
         initializeSpherePoints();
-        addFaces();
+        addTiles();
         initializePlanes();
-        sortFaces();
+        sortTiles();
         //DEBUG_sort();
         computeNeighborLists();
         //DEBUG_neighborList();
-        orientFaces();
+        orientTiles();
         //DEBUG_deg();
         //DEBUG_planes();
-        spreadFaces();
+        spreadTiles();
         updateEdgeLengths();
     }
 
-    // Length of an edge of a face should be proportional to radius/2^EHN
+    // Length of an edge of a tile should be proportional to radius/2^EHN
     float baseEdgeLength()
     {
         return baseEdgeMultiplier * radius / (float)Tools.IntPow(2, expHexNumber);
     }
 
-    // Use powers of this constant to determine the effect of the degree of a face
+    // Use powers of this constant to determine the effect of the degree of a tile
     // on the edge-length multiplier
     float edgeMultiplier(int degree)
     {
@@ -115,12 +118,12 @@ public class GeoSphereGenerator : MonoBehaviour
         return false;
     }
 
-    // !Assumes the faces[] list is initialized and sorted!
+    // !Assumes the tiles[] list is initialized and sorted!
     //
-    // We classify faces by "degree", a non-negative integer.
-    // Two special values are 0 and 1: degree 0 faces are pentagons
-    // and degree 1 faces are hexagons on an arc between pentagons.
-    // Other degrees k>1 describe the "distance" (in faces) of the
+    // We classify tiles by "degree", a non-negative integer.
+    // Two special values are 0 and 1: degree 0 tiles are pentagons
+    // and degree 1 tiles are hexagons on an arc between pentagons.
+    // Other degrees k>1 describe the "distance" (in tiles) of the
     // hexagon to a degree-1 hexagon:
     //
     //                  P0
@@ -135,7 +138,7 @@ public class GeoSphereGenerator : MonoBehaviour
     // 
     // In the above example (with expHexNumber=3), P and H denote 
     // pentagons or hexagons, and the number next to the letter is
-    // the degree of the face.
+    // the degree of the tile.
     //
     // The implementation of the function just finds the specific
     // range of indexes the input is in. We use the fact that there
@@ -156,7 +159,7 @@ public class GeoSphereGenerator : MonoBehaviour
         if (deg <= 1)
             return deg == 0 ? (0, 11) : (12, deg2StartIdx);
         if (3 * (deg - 1) >= exp)
-            return (faces.Count, faces.Count);
+            return (tiles.Count, tiles.Count);
         // Those where the easy cases. Now we need to keep track of
         // the offset of lower degree indexes. 
         int offset = deg2StartIdx;
@@ -176,14 +179,14 @@ public class GeoSphereGenerator : MonoBehaviour
             return 1;
         int offset = deg2StartIdx;
         int nextDeg = 2;
-        while (offset < faces.Count)
+        while (offset < tiles.Count)
         {
             offset += 60 * (exp - 3 * (nextDeg - 1));
             if (i < offset)
                 return nextDeg;
             ++nextDeg;
         }
-        Debug.LogError(string.Format("Index out of bounds: got i={0}, there are only {1} faces", i, faces.Count));
+        Debug.LogError(string.Format("Index out of bounds: got i={0}, there are only {1} tiles", i, tiles.Count));
         return -1;
     }
     private int maxDegree()
@@ -197,8 +200,8 @@ public class GeoSphereGenerator : MonoBehaviour
         Material orangeMat = Resources.Load("Materials/DUMMY_mat_orange", typeof(Material)) as Material;
         Material redMat = Resources.Load("Materials/DUMMY_mat_red", typeof(Material)) as Material;
         List<Material> colorMats = new List<Material>() { greenMat, yellowMat, orangeMat, redMat };
-        for (int i=0; i<faces.Count; ++i)
-            faces[i].GetComponent<MeshRenderer>().material = colorMats[getDeg(i) % colorMats.Count];
+        for (int i=0; i<tiles.Count; ++i)
+            tiles[i].GetComponent<MeshRenderer>().material = colorMats[getDeg(i) % colorMats.Count];
     }
 
     // Some sphere points may be added several times by the subdivide algorithm.
@@ -214,8 +217,8 @@ public class GeoSphereGenerator : MonoBehaviour
                     ++duplicatesFound;
                 }
         Debug.Log(string.Format("Found and removed {0} duplicate points", duplicatesFound));
-        if (spherePoints.Count != expectedFaces)
-            Debug.LogError(string.Format("Expected {0} faces, spherePoints list contains {1} items", expectedFaces, spherePoints.Count));
+        if (spherePoints.Count != expectedTiles)
+            Debug.LogError(string.Format("Expected {0} tiles, spherePoints list contains {1} items", expectedTiles, spherePoints.Count));
     }
 
     private void subdivide(Vector3 v1, Vector3 v2, Vector3 v3, int depth) {
@@ -261,30 +264,25 @@ public class GeoSphereGenerator : MonoBehaviour
             pentCenters[i] *= radius;
     }
 
-    private void addFaces()
+    private void addTiles()
     {
         foreach (Vector3 point in spherePoints)
         {
-            bool isPent = isPentPoint(point);
-            GameObject face = Instantiate(isPent ? Pent : Hex, point, Quaternion.identity);
-            face.transform.parent = transform;
-            //face.name = isPent ? "PentRenderer" : "HexRenderer";
-            // Turn the flat side of the face towards the center of the sphere
-            face.transform.LookAt(origin);
-            face.transform.Rotate(90, 0, 0);
-            // Set the edge size of each face, depending on the chosen radius and granularity of the sphere.
-            // Add to end of face list (beginning for pents, end for hexes)
-            if (isPentPoint(point))
-            {
-                face.GetComponent<PentGenerator>().setEdge(baseEdgeLength());
-                face.GetComponent<PentGenerator>().setRadius(radius);
-                faces.Insert(0, face);
-            } else
-            {
-                face.GetComponent<HexGenerator>().setEdge(baseEdgeLength());
-                faces.Add(face);
-            }
+            bool isHex = !isPentPoint(point);
+            TileBehaviour tile = TileBehaviour.Create(isHex, point, baseEdgeLength(), radius, initialHeight * radius);
+            setParent(tile.gameObject);
+            makeFaceOrigin(tile.gameObject);
+            if (isHex)
+                tiles.Add(tile);
+            else
+                tiles.Insert(0, tile);
         }
+    }
+    private void setParent(GameObject go) { go.transform.parent = transform; }
+    private void makeFaceOrigin(GameObject go)
+    {
+        go.transform.LookAt(origin);
+        go.transform.Rotate(new Vector3(90, 0, 0));
     }
 
     // We need to keep track of all 30 planes defined by neighboring
@@ -295,21 +293,21 @@ public class GeoSphereGenerator : MonoBehaviour
         float neighborDistanceUpperBound = distanceBetweenPents() * 1.02f;
         for (int i = 0; i < 11; ++i)
             for (int j = i + 1; j < 12; ++j)
-                if ((faces[i].transform.position - faces[j].transform.position).magnitude < neighborDistanceUpperBound)
-                    planes[(i, j)] = Plane.Translate(new Plane(origin, faces[i].transform.position, faces[j].transform.position), origin);
+                if ((tiles[i].transform.position - tiles[j].transform.position).magnitude < neighborDistanceUpperBound)
+                    planes[(i, j)] = Plane.Translate(new Plane(origin, tiles[i].transform.position, tiles[j].transform.position), origin);
         if (planes.Count != 30)
             Debug.LogError(string.Format("Uh oh... plane initializer computed {0} planes instead of 30", planes.Count));
     }
     private void DEBUG_planes()
     {
-        // For debug, color faces 12 through 12+30*(2^expHexNumber - 1), non-inclusive,
+        // For debug, color tiles 12 through 12+30*(2^expHexNumber - 1), non-inclusive,
         // to identify edge hexes are where they should be
         Material mat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
         int foundEdgeHexes = 0;
-        for (int i = 0; i < faces.Count; ++i)
+        for (int i = 0; i < tiles.Count; ++i)
             if (isOnPentArc(i))
             {
-                faces[i].GetComponent<MeshRenderer>().material = mat;
+                tiles[i].GetComponent<MeshRenderer>().material = mat;
                 foundEdgeHexes++;
             }
         Debug.Log(string.Format("Colored {0} edge hexes", foundEdgeHexes));
@@ -318,7 +316,7 @@ public class GeoSphereGenerator : MonoBehaviour
         foreach (KeyValuePair<(int, int), Plane> entry in planes)
             debugMsg += string.Format(" {0}", entry.Key);
         Debug.Log(debugMsg);
-        // Take any plane, and make sure there are at least 2^expHexNumber+1 faces
+        // Take any plane, and make sure there are at least 2^expHexNumber+1 tiles
         // on the arc they define (2 pentagons and 2^expHexNumber-1 hexagons).
         long requiredPerArc = Tools.IntPow(2, expHexNumber) + 1;
         foreach (KeyValuePair<(int, int), Plane> entry in planes)
@@ -326,47 +324,27 @@ public class GeoSphereGenerator : MonoBehaviour
             long totalOnArc = 0;
             Plane plane = entry.Value;
             (int p1, int p2) = entry.Key;
-            for(int i=0; i<faces.Count; ++i)
+            for(int i=0; i<tiles.Count; ++i)
                 if (Tools.NearlyEqual(distanceToPlane(i, entry.Key), 0, epsilon))
                 {
-                    Debug.Log(string.Format("Face {0} at position {1} is on arc {2},{3} (pent positions {4} and {5})",
-                        i, faces[i].transform.position, p1, p2, faces[p1].transform.position, faces[p2].transform.position));
+                    Debug.Log(string.Format("Tile {0} at position {1} is on arc {2},{3} (pent positions {4} and {5})",
+                        i, tiles[i].transform.position, p1, p2, tiles[p1].transform.position, tiles[p2].transform.position));
                     ++totalOnArc;
                 }
             if (totalOnArc < requiredPerArc)
-                Debug.LogError(string.Format("Plane through pents {0},{1} (positions {2},{3}) passes through only {4} faces!",
-                    p1, p2, faces[p1].transform.position, faces[p2].transform.position, totalOnArc));
+                Debug.LogError(string.Format("Plane through pents {0},{1} (positions {2},{3}) passes through only {4} tiles!",
+                    p1, p2, tiles[p1].transform.position, tiles[p2].transform.position, totalOnArc));
         }
-        Debug.Log(string.Format("Face 69 is at distance {0} from plane (0,11), distance {1} from pent0 and {2} from " +
-            "pent11. Total distance between pents is {3}, and isOnArc returns {4}", 
-            planes[(0, 11)].GetDistanceToPoint(faces[69].transform.position),
-            (faces[0].transform.position - faces[69].transform.position).magnitude,
-            (faces[11].transform.position - faces[69].transform.position).magnitude,
-            distanceBetweenPents(),
-            isOnPentArc(69)));
-        /*
-        // Hex 69 is between pent 0 and 11, but isn't getting colored.
-        // Study it
-        Vector3 badHex = faces[69].transform.position;
-        GameObject badPent1 = faces[0], badPent2 = faces[11];
-        Debug.Log(string.Format("Hex 69 (at {0}) should be on the 0-11 plane {1} but is not!",
-            badHex, planes[(0, 11)]));
-        Debug.Log(string.Format("Distance of the hex to the plane is {0}", planes[(0, 11)].GetDistanceToPoint(badHex)));
-        Debug.DrawLine(origin, badHex, Color.red, 20.0f);
-        for (int i = 0; i < faces.Count; ++i)
-            Debug.Log(string.Format("Distance of face #{0} from plane (0,11) is {1}",
-                i, planes[(0, 11)].GetDistanceToPoint(faces[i].transform.position)));
-        */
     }
 
     // This will be important for the orientation phase.
-    // Placing the center-points of the faces is the easy part (or
+    // Placing the center-points of the tiles is the easy part (or
     // at least the easily copy-pasted part); when we need to rotate
-    // all faces to reach their correct orientation we must start
+    // all tiles to reach their correct orientation we must start
     // with the pentagons, then all edge-hexes (hexagons on a line
     // between two pentagons), and then fill each "hex-traingle" 
     // inwards from the edges.
-    // So, when we sort the faces, ensure the following order:
+    // So, when we sort the tiles, ensure the following order:
     // 1. The 12 pentagons are first (already taken care of for us).
     // 2. The 30*(2^expHexNumber - 1) edge hexes come next, grouped
     //    by common plane first, then by order of hexes closer to
@@ -379,7 +357,7 @@ public class GeoSphereGenerator : MonoBehaviour
     //    (above or below) to each of the 30 planes. In each quadrant,
     //    sort by shortest distance to any plane.
     //    We actually don't need to group by quadrant...
-    int compareFaceIndexes(int i1, int i2)
+    int compareTileIndexes(int i1, int i2)
     {
         // First, if i1 is a pentagon, then there is no real order so
         // we can just compare numeric indexes (for consistency):
@@ -407,24 +385,19 @@ public class GeoSphereGenerator : MonoBehaviour
             return i1.CompareTo(i2);
         return dist1.CompareTo(dist2);
     }
-    private void sortFaces()
+    private void sortTiles()
     {
-        List<int> sortedFaceIndexes = new List<int>();
-        for (int i = 0; i < faces.Count; ++i)
-            sortedFaceIndexes.Add(i);
-        sortedFaceIndexes.Sort((i1, i2) => compareFaceIndexes(i1, i2));
-        faces = sortedFaceIndexes.Select(i => faces[i]).ToList();
-        updateFaceIds();
+        List<int> sortedTileIndexes = new List<int>();
+        for (int i = 0; i < tiles.Count; ++i)
+            sortedTileIndexes.Add(i);
+        sortedTileIndexes.Sort((i1, i2) => compareTileIndexes(i1, i2));
+        tiles = sortedTileIndexes.Select(i => tiles[i]).ToList();
+        updateTileIds();
     }
-    private void updateFaceIds()
+    private void updateTileIds()
     {
-        for (int i = 0; i < faces.Count; ++i)
-        {
-            if (i < 12)
-                faces[i].GetComponent<PentGenerator>().id = i;
-            else
-                faces[i].GetComponent<HexGenerator>().id = i;
-        }
+        for (int i = 0; i < tiles.Count; ++i)
+            tiles[i].GetComponent<TileBehaviour>().id = i;
     }
     private void DEBUG_sort()
     {
@@ -447,56 +420,56 @@ public class GeoSphereGenerator : MonoBehaviour
         // Pentagons:
         int offset = 0;
         for (int i = 0; i < 12; ++i)
-            faces[i].GetComponent<MeshRenderer>().material = colorMats[0];
+            tiles[i].GetComponent<MeshRenderer>().material = colorMats[0];
         offset += 12;
         // Edge hexes (coefficient 30, not 60)
         for (int i =offset; i < offset + 30 * (Tools.IntPow(2, expHexNumber) - 1); ++i)
-            faces[i].GetComponent<MeshRenderer>().material = colorMats[1];
+            tiles[i].GetComponent<MeshRenderer>().material = colorMats[1];
         offset += 30 * ((int)Tools.IntPow(2, expHexNumber) - 1);
         // Color 
         for (int deg =2; 3*(deg-1) < Tools.IntPow(2, expHexNumber); ++deg)
         {
             for (int i=offset; i < offset + 60 * (Tools.IntPow(2, expHexNumber) - 3*(deg-1)); ++i)
-                faces[i].GetComponent<MeshRenderer>().material = colorMats[deg % colorMats.Count];
+                tiles[i].GetComponent<MeshRenderer>().material = colorMats[deg % colorMats.Count];
             offset += 60 * ((int)Tools.IntPow(2, expHexNumber) - 3 * (deg - 1));
         }
         /*
         for (int i = offset; i < offset + 60 * (Tools.IntPow(2, expHexNumber) - 3); ++i)
-            faces[i].GetComponent<MeshRenderer>().material = colorMats[2];
+            tiles[i].GetComponent<MeshRenderer>().material = colorMats[2];
             */
     }
 
     // Call this to set up neighbors list.
-    // To do so, just sweep the face list (quadratic) and build each pentagon's five neighbors
+    // To do so, just sweep the tile list (quadratic) and build each pentagon's five neighbors
     // and each hexagons' six.
-    // We find the faces that are close enough, and take the closest 5 or 6 (pentagon or hexagon).
+    // We find the tiles that are close enough, and take the closest 5 or 6 (pentagon or hexagon).
     private void computeNeighborLists()
     {
         neighbors.Clear();
         Vector3 source, candidate;
         // Pentagons
-        for (int i = 0; i < faces.Count; ++i)
+        for (int i = 0; i < tiles.Count; ++i)
         {
             int expectedNeighbors = i < 12 ? 5 : 6;
             List<int> foundNeighbors = new List<int>();
-            for (int j = 0; j < faces.Count; ++j)
+            for (int j = 0; j < tiles.Count; ++j)
             {
                 if (i == j)
                     continue;
                 if (areNeighbors(i, j))
                 {
-                    //Debug.Log(string.Format("Adding {0} as a neighbor for face {1}", j, i));
+                    //Debug.Log(string.Format("Adding {0} as a neighbor for tile {1}", j, i));
                     foundNeighbors.Add(j);
                 }
             }
             // Clear out those farthest away if need be
             if (foundNeighbors.Count > expectedNeighbors)
             {
-                foundNeighbors = foundNeighbors.OrderBy(idx => distanceBetweenFaces(i, idx)).ToList();
+                foundNeighbors = foundNeighbors.OrderBy(idx => distanceBetweenTiles(i, idx)).ToList();
                 foundNeighbors = foundNeighbors.Take(expectedNeighbors).ToList();
             }
             if (foundNeighbors.Count < expectedNeighbors)
-                Debug.LogError(string.Format("Only {0} neighbors found for face {1}", foundNeighbors.Count, i));
+                Debug.LogError(string.Format("Only {0} neighbors found for tile {1}", foundNeighbors.Count, i));
             neighbors.Add(foundNeighbors);
         }
     }
@@ -508,7 +481,7 @@ public class GeoSphereGenerator : MonoBehaviour
         // Other (good) neighbors are 177, 178, 192, 191, 429
         int badHex = 427;
         List<int> candidates = new List<int>();
-        for (int i=0; i<faces.Count; ++i)
+        for (int i=0; i<tiles.Count; ++i)
         {
             if (i == badHex)
                 continue;
@@ -516,13 +489,13 @@ public class GeoSphereGenerator : MonoBehaviour
                 candidates.Add(i);
         }
         Debug.Log(string.Format("Got neighbors: " + string.Join(",", candidates)));
-        candidates = candidates.OrderBy(idx => distanceBetweenFaces(badHex, idx)).ToList();
+        candidates = candidates.OrderBy(idx => distanceBetweenTiles(badHex, idx)).ToList();
         Debug.Log(string.Format("Ordered: " + string.Join(",", candidates)));
         candidates = candidates.Take(6).ToList();
         // Hex 262 still doesn't find neighbor 266... why not?
         badHex = 262;
         candidates = new List<int>();
-        for (int i = 0; i < faces.Count; ++i)
+        for (int i = 0; i < tiles.Count; ++i)
         {
             if (i == badHex)
                 continue;
@@ -530,18 +503,18 @@ public class GeoSphereGenerator : MonoBehaviour
                 candidates.Add(i);
         }
         Debug.Log(string.Format("Got neighbors: " + string.Join(",", candidates)));
-        candidates = candidates.OrderBy(idx => distanceBetweenFaces(badHex, idx)).ToList();
+        candidates = candidates.OrderBy(idx => distanceBetweenTiles(badHex, idx)).ToList();
         Debug.Log(string.Format("Ordered: " + string.Join(",", candidates)));
         candidates = candidates.Take(6).ToList();
     }
     private void DEBUG_neighborList_aux()
     {
-        int faceIdx = rng.Next(faces.Count);
+        int tileIdx = rng.Next(tiles.Count);
         Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
         Material yellowMat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
-        faces[faceIdx].GetComponent<MeshRenderer>().material = yellowMat;
-        foreach (int i in neighbors[faceIdx])
-            faces[i].GetComponent<MeshRenderer>().material = greenMat;
+        tiles[tileIdx].GetComponent<MeshRenderer>().material = yellowMat;
+        foreach (int i in neighbors[tileIdx])
+            tiles[i].GetComponent<MeshRenderer>().material = greenMat;
         Invoke("DEBUG_neighborList_aux", 2);
     }
 
@@ -552,20 +525,20 @@ public class GeoSphereGenerator : MonoBehaviour
     //    then their neighbors... etc.
     // 2. Rotate edge hexagons. Do so by finding one of the pentagons defining
     //    the edge, and align by it (should be good enough).
-    // 3. Rotate triangle hexagons. To do so, iterate over the faces in ascending 
+    // 3. Rotate triangle hexagons. To do so, iterate over the tiles in ascending 
     //    index order to ensure that by the time we reach hex H, at least two of 
     //    it's neighbors are orientated. Find which ones, and rotate H as the 
     //    average rotation required of each aligned neighbor (may be more than 2!).
     //    There may be issues regarding an offset of 2pi/6, but try a naive
     //    implementation and maybe it'll work
-    private void orientFaces()
+    private void orientTiles()
     {
         // Pentagons first
         fixNeighborRotation(0, 1);
         fixNeighborRotation(1, 0);
         int fixedRotations = 2;
         for (int i = 2; i < 12; ++i)
-            if (Tools.NearlyEqual(distanceBetweenFaces(i - 1, i), distanceBetweenPents(), epsilon))
+            if (Tools.NearlyEqual(distanceBetweenTiles(i - 1, i), distanceBetweenPents(), epsilon))
             {
                 fixNeighborRotation(i - 1, i);
                 ++fixedRotations;
@@ -593,7 +566,7 @@ public class GeoSphereGenerator : MonoBehaviour
         // For the rest, do them in ascending degree order. For each
         // unaligned hex, find any neighbor of strictly lower degree
         // and align by it.
-        while (end < faces.Count)
+        while (end < tiles.Count)
         {
             (start, end) = degRange(++deg);
             for (int i=start; i<end; ++i)
@@ -608,20 +581,20 @@ public class GeoSphereGenerator : MonoBehaviour
         }
     }
 
-    // Now, move the faces so they are distributed uniformly as possible around the sphere.
-    // To avoid complicated computations, I'll just go several times over all faces, and
+    // Now, move the tiles so they are distributed uniformly as possible around the sphere.
+    // To avoid complicated computations, I'll just go several times over all tiles, and
     // each pass move them to the average point (on the sphere) of their neighbors.
-    private void spreadFaces()
+    private void spreadTiles()
     {
-        spreadFaces(10);
+        spreadTiles(10);
     }
-    private void spreadFaces(int passes)
+    private void spreadTiles(int passes)
     {
         // Do passes without pentagons; pentagons are done in one go at the end.
         for (int pass=1; pass<=passes; ++pass)
         {
             // Pentagons don't move, start from 12
-            for (int i=12; i<faces.Count; ++i)
+            for (int i=12; i<tiles.Count; ++i)
             {
                 int deg = getDeg(i);
                 Vector3 avg = origin;
@@ -637,11 +610,11 @@ public class GeoSphereGenerator : MonoBehaviour
                         if (getDeg(j) == 1 && onPentArc(i) != onPentArc(j))
                             continue;
                     }
-                    avg += faces[j].transform.position;
+                    avg += tiles[j].transform.position;
                 }
                 // Push location to the sphere. No need to actually average
                 // because we're normalizing anyway.
-                faces[i].transform.position = avg.normalized * radius;
+                tiles[i].transform.position = avg.normalized * radius;
             }
         }
         // Pentagons
@@ -649,52 +622,41 @@ public class GeoSphereGenerator : MonoBehaviour
         {
             Vector3 avg = origin;
             foreach (int j in neighbors[i])
-                avg += faces[j].transform.position;
-            faces[i].transform.position = avg.normalized * radius;
+                avg += tiles[j].transform.position;
+            tiles[i].transform.position = avg.normalized * radius;
         }
     }
 
-    // Dynamically set each faces' new edge length.
-    // The edge length should depend on the degree of the face
+    // Dynamically set each tiles' new edge length.
+    // The edge length should depend on the degree of the tile
     // in some way; pentagons get a big boost, but after that the
     // smaller the degree the smaller the boost.
     private void updateEdgeLengths()
     {
         float baseEdge = baseEdgeLength();
-        for (int i=0; i<faces.Count; ++i)
-        {
-            if (i < 12)
-                faces[i].GetComponent<PentGenerator>().setEdge(baseEdge * edgeMultiplier(getDeg(i)));
-            else
-                faces[i].GetComponent<HexGenerator>().setEdge(baseEdge * edgeMultiplier(getDeg(i)));
-        }
+        for (int i=0; i<tiles.Count; ++i)
+            tiles[i].GetComponent<TileBehaviour>().setEdge(baseEdge * edgeMultiplier(getDeg(i)));
     }
 
-    // If the point is on some arc between pentagons (i,j) (with i<j) returns
-    // (i,j). If not, or if the point is a pentagon, returns (-1,-1).
-    private bool isPent(GameObject go)
+    private (int, int) onPentArc(int tileIdx)
     {
-        return go.GetComponent<PentGenerator>() != null;
-    }
-    private (int, int) onPentArc(int faceIdx)
-    {
-        Vector3 point = faces[faceIdx].transform.position;
+        Vector3 point = tiles[tileIdx].transform.position;
         foreach (KeyValuePair<(int,int),Plane> entry in planes)
         {
             Plane plane = entry.Value;
             (int k1, int k2) = entry.Key;
-            Vector3 pent1 = faces[k1].transform.position;
-            Vector3 pent2 = faces[k2].transform.position;
-            if (Tools.NearlyEqual(distanceToPlane(faceIdx, entry.Key), 0, epsilon) &&
+            Vector3 pent1 = tiles[k1].transform.position;
+            Vector3 pent2 = tiles[k2].transform.position;
+            if (Tools.NearlyEqual(distanceToPlane(tileIdx, entry.Key), 0, epsilon) &&
                 (pent1 - point).magnitude < distanceBetweenPents() &&
                 (pent2 - point).magnitude < distanceBetweenPents())
                 return entry.Key;
         }
         return (-1, -1);
     }
-    private bool isOnPentArc(int faceIdx)
+    private bool isOnPentArc(int tileIdx)
     {
-        (int i, int _) = onPentArc(faceIdx);
+        (int i, int _) = onPentArc(tileIdx);
         return i >= 0;
     }
 
@@ -703,31 +665,31 @@ public class GeoSphereGenerator : MonoBehaviour
     // It's not enough to check proximity to the plane, because hexagons
     // in the middle of pent-triangles can still intersect a plane from
     // a pair of pentagons on the opposite side of the sphere.
-    private float distanceToPlane(int faceIdx)
+    private float distanceToPlane(int tileIdx)
     {
-        Vector3 point = faces[faceIdx].transform.position;
+        Vector3 point = tiles[tileIdx].transform.position;
         float minDist = radius; // INF, in practice, for any point on the sphere
         float pentDistance = distanceBetweenPents();
         foreach (KeyValuePair<(int,int), Plane> entry in planes)
         {
-            // Both pentagons must be within pent-distance of the face, or it 
+            // Both pentagons must be within pent-distance of the tile, or it 
             // doesn't count.
             (int p1, int p2) = entry.Key;
-            if ((point - faces[p1].transform.position).magnitude >= pentDistance ||
-                (point - faces[p2].transform.position).magnitude >= pentDistance)
+            if ((point - tiles[p1].transform.position).magnitude >= pentDistance ||
+                (point - tiles[p2].transform.position).magnitude >= pentDistance)
                 continue;
-            float dist = distanceToPlane(faceIdx, entry.Key);
+            float dist = distanceToPlane(tileIdx, entry.Key);
             if (dist < minDist)
                 minDist = dist;
         }
         return minDist;
     }
-    private float distanceToPlane(int faceIdx, (int,int) planeKey)
+    private float distanceToPlane(int tileIdx, (int,int) planeKey)
     {
-        return System.Math.Abs(planes[planeKey].GetDistanceToPoint(faces[faceIdx].transform.position));
+        return System.Math.Abs(planes[planeKey].GetDistanceToPoint(tiles[tileIdx].transform.position));
     }
 
-    // If two faces are close enough to each other (say, at most the distance between
+    // If two tiles are close enough to each other (say, at most the distance between
     // two pentagons), we use this method to rotate one to face the other.
     // 
     // Say we fix some pentagon A and a neighbor pentagon B, and we want to rotate
@@ -757,10 +719,10 @@ public class GeoSphereGenerator : MonoBehaviour
     //                 v
     // So, measure T as the angle between AxB and B.X, and rotate B by 180 - T
     // around B's Y axis.
-    private void fixNeighborRotation(int sourceFaceIdx, int neighborFaceIdx)
+    private void fixNeighborRotation(int sourceTileIdx, int neighborTileIdx)
     {
-        GameObject A = faces[sourceFaceIdx];
-        GameObject B = faces[neighborFaceIdx];
+        TileBehaviour A = tiles[sourceTileIdx];
+        TileBehaviour B = tiles[neighborTileIdx];
         Vector3 vA = A.transform.position;
         Vector3 vB = B.transform.position;
         Vector3 BX = B.transform.right;
@@ -772,26 +734,26 @@ public class GeoSphereGenerator : MonoBehaviour
         B.transform.RotateAround(vB, BY, rotation);
     }
 
-    private float distanceBetweenFaces(int i1, int i2)
+    private float distanceBetweenTiles(int i1, int i2)
     {
-        return (faces[i1].transform.position - faces[i2].transform.position).magnitude;
+        return (tiles[i1].transform.position - tiles[i2].transform.position).magnitude;
     }
-    
-    // A distance threshold between two neighboring faces.
-    // THIS DOES NOT GUARANTEE faces of this distance apart are neighbors, but it's
+
+    // A distance threshold between two neighboring tiles.
+    // THIS DOES NOT GUARANTEE tiles of this distance apart are neighbors, but it's
     // not a bad filter.
-    private float neighborFaceDistance()
+    private float neighborTileDistance()
     {
         return 3f * baseEdgeLength();
     }
     private bool areNeighbors(int i1, int i2) {
-        return (faces[i1].transform.position - faces[i2].transform.position).magnitude <= neighborFaceDistance();
+        return (tiles[i1].transform.position - tiles[i2].transform.position).magnitude <= neighborTileDistance();
     }
 
-    // Assumes the faces[] list is initialized with the pentagons as the first 12 elements.
+    // Assumes the tiles[] list is initialized with the pentagons as the first 12 elements.
     private float distanceBetweenPents()
     {
-        return (faces[0].transform.position - faces[1].transform.position).magnitude;
+        return (tiles[0].transform.position - tiles[1].transform.position).magnitude;
     }
 
     // Update is called once per frame
@@ -812,14 +774,14 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         updateCounter = 0;
         Debug.Log(string.Format("Physics sphere centered at {1} with radius {2} collided with {0} objects",
-            Physics.OverlapSphere(faces[0].transform.position, 200 * baseEdgeLength()).Length, faces[0].transform.position, 200 * baseEdgeLength()));
+            Physics.OverlapSphere(tiles[0].transform.position, 200 * baseEdgeLength()).Length, tiles[0].transform.position, 200 * baseEdgeLength()));
     }
 
     /*
     void OnDrawGizmos()
     {
-        Vector3 from = faces[0].transform.position;
-        Vector3 to = from + neighborFaceDistance() * faces[0].transform.right;
+        Vector3 from = tiles[0].transform.position;
+        Vector3 to = from + neighborTileDistance() * tiles[0].transform.right;
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(from, to);
     }

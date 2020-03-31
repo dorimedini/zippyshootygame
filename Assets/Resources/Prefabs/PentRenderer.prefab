@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1709272152923566540}
   - component: {fileID: 1675897926530340327}
   - component: {fileID: 1156302546871376645}
-  - component: {fileID: 2818904913718047420}
+  - component: {fileID: -5817059214029688701}
   m_Layer: 0
   m_Name: PentRenderer
   m_TagString: Untagged
@@ -112,7 +112,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &2818904913718047420
+--- !u!114 &-5817059214029688701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,10 +121,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7344225407131647139}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 600de1f295341214bbe1fb242bbf4efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f76a0933ecb4ce4c89f897c60034496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DEBUG: 1
-  edge: 1
-  height: 0.2
-  id: 0

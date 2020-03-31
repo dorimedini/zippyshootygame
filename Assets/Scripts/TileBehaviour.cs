@@ -2,26 +2,63 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class Tile
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshCollider))]
+public class TileBehaviour : MonoBehaviour
 {
-	public bool DEBUG = true;
-	public float height;
-	public float edge;
-	public float radius;
-	public int id;              // Set by Geosphere generator
-	public bool isHex;
+	public static bool DEBUG = true;
+	
+	public float height { get; set; }
+	public float edge { get; set; }
+	public float radius { get; set; }
+	public int id { get; set; }           // Set by Geosphere generator
+	
+	private Mesh mesh { get; set; }
+	private bool needRedraw { get; set; }
+	public bool isHex { get; set; }
 
-	private Mesh mesh;
-
-	public Tile(bool isHexagon, float edgeLength, float r, float h, int tileId = -1)
+	public static TileBehaviour Create(bool isHexagon, Vector3 location, float edgeLength, float r, float h, int tileId = -1)
 	{
-		isHex = isHexagon;
-		height = h;
-		edge = edgeLength;
-		radius = r;
-		id = tileId;
-		mesh = new Mesh();
+		Object obj = isHexagon ? Resources.Load("Prefabs/HexRenderer") : Resources.Load("Prefabs/PentRenderer");
+		GameObject tile_obj = Instantiate(obj, location, Quaternion.identity) as GameObject;
+		TileBehaviour tile = tile_obj.GetComponent<TileBehaviour>();
+		tile.isHex = isHexagon;
+		tile.height = h;
+		tile.edge = edgeLength;
+		tile.radius = r;
+		tile.id = tileId;
+		tile.mesh = new Mesh();
+		return tile;
+	}
+
+	void Awake()
+	{
+		needRedraw = true;
+	}
+
+	void Start()
+	{
+
+	}
+
+	void Update()
+	{
+		if (needRedraw)
+		{
+			redraw();
+			UpdateMesh();
+			needRedraw = false;
+		}
+	}
+	void UpdateMesh()
+	{
+		GetComponent<MeshFilter>().mesh = mesh;
+		GetComponent<MeshCollider>().sharedMesh = mesh;
+	}
+
+	void OnCollisionEnter(Collision col)
+	{
+		// If this isn't implemented there are no collisions...?
 	}
 
 	public void redraw()
@@ -35,9 +72,9 @@ public class Tile
 	public Mesh getMesh() { return mesh; }
 
 	// Allow parent object to control edge width
-	public void setEdge(float e) { edge = e; }
-	public void setHeight(float h) { height = h; }
-	public void setRadius(float r) { radius = r; }
+	public void setEdge(float e) { edge = e; needRedraw = true; }
+	public void setHeight(float h) { height = h; needRedraw = true; }
+	public void setRadius(float r) { radius = r; needRedraw = true; }
 
 	int totalEdges() { return isHex ? 6 : 5; }
 
@@ -117,11 +154,11 @@ public class Tile
 	}
 
 	// We want the origin of this object to be it's geometric 
-	// center, and we want to compute this vector before computing
+	// center AT ITS BASE, and we want to compute this vector before computing
 	// the points of the hexagon/pentagon.
 	Vector3 getCenterOffset()
 	{
-		return new Vector3(edge * 0.5f + getFloorGap(), height * 0.5f, getLength() * 0.5f);
+		return new Vector3(edge * 0.5f + getFloorGap(), 0, getLength() * 0.5f);
 	}
 
 	// Build the vertex list.

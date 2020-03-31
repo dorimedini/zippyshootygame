@@ -198,6 +198,16 @@ PrefabInstance:
       propertyPath: expHexNumber
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
+        type: 3}
+      propertyPath: radius
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
+        type: 3}
+      propertyPath: initialHeight
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
 --- !u!1 &705507993
@@ -230,7 +240,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 10
-  m_Range: 20
+  m_Range: 60
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
