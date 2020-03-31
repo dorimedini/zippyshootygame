@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class TileBehaviour : MonoBehaviour
 {
-	public static bool DEBUG = true;
+	public bool DEBUG;
 	
 	public float height { get; set; }
 	public float edge { get; set; }
@@ -17,11 +17,12 @@ public class TileBehaviour : MonoBehaviour
 	private bool needRedraw { get; set; }
 	public bool isHex { get; set; }
 
-	public static TileBehaviour Create(bool isHexagon, Vector3 location, float edgeLength, float r, float h, int tileId = -1)
+	public static TileBehaviour Create(bool isHexagon, Vector3 location, float edgeLength, float r, float h, bool debug, int tileId = -1)
 	{
 		Object obj = isHexagon ? Resources.Load("Prefabs/HexRenderer") : Resources.Load("Prefabs/PentRenderer");
 		GameObject tile_obj = Instantiate(obj, location, Quaternion.identity) as GameObject;
 		TileBehaviour tile = tile_obj.GetComponent<TileBehaviour>();
+		tile.DEBUG = debug;
 		tile.isHex = isHexagon;
 		tile.height = h;
 		tile.edge = edgeLength;

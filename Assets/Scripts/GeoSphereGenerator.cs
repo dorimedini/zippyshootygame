@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GeoSphereGenerator : MonoBehaviour
 {
+    public bool DEBUG = true;
+
     public GameObject Hex, Pent;
 
     // Positive integer. Controls how many tile center-points the geodesic sphere has.
@@ -33,19 +35,19 @@ public class GeoSphereGenerator : MonoBehaviour
     private float prevEdgeDegreeMultiplier;
     private float prevPentEdgeMultiplier;
 
-    Vector3 origin;
-    float epsilon;        // Used as an ADDITIVE "close enough" value for floats
+    Vector3 origin { set; get; }
+    float epsilon { set; get; }        // Used as an ADDITIVE "close enough" value for floats
     const float X = 0.525731112119133606f;
     const float Z = 0.850650808352039932f;
-    long expectedTiles;
-    List<Vector3> spherePoints;
-    List<Vector3> pentCenters;  // Locations of the 12 pentagons
+    long expectedTiles { set; get; }
+    List<Vector3> spherePoints { set; get; }
+    List<Vector3> pentCenters { set; get; }  // Locations of the 12 pentagons
     List<Vector3> pentCentersNormalized = new List<Vector3> {
             new Vector3(-X, 0.0f, Z), new Vector3(X, 0.0f, Z),  new Vector3(-X, 0.0f, -Z), new Vector3(X, 0.0f, -Z),
             new Vector3(0.0f, Z, X),  new Vector3(0.0f, Z, -X), new Vector3(0.0f, -Z, X),  new Vector3(0.0f, -Z, -X),
             new Vector3(Z, X, 0.0f),  new Vector3(-Z, X, 0.0f), new Vector3(Z, -X, 0.0f),  new Vector3(-Z, -X, 0.0f)
         };
-    List<TileBehaviour> tiles;                // Updated in addTiles(). First 12 items are the pentagons.
+    List<TileBehaviour> tiles;             // Updated in addTiles(). First 12 items are the pentagons.
     Dictionary<(int, int), Plane> planes;  // Indexed by pentagon-index pairs, updated in initializePlanes()
     List<List<int>> neighbors;             // Lists of tile IDs that touch the respective tile (lists are of length 5 or 6)
     int updateInterval;                    // Temporary (hopefully). For debugging purposes
@@ -78,12 +80,17 @@ public class GeoSphereGenerator : MonoBehaviour
         addTiles();
         initializePlanes();
         sortTiles();
-        //DEBUG_sort();
+        if (DEBUG)
+            DEBUG_sort();
         computeNeighborLists();
-        //DEBUG_neighborList();
+        if (DEBUG)
+            DEBUG_neighborList();
         orientTiles();
-        //DEBUG_deg();
-        //DEBUG_planes();
+        if (DEBUG)
+        {
+            DEBUG_deg();
+            DEBUG_planes();
+        }
         spreadTiles();
         updateEdgeLengths();
     }
@@ -269,7 +276,7 @@ public class GeoSphereGenerator : MonoBehaviour
         foreach (Vector3 point in spherePoints)
         {
             bool isHex = !isPentPoint(point);
-            TileBehaviour tile = TileBehaviour.Create(isHex, point, baseEdgeLength(), radius, initialHeight * radius);
+            TileBehaviour tile = TileBehaviour.Create(isHex, point, baseEdgeLength(), radius, initialHeight * radius, DEBUG);
             setParent(tile.gameObject);
             makeFaceOrigin(tile.gameObject);
             if (isHex)
