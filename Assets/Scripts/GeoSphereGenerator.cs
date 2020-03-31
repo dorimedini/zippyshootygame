@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class GeoSphereGenerator : MonoBehaviour
 {
-    public bool DEBUG = true;
-
-    public GameObject Hex, Pent;
+    public bool DEBUG;
 
     // Positive integer. Controls how many tile center-points the geodesic sphere has.
     // In the end there will be:
@@ -21,6 +19,10 @@ public class GeoSphereGenerator : MonoBehaviour
 
     // The initial height of the tiles, as a percentage of the radius
     public float initialHeight;
+
+    // Tile's colliders are wider than their rendering mesh; this float value determines
+    // how much wider (percentage of edge length)
+    public float collisionExpansion;
 
     // The edges of the tiles vary depending on their locations on the sphere,
     // but the "base" edge length should be proportional to radius/2^EHN. Trial and error
@@ -276,7 +278,14 @@ public class GeoSphereGenerator : MonoBehaviour
         foreach (Vector3 point in spherePoints)
         {
             bool isHex = !isPentPoint(point);
-            TileBehaviour tile = TileBehaviour.Create(isHex, point, baseEdgeLength(), radius, initialHeight * radius, DEBUG);
+            TileBehaviour tile = TileBehaviour.Create(
+                isHex, 
+                point, 
+                baseEdgeLength(), 
+                radius, 
+                initialHeight * radius, 
+                collisionExpansion,
+                DEBUG);
             setParent(tile.gameObject);
             makeFaceOrigin(tile.gameObject);
             if (isHex)

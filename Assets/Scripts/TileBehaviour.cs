@@ -12,23 +12,35 @@ public class TileBehaviour : MonoBehaviour
 	public float edge { get; set; }
 	public float radius { get; set; }
 	public int id { get; set; }           // Set by Geosphere generator
+	public float collisionExpansion { get; set; }  // How much wider the collider is (percentage)
 	
 	private Mesh mesh { get; set; }
+	private Mesh collMesh { get; set; }   // Collider's mesh is different than the renderer's mesh
 	private bool needRedraw { get; set; }
 	public bool isHex { get; set; }
 
-	public static TileBehaviour Create(bool isHexagon, Vector3 location, float edgeLength, float r, float h, bool debug, int tileId = -1)
+	public static TileBehaviour Create(
+		bool isHexagon,
+		Vector3 location,
+		float edgeLength,
+		float r,
+		float h,
+		float collExpansion,
+		bool debug,
+		int tileId = -1)
 	{
 		Object obj = isHexagon ? Resources.Load("Prefabs/HexRenderer") : Resources.Load("Prefabs/PentRenderer");
 		GameObject tile_obj = Instantiate(obj, location, Quaternion.identity) as GameObject;
 		TileBehaviour tile = tile_obj.GetComponent<TileBehaviour>();
-		tile.DEBUG = debug;
 		tile.isHex = isHexagon;
-		tile.height = h;
 		tile.edge = edgeLength;
 		tile.radius = r;
+		tile.height = h;
+		tile.collisionExpansion = collExpansion;
+		tile.DEBUG = debug;
 		tile.id = tileId;
 		tile.mesh = new Mesh();
+		tile.collMesh = new Mesh();
 		return tile;
 	}
 
@@ -54,7 +66,7 @@ public class TileBehaviour : MonoBehaviour
 	void UpdateMesh()
 	{
 		GetComponent<MeshFilter>().mesh = mesh;
-		GetComponent<MeshCollider>().sharedMesh = mesh;
+		GetComponent<MeshCollider>().sharedMesh = collMesh;
 	}
 
 	void OnCollisionEnter(Collision col)
@@ -65,9 +77,13 @@ public class TileBehaviour : MonoBehaviour
 	public void redraw()
 	{
 		mesh = new Mesh();
+		collMesh = new Mesh();
 		mesh.vertices = getVertices();
 		mesh.triangles = getTriangles();
 		mesh.RecalculateNormals();
+		collMesh.vertices = getVertices(true);
+		collMesh.triangles = mesh.triangles;
+		collMesh.RecalculateNormals();
 	}
 
 	public Mesh getMesh() { return mesh; }
@@ -177,7 +193,7 @@ public class TileBehaviour : MonoBehaviour
 	//      6-----11
 	// Note that the height extends towards a point of radial distance from the tile
 	// in the Y direction, not directly upwards from each point.
-	Vector3[] getVertices()
+	Vector3[] getVertices(bool forCollider = false)
 	{
 		float width = getWidth();
 		float length = getLength();
@@ -207,6 +223,13 @@ public class TileBehaviour : MonoBehaviour
 		// Add second layer in the radial direction
 		for (int i = 0; i < totalEdges(); ++i)
 			v[totalEdges() + i] = v[i] + height * (radiusUp - v[i]).normalized;
+		// If this is for the collider, add some extra width
+		if (forCollider)
+		{
+			int halfway = v.Length / 2;
+			for (int i = 0; i < v.Length; ++i)
+				v[i] += collisionExpansion * (v[i] - new Vector3(0, i < halfway ? 0 : height, 0));
+		}
 		return v;
 	}
 
