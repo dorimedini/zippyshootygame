@@ -1,6 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditor;
 using UnityEngine;
 
 public class GeoSphereGenerator : MonoBehaviour
@@ -77,7 +81,11 @@ public class GeoSphereGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<SphereCollider>().radius = radius;
+        BuildSphere();
+    }
+
+    void BuildSphere()
+    {
         initializeSpherePoints();
         addTiles();
         initializePlanes();
@@ -87,13 +95,14 @@ public class GeoSphereGenerator : MonoBehaviour
         computeNeighborLists();
         if (DEBUG)
             DEBUG_neighborList();
-        orientTiles();
+        makeFaceOrigin();
         if (DEBUG)
         {
             DEBUG_deg();
             DEBUG_planes();
         }
         spreadTiles();
+        orientTiles();
         updateEdgeLengths();
     }
 
@@ -287,7 +296,6 @@ public class GeoSphereGenerator : MonoBehaviour
                 collisionExpansion,
                 DEBUG);
             setParent(tile.gameObject);
-            makeFaceOrigin(tile.gameObject);
             if (isHex)
                 tiles.Add(tile);
             else
@@ -295,10 +303,24 @@ public class GeoSphereGenerator : MonoBehaviour
         }
     }
     private void setParent(GameObject go) { go.transform.parent = transform; }
+    private void makeFaceOrigin()
+    {
+        foreach (TileBehaviour tile in tiles)
+        {
+            makeFaceOrigin(tile.gameObject);
+        }
+    }
     private void makeFaceOrigin(GameObject go)
     {
         go.transform.LookAt(origin);
         go.transform.Rotate(new Vector3(90, 0, 0));
+    }
+    private void randomizeTileHeights(float max = 0.7f, float min = 0.1f)
+    {
+        foreach (TileBehaviour tile in tiles)
+        {
+            tile.setHeight(UnityEngine.Random.Range(min, max) * radius);
+        }
     }
 
     // We need to keep track of all 30 planes defined by neighboring
@@ -600,10 +622,7 @@ public class GeoSphereGenerator : MonoBehaviour
     // Now, move the tiles so they are distributed uniformly as possible around the sphere.
     // To avoid complicated computations, I'll just go several times over all tiles, and
     // each pass move them to the average point (on the sphere) of their neighbors.
-    private void spreadTiles()
-    {
-        spreadTiles(10);
-    }
+    private void spreadTiles() { spreadTiles(10); }
     private void spreadTiles(int passes)
     {
         // Do passes without pentagons; pentagons are done in one go at the end.

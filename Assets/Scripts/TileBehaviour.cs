@@ -7,17 +7,17 @@ using UnityEngine;
 public class TileBehaviour : MonoBehaviour
 {
 	public bool DEBUG;
-	
-	public float height { get; set; }
-	public float edge { get; set; }
-	public float radius { get; set; }
-	public int id { get; set; }           // Set by Geosphere generator
-	public float collisionExpansion { get; set; }  // How much wider the collider is (percentage)
-	
-	private Mesh mesh { get; set; }
-	private Mesh collMesh { get; set; }   // Collider's mesh is different than the renderer's mesh
-	private bool needRedraw { get; set; }
-	public bool isHex { get; set; }
+
+	public float height;
+	public float edge;
+	public float radius;
+	public int id;           // Set by Geosphere generator
+	public float collisionExpansion;  // How much wider the collider is (percentage)
+
+	public Mesh mesh;
+	public Mesh collMesh;   // Collider's mesh is different than the renderer's mesh
+	public bool needRedraw;
+	public bool isHex;
 
 	public static TileBehaviour Create(
 		bool isHexagon,
@@ -47,11 +47,12 @@ public class TileBehaviour : MonoBehaviour
 	void Awake()
 	{
 		needRedraw = true;
+		
 	}
 
 	void Start()
 	{
-
+		
 	}
 
 	void Update()
@@ -71,7 +72,8 @@ public class TileBehaviour : MonoBehaviour
 
 	void OnCollisionEnter(Collision col)
 	{
-		// If this isn't implemented there are no collisions...?
+		if (col != null)
+			Debug.Log(string.Format("Got collision on tile {1}: {0}", col, id));
 	}
 
 	public void redraw()

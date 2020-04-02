@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 7048408702947457516}
   - component: {fileID: 3774444423744258074}
   - component: {fileID: 3847381631105897276}
+  - component: {fileID: -9050177866546081978}
+  - component: {fileID: 3063156705808600628}
+  - component: {fileID: 4154293110063296997}
   m_Layer: 0
   m_Name: GeoSphere
   m_TagString: Untagged
@@ -45,10 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hex: {fileID: 5627848097101682897, guid: 8cd8efb5dd06df74e862b6e014e9dc33, type: 3}
-  Pent: {fileID: 7344225407131647139, guid: e0d42b717337c43409e15b2a77abd8d1, type: 3}
-  expHexNumber: 4
-  radius: 15
+  DEBUG: 0
+  expHexNumber: 3
+  radius: 100
+  initialHeight: 0.1
+  collisionExpansion: 0.15
   baseEdgeMultiplier: 0.6
   edgeDegreeMultiplier: 0.02
   pentEdgeMultiplier: 1.1
@@ -81,3 +85,63 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-9050177866546081978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452639711383623897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DEBUG: 0
+  expHexNumber: 3
+  radius: 100
+  initialHeight: 0.1
+  collisionExpansion: 0.15
+  baseEdgeMultiplier: 0.6
+  edgeDegreeMultiplier: 0.02
+  pentEdgeMultiplier: 1.1
+--- !u!114 &3063156705808600628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452639711383623897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DEBUG: 0
+  expHexNumber: 3
+  radius: 100
+  initialHeight: 0.1
+  collisionExpansion: 0.15
+  baseEdgeMultiplier: 0.6
+  edgeDegreeMultiplier: 0.02
+  pentEdgeMultiplier: 1.1
+--- !u!114 &4154293110063296997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452639711383623897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DEBUG: 0
+  expHexNumber: 3
+  radius: 100
+  initialHeight: 0.1
+  collisionExpansion: 0.15
+  baseEdgeMultiplier: 0.6
+  edgeDegreeMultiplier: 0.02
+  pentEdgeMultiplier: 1.1
