@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -8,7 +9,10 @@ public class TileBehaviour : MonoBehaviour
 {
 	public bool DEBUG;
 
-	public float height;
+	public float targetHeight;
+	private float currentHeight;
+	private float timeToTarget;
+	private bool extending;
 	public float edge;
 	public float radius;
 	public int id;           // Set by Geosphere generator
@@ -18,6 +22,11 @@ public class TileBehaviour : MonoBehaviour
 	public Mesh collMesh;   // Collider's mesh is different than the renderer's mesh
 	public bool needRedraw;
 	public bool isHex;
+
+	// Need these to handle player launching
+	private Dictionary<int, GameObject> collidedWithTile;
+	private Dictionary<int, float> launchCooldownList;
+	public const float launchCooldown = 1.5f;
 
 	public static TileBehaviour Create(
 		bool isHexagon,
@@ -35,19 +44,23 @@ public class TileBehaviour : MonoBehaviour
 		tile.isHex = isHexagon;
 		tile.edge = edgeLength;
 		tile.radius = r;
-		tile.height = h;
+		tile.targetHeight = h;
+		tile.currentHeight = h;
+		tile.timeToTarget = 0f;
 		tile.collisionExpansion = collExpansion;
 		tile.DEBUG = debug;
 		tile.id = tileId;
 		tile.mesh = new Mesh();
 		tile.collMesh = new Mesh();
+		tile.collidedWithTile = new Dictionary<int, GameObject>();
+		tile.launchCooldownList = new Dictionary<int, float>();
 		return tile;
 	}
 
 	void Awake()
 	{
 		needRedraw = true;
-		
+		extending = false;
 	}
 
 	void Start()
@@ -55,25 +68,46 @@ public class TileBehaviour : MonoBehaviour
 		
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
+		if (extending)
+			extendStep();
 		if (needRedraw)
 		{
 			redraw();
 			UpdateMesh();
 			needRedraw = false;
 		}
+		UpdateLaunchCooldowns();
 	}
 	void UpdateMesh()
 	{
 		GetComponent<MeshFilter>().mesh = mesh;
 		GetComponent<MeshCollider>().sharedMesh = collMesh;
 	}
+	void UpdateLaunchCooldowns()
+    {
+		var objIds = launchCooldownList.Keys.ToList();
+		foreach (int objId in objIds)
+        {
+			launchCooldownList[objId] -= Time.deltaTime;
+			if (launchCooldownList[objId] <= 0)
+				launchCooldownList.Remove(objId);
+		}
+    }
 
 	void OnCollisionEnter(Collision col)
 	{
-		if (col != null)
-			Debug.Log(string.Format("Got collision on tile {1}: {0}", col, id));
+		GameObject obj = col.gameObject;
+		int objId = obj.GetInstanceID();
+		if (!collidedWithTile.ContainsKey(objId))
+        {
+			collidedWithTile[objId] = obj;
+        }
+	}
+	void OnCollisionExit(Collision col)
+    {
+		collidedWithTile.Remove(col.gameObject.GetInstanceID());
 	}
 
 	public void redraw()
@@ -92,17 +126,92 @@ public class TileBehaviour : MonoBehaviour
 
 	// Allow parent object to control edge width
 	public void setEdge(float e) { edge = e; needRedraw = true; }
-	public void setHeight(float h) { height = h; needRedraw = true; }
 	public void setRadius(float r) { radius = r; needRedraw = true; }
+	public void setHeight(float h) {
+		currentHeight = targetHeight = h;
+		timeToTarget = 0f;
+		extending = false;
+		needRedraw = true;
+	}
+	public void extendTo(float height, float timeToHeight) {
+		extending = true;
+		targetHeight = height;
+		timeToTarget = timeToHeight;
+	}
+	private void extendStep()
+	{
+		// Compute height increase
+		float deltaHeight;
+		if (timeToTarget < 0.01)
+		{
+			// Snap to target when almost out of time
+			deltaHeight = targetHeight - currentHeight;
+			timeToTarget = 0f;
+			extending = false;
+		}
+		else
+		{
+			deltaHeight = Mathf.Lerp(currentHeight, targetHeight, Mathf.Sqrt(Time.deltaTime / timeToTarget)) - currentHeight;
+			timeToTarget -= Time.deltaTime;
+		}
+		// Don't update currentHeight yet! isOverTile uses is
+
+		// First, get a list of Rigidbodies standing on the tile so we can
+		// launch them. Objects that have been launched have a cooldown.
+		// Only launch if height increased!
+		Dictionary<int, Rigidbody> rbs = new Dictionary<int, Rigidbody>();
+		if (deltaHeight > 0)
+		{
+			foreach (var kvp in collidedWithTile)
+			{
+				GameObject obj = kvp.Value;
+				int objId = kvp.Key;
+				Rigidbody rb = obj.GetComponent<Rigidbody>();
+				if (rb == null)
+					continue;
+				if (!isOverTile(rb))
+					continue;
+				if (launchCooldownList.ContainsKey(objId))
+					continue;
+				rbs[objId] = rb;
+			}
+		}
+
+		// Update current height after checking which rigidbodies are eligible for launch.
+		currentHeight += deltaHeight;
+
+		// Fix locations of objects (if height increases).
+		if (deltaHeight > 0) {
+			float force = 25f * deltaHeight;
+			foreach (var kvp in rbs)
+			{
+				Rigidbody rb = kvp.Value;
+				int objId = kvp.Key;
+				Vector3 dir = -rb.transform.position.normalized;
+				rb.AddForce(force * dir, ForceMode.Impulse);
+				launchCooldownList[objId] = launchCooldown;
+			}
+		}
+
+		// Set redraw
+		needRedraw = true;
+    }
+
+	// Assumes rigidbody is collided with tile, and is just as close to the origin as the tile.
+	// TODO: This could be given some more thought...
+	private bool isOverTile(Rigidbody rb)
+    {
+		return rb.transform.position.magnitude <= radius - currentHeight + 0.1f;
+    }
 
 	int totalEdges() { return isHex ? 6 : 5; }
 
 	// The length is the the following distance:
-	//     +-----+           _+_      ^
+	//     ^-----+           _+_      ^
 	//    /|      \       +--   --+   |
 	//   + |l      +      \       /   |l
 	//    \|      /        +-----+    v
-	//     +-----+
+	//     v-----+
 	float getLength()
 	{
 		return isHex ? 
@@ -224,13 +333,13 @@ public class TileBehaviour : MonoBehaviour
 		}
 		// Add second layer in the radial direction
 		for (int i = 0; i < totalEdges(); ++i)
-			v[totalEdges() + i] = v[i] + height * (radiusUp - v[i]).normalized;
+			v[totalEdges() + i] = v[i] + currentHeight * (radiusUp - v[i]).normalized;
 		// If this is for the collider, add some extra width
 		if (forCollider)
 		{
 			int halfway = v.Length / 2;
 			for (int i = 0; i < v.Length; ++i)
-				v[i] += collisionExpansion * (v[i] - new Vector3(0, i < halfway ? 0 : height, 0));
+				v[i] += collisionExpansion * (v[i] - new Vector3(0, i < halfway ? 0 : currentHeight, 0));
 		}
 		return v;
 	}

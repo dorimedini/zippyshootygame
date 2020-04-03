@@ -58,7 +58,7 @@ LightmapSettings:
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
-    m_AO: 0
+    m_AO: 1
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
@@ -208,6 +208,11 @@ PrefabInstance:
       propertyPath: baseEdgeMultiplier
       value: 0.7
       objectReference: {fileID: 0}
+    - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
+        type: 3}
+      propertyPath: colorTiles
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3063156705808600628, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
     - {fileID: 4154293110063296997, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
@@ -317,7 +322,12 @@ PrefabInstance:
     - target: {fileID: 4594609659454184972, guid: 78cd8cc038c0f3c44816df3357da2fd9,
         type: 3}
       propertyPath: lookSpeedY
-      value: 10
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4594609659454184973, guid: 78cd8cc038c0f3c44816df3357da2fd9,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4594609659454184974, guid: 78cd8cc038c0f3c44816df3357da2fd9,
         type: 3}

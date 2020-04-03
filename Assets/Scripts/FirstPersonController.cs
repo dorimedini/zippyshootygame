@@ -8,7 +8,6 @@ public class FirstPersonController : MonoBehaviour
     public float movementSpeed;
     public float lookSpeedX;
     public float lookSpeedY;
-    public float gravity; // Usually 9.8f
 
     private Rigidbody rb;
     private Camera camera;
@@ -34,7 +33,7 @@ public class FirstPersonController : MonoBehaviour
         // LookAt needs a target to look at, and the "up" direction.
         Vector3 newForward = Vector3.ProjectOnPlane(transform.forward, -transform.position.normalized);
         transform.LookAt(transform.position + newForward, -transform.position);
-        // Rotate the camera depending on Y axis input
+        // Rotate the camera depending on Y axis input.
         camera.transform.Rotate(lookSpeedY * rotY, 0, 0);
         // If we look too far up: the camera's "up" direction will form an angle of over 180 degrees with
         // the player's forward direction. We can check this by checking SignedAngle from player's forward
@@ -60,7 +59,7 @@ public class FirstPersonController : MonoBehaviour
         rb.MovePosition(rb.position + Time.deltaTime * speed);
 
         // Gravity
-        rb.AddForce(rb.mass * gravity * rb.position.normalized);
+        rb.AddForce(rb.mass * GeoPhysics.gravity * rb.position.normalized);
     }
 
     void OnCollisionEnter(Collision other)
