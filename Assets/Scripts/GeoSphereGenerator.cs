@@ -9,7 +9,9 @@ using UnityEngine;
 
 public class GeoSphereGenerator : MonoBehaviour
 {
+    // Debugging flags
     public bool DEBUG;
+    public bool colorTiles;
 
     // Positive integer. Controls how many tile center-points the geodesic sphere has.
     // In the end there will be:
@@ -78,6 +80,8 @@ public class GeoSphereGenerator : MonoBehaviour
     void Start()
     {
         BuildSphere();
+        if (colorTiles)
+            colorTilesByDeg();
     }
 
     void BuildSphere()
@@ -100,6 +104,24 @@ public class GeoSphereGenerator : MonoBehaviour
         spreadTiles();
         orientTiles();
         updateEdgeLengths();
+    }
+
+    // ONLY CALL AFTER SORTING TILES
+    private void colorTilesByDeg()
+    {
+        Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
+        Material yellowMat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
+        Material orangeMat = Resources.Load("Materials/DUMMY_mat_orange", typeof(Material)) as Material;
+        Material redMat = Resources.Load("Materials/DUMMY_mat_red", typeof(Material)) as Material;
+        List<Material> colorMats = new List<Material>() { greenMat, yellowMat, orangeMat, redMat };
+        for (int deg=0; deg<=maxDegree(); ++deg)
+        {
+            (int start, int end) = degRange(deg);
+            for (int i=start; i<end; ++i)
+            {
+                tiles[i].GetComponent<MeshRenderer>().material = colorMats[deg % colorMats.Count];
+            }
+        }
     }
 
     // Length of an edge of a tile should be proportional to radius/2^EHN
