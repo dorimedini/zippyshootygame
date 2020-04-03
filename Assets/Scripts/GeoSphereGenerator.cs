@@ -31,13 +31,13 @@ public class GeoSphereGenerator : MonoBehaviour
     // The edges of the tiles vary depending on their locations on the sphere,
     // but the "base" edge length should be proportional to radius/2^EHN. Trial and error
     // gives a constant of 0.6, but we can change in the future.
-    public float baseEdgeMultiplier = 0.6f;
+    public float baseEdgeMultiplier;
     private float prevEdgeMultiplier;
 
     // Edge length of tiles also depend on degree.
     // Use this constant to control how intense the dependency is.
-    public float edgeDegreeMultiplier = 0.02f;
-    public float pentEdgeMultiplier = 1.2f;
+    public float edgeDegreeMultiplier;
+    public float pentEdgeMultiplier;
     private float prevEdgeDegreeMultiplier;
     private float prevPentEdgeMultiplier;
 
@@ -56,8 +56,6 @@ public class GeoSphereGenerator : MonoBehaviour
     List<TileBehaviour> tiles;             // Updated in addTiles(). First 12 items are the pentagons.
     Dictionary<(int, int), Plane> planes;  // Indexed by pentagon-index pairs, updated in initializePlanes()
     List<List<int>> neighbors;             // Lists of tile IDs that touch the respective tile (lists are of length 5 or 6)
-    int updateInterval;                    // Temporary (hopefully). For debugging purposes
-    int updateCounter;
     System.Random rng;
 
     void Awake()
@@ -65,8 +63,6 @@ public class GeoSphereGenerator : MonoBehaviour
         prevEdgeMultiplier = baseEdgeMultiplier;
         prevEdgeDegreeMultiplier = edgeDegreeMultiplier;
         prevPentEdgeMultiplier = pentEdgeMultiplier;
-        updateCounter = 0;
-        updateInterval = 1000;
         tiles = new List<TileBehaviour>();
         planes = new Dictionary<(int, int), Plane>();
         neighbors = new List<List<int>>();
@@ -807,7 +803,6 @@ public class GeoSphereGenerator : MonoBehaviour
 
     private void DEBUG_update()
     {
-        updateCounter = 0;
         Debug.Log(string.Format("Physics sphere centered at {1} with radius {2} collided with {0} objects",
             Physics.OverlapSphere(tiles[0].transform.position, 200 * baseEdgeLength()).Length, tiles[0].transform.position, 200 * baseEdgeLength()));
     }

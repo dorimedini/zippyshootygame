@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7593885802273197266}
-  - component: {fileID: 1940497907304186840}
   - component: {fileID: 1709272152923566540}
   - component: {fileID: 1675897926530340327}
   - component: {fileID: 1156302546871376645}
@@ -35,22 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1940497907304186840
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7344225407131647139}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 1
 --- !u!64 &1709272152923566540
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -61,7 +44,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
@@ -124,3 +107,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f76a0933ecb4ce4c89f897c60034496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DEBUG: 0
+  height: 0
+  edge: 0
+  radius: 0
+  id: 0
+  collisionExpansion: 0
+  mesh: {fileID: 0}
+  collMesh: {fileID: 0}
+  needRedraw: 0
+  isHex: 0

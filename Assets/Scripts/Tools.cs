@@ -25,32 +25,25 @@ public static class Tools
     // This returns true if the ADDITIVE DIFFERENCE is at most epsilon
     public static bool NearlyEqual(double a, double b, double epsilon)
     {
-        double absA = System.Math.Abs(a);
-        double absB = System.Math.Abs(b);
         double diff = System.Math.Abs(a - b);
-
         if (a.Equals(b))
         { // shortcut, handles infinities
             return true;
         }
-        /*
-        else if (a == 0 || b == 0 || absA + absB < 2 * epsilon)
-        {
-            // a or b is zero or both are extremely close to it
-            // relative error is less meaningful here
-            return diff < epsilon;
-        }
-        else
-        { // use relative error
-            return diff / (absA + absB) < epsilon;
-        }
-        */
         return diff < epsilon;
     }
 
     public static bool NearlyEqual(Vector3 a, Vector3 b, double epsilon)
     {
         return NearlyEqual((a - b).magnitude, 0, epsilon);
+    }
+
+    public static string ToString<K,T>(Dictionary<K,T> dict)
+    {
+        List<string> kvps = new List<string>();
+        foreach (var kvp in dict)
+            kvps.Add("(" + kvp.Key.ToString() + ":" + kvp.Value.ToString() + ")");
+        return "[" + string.Join(",", kvps) + "]";
     }
 
 
