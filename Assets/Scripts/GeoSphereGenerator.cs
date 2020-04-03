@@ -171,7 +171,7 @@ public class GeoSphereGenerator : MonoBehaviour
         int exp = (int)Tools.IntPow(2, expHexNumber);
         int deg2StartIdx = 12 + 30 * (exp - 1);
         if (deg <= 1)
-            return deg == 0 ? (0, 11) : (12, deg2StartIdx);
+            return deg == 0 ? (0, 12) : (12, deg2StartIdx);
         if (3 * (deg - 1) >= exp)
             return (tiles.Count, tiles.Count);
         // Those where the easy cases. Now we need to keep track of
