@@ -23,6 +23,11 @@ public class GeoSphereGenerator : MonoBehaviour
     // Radius of the sphere - distance from the center to any center of any tile.
     public float radius;
 
+    // Number of lights, between 1 and 4
+    public int numLights;
+    public float lightRadiusMultiplier; // 0.8f?
+    public float lightIntensity; // 6f?
+
     // The initial height of the tiles, as a percentage of the radius
     public float initialHeight;
 
@@ -104,6 +109,7 @@ public class GeoSphereGenerator : MonoBehaviour
         spreadTiles();
         orientTiles();
         updateEdgeLengths();
+        addLights();
     }
 
     // ONLY CALL AFTER SORTING TILES
@@ -689,6 +695,63 @@ public class GeoSphereGenerator : MonoBehaviour
         float baseEdge = baseEdgeLength();
         for (int i=0; i<tiles.Count; ++i)
             tiles[i].GetComponent<TileBehaviour>().setEdge(baseEdge * edgeMultiplier(getDeg(i)));
+    }
+
+    private void addLights()
+    {
+        // Create colored lights. Edit list for different behaviour
+        List<Color> lightColors = new List<Color>{
+            Color.yellow,
+            Color.yellow,
+            Color.yellow,
+            Color.yellow
+        };
+        List<GameObject> lights = new List<GameObject>();
+        for (int i=0; i<numLights; ++i)
+        {
+            lights.Add(new GameObject(string.Format("Pointlight{0}", i)));
+            Light lightComp = lights[i].AddComponent<Light>();
+            lightComp.color = lightColors[i % lightColors.Count];
+            lightComp.range = lightRadiusMultiplier * radius;
+            lightComp.intensity = lightIntensity;
+        }
+        // Place them
+        switch(numLights)
+        {
+            // In case of 1 light source, we need to up the range/intensity to illuminate everything
+            case 1:
+                lights[0].transform.position = origin;
+                lights[0].GetComponent<Light>().range = 2 * radius;
+                break;
+            // For 2 or 3 lights, keep them on the XZ plane
+            case 2:
+                lights[0].transform.position = origin + new Vector3(0, 0, radius / 3);
+                lights[1].transform.position = origin + new Vector3(0, 0, -radius / 3);
+                break;
+            case 3:
+                float deg30 = Mathf.PI / 6f;
+                float cos30 = Mathf.Cos(deg30);
+                float sin30 = Mathf.Sin(deg30);
+                lights[0].transform.position = origin + new Vector3(0, 0, radius / 2);
+                lights[1].transform.position = origin + new Vector3(-(radius / 2) * cos30, 0, -(radius / 2) * sin30);
+                lights[2].transform.position = origin + new Vector3(radius / 2 * cos30, 0, -(radius / 2) * sin30);
+                break;
+            // If we have 4 lights it's a bit more complicated - we want to form a 3D pyramid from the lights.
+            // From https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron, we can adapt
+            // the coordinates (sqrt(8/9), 0, -1/3), (-sqrt(2/9), sqrt(2/3), -1/3), (-sqrt(2/9), -sqrt(2/3), -1/3), (0,0,1)
+            // to our radius (multiply everything by R/2):
+            case 4:
+                float sqrt2 = Mathf.Sqrt(2);
+                float sqrt3 = Mathf.Sqrt(3);
+                lights[0].transform.position = origin + (radius / 2f) * (new Vector3(2f / 3f * sqrt2, 0, -1f / 3f));
+                lights[1].transform.position = origin + (radius / 2f) * (new Vector3(-sqrt2 / 3f, sqrt2 / sqrt3, -1f / 3f));
+                lights[2].transform.position = origin + (radius / 2f) * (new Vector3(-sqrt2 / 3f, -sqrt2 / sqrt3, -1f / 3f));
+                lights[3].transform.position = origin + (radius / 2f) * (new Vector3(0, 0, 1));
+                break;
+            default:
+                Debug.LogError(string.Format("Got numLights={0}, valid values are 1~4", numLights));
+                break;
+        }
     }
 
     private (int, int) onPentArc(int tileIdx)
