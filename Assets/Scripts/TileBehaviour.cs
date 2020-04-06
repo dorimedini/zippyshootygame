@@ -87,12 +87,15 @@ public class TileBehaviour : MonoBehaviour
     }
     void UpdateLaunchCooldowns()
     {
-        var objIds = launchCooldownList.Keys.ToList();
-        foreach (int objId in objIds)
+        if (launchCooldownList.Count > 0)
         {
-            launchCooldownList[objId] -= Time.deltaTime;
-            if (launchCooldownList[objId] <= 0)
-                launchCooldownList.Remove(objId);
+            var objIds = launchCooldownList.Keys.ToList();
+            foreach (int objId in objIds)
+            {
+                launchCooldownList[objId] -= Time.deltaTime;
+                if (launchCooldownList[objId] <= 0)
+                    launchCooldownList.Remove(objId);
+            }
         }
     }
 
