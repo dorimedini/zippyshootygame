@@ -324,6 +324,11 @@ PrefabInstance:
       propertyPath: lookSpeedY
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4594609659454184972, guid: 78cd8cc038c0f3c44816df3357da2fd9,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4594609659454184973, guid: 78cd8cc038c0f3c44816df3357da2fd9,
         type: 3}
       propertyPath: m_CollisionDetection

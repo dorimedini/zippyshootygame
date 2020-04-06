@@ -8,6 +8,7 @@ public class FirstPersonController : MonoBehaviour
     public float movementSpeed;
     public float lookSpeedX;
     public float lookSpeedY;
+    public float jumpSpeed;
 
     private Rigidbody rb;
     private Camera camera;
@@ -17,6 +18,14 @@ public class FirstPersonController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         camera = GetComponentInChildren<Camera>();
+    }
+
+    bool grounded() {
+        // transform.position - the ground level the player is standing on, if grounded.
+        // Check if there's a collider somewhere between 1 meter into the players body
+        // and 1.1 meters "downward", where "downward" in global coordinates depends on the
+        // player's location on the sphere.
+        return Physics.Raycast(transform.position + transform.up, -transform.up, 1.1f);
     }
 
     // Update is called once per frame
@@ -60,6 +69,10 @@ public class FirstPersonController : MonoBehaviour
 
         // Gravity
         rb.AddForce(rb.mass * GeoPhysics.gravity * rb.position.normalized);
+
+        // Jump
+        if (grounded() && Input.GetButtonDown("Jump"))
+            rb.velocity = rb.velocity + jumpSpeed * transform.up;
     }
 
     void OnCollisionEnter(Collision other)
