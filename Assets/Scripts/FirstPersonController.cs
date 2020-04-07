@@ -68,7 +68,7 @@ public class FirstPersonController : MonoBehaviour
         rb.MovePosition(rb.position + Time.deltaTime * speed);
 
         // Gravity
-        rb.AddForce(rb.mass * GeoPhysics.gravity * rb.position.normalized);
+        GeoPhysics.ApplyGravity(rb);
 
         // Jump
         if (grounded() && Input.GetButtonDown("Jump"))
