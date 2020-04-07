@@ -59,6 +59,10 @@ public class TileBehaviour : MonoBehaviour
 
     void Awake()
     {
+        mesh = new Mesh();
+        collMesh = new Mesh();
+        collidedWithTile = new Dictionary<int, GameObject>();
+        launchCooldownList = new Dictionary<int, float>();
         needRedraw = true;
         extending = false;
     }
