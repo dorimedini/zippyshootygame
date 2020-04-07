@@ -9,8 +9,7 @@ using UnityEngine;
 
 public class GeoSphereGenerator : MonoBehaviour
 {
-    // Debugging flags
-    public bool DEBUG;
+    // Useful for visualizing tile structure
     public bool colorTiles;
 
     // Positive integer. Controls how many tile center-points the geodesic sphere has.
@@ -92,24 +91,15 @@ public class GeoSphereGenerator : MonoBehaviour
     void BuildSphere()
     {
         initializeSpherePoints();
-        addTiles();
-        initializePlanes();
-        sortTiles();
-        if (DEBUG)
-            DEBUG_sort();
-        computeNeighborLists();
-        if (DEBUG)
-            DEBUG_neighborList();
-        makeFaceOrigin();
-        if (DEBUG)
-        {
-            DEBUG_deg();
-            DEBUG_planes();
-        }
-        spreadTiles();
-        orientTiles();
-        updateEdgeLengths();
-        addLights();
+        addTiles();                 // Instantiate the tile objects
+        initializePlanes();         // Each neighboring pair of pentagons, along with the origin, define a plane
+        sortTiles();                // Pentagons, then hexagons on pentagon arcs, then by distance from arc hexagons
+        computeNeighborLists();     // Each tile should know which tiles are it's neighbors
+        makeFaceOrigin();           // Rotate tiles to face the origin
+        spreadTiles();              // Correct slight misalignment by averaging each tile's location by it's neighbors
+        orientTiles();              // Rotate tiles so their edges align with their neighbors
+        updateEdgeLengths();        // Enlarge some tiles to fill the gaps
+        addLights();                // Between 1 and 4 point lights in the arena
     }
 
     // ONLY CALL AFTER SORTING TILES
@@ -235,16 +225,6 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         return Mathf.FloorToInt((float)Tools.IntPow(2, expHexNumber) / 3f + 1f);
     }
-    private void DEBUG_deg()
-    {
-        Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
-        Material yellowMat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
-        Material orangeMat = Resources.Load("Materials/DUMMY_mat_orange", typeof(Material)) as Material;
-        Material redMat = Resources.Load("Materials/DUMMY_mat_red", typeof(Material)) as Material;
-        List<Material> colorMats = new List<Material>() { greenMat, yellowMat, orangeMat, redMat };
-        for (int i=0; i<tiles.Count; ++i)
-            tiles[i].GetComponent<MeshRenderer>().material = colorMats[getDeg(i) % colorMats.Count];
-    }
 
     // Some sphere points may be added several times by the subdivide algorithm.
     // Clean up the point set before adding GameObjects to them.
@@ -317,8 +297,7 @@ public class GeoSphereGenerator : MonoBehaviour
                 baseEdgeLength(), 
                 radius, 
                 initialHeight * radius, 
-                collisionExpansion,
-                DEBUG);
+                collisionExpansion);
             setParent(tile.gameObject);
             if (isHex)
                 tiles.Add(tile);
@@ -359,44 +338,6 @@ public class GeoSphereGenerator : MonoBehaviour
                     planes[(i, j)] = Plane.Translate(new Plane(origin, tiles[i].transform.position, tiles[j].transform.position), origin);
         if (planes.Count != 30)
             Debug.LogError(string.Format("Uh oh... plane initializer computed {0} planes instead of 30", planes.Count));
-    }
-    private void DEBUG_planes()
-    {
-        // For debug, color tiles 12 through 12+30*(2^expHexNumber - 1), non-inclusive,
-        // to identify edge hexes are where they should be
-        Material mat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
-        int foundEdgeHexes = 0;
-        for (int i = 0; i < tiles.Count; ++i)
-            if (isOnPentArc(i))
-            {
-                tiles[i].GetComponent<MeshRenderer>().material = mat;
-                foundEdgeHexes++;
-            }
-        Debug.Log(string.Format("Colored {0} edge hexes", foundEdgeHexes));
-        // Get some info
-        string debugMsg = "Found the following plane keys:\n";
-        foreach (KeyValuePair<(int, int), Plane> entry in planes)
-            debugMsg += string.Format(" {0}", entry.Key);
-        Debug.Log(debugMsg);
-        // Take any plane, and make sure there are at least 2^expHexNumber+1 tiles
-        // on the arc they define (2 pentagons and 2^expHexNumber-1 hexagons).
-        long requiredPerArc = Tools.IntPow(2, expHexNumber) + 1;
-        foreach (KeyValuePair<(int, int), Plane> entry in planes)
-        {
-            long totalOnArc = 0;
-            Plane plane = entry.Value;
-            (int p1, int p2) = entry.Key;
-            for(int i=0; i<tiles.Count; ++i)
-                if (Tools.NearlyEqual(distanceToPlane(i, entry.Key), 0, epsilon))
-                {
-                    Debug.Log(string.Format("Tile {0} at position {1} is on arc {2},{3} (pent positions {4} and {5})",
-                        i, tiles[i].transform.position, p1, p2, tiles[p1].transform.position, tiles[p2].transform.position));
-                    ++totalOnArc;
-                }
-            if (totalOnArc < requiredPerArc)
-                Debug.LogError(string.Format("Plane through pents {0},{1} (positions {2},{3}) passes through only {4} tiles!",
-                    p1, p2, tiles[p1].transform.position, tiles[p2].transform.position, totalOnArc));
-        }
     }
 
     // This will be important for the orientation phase.
@@ -461,45 +402,6 @@ public class GeoSphereGenerator : MonoBehaviour
         for (int i = 0; i < tiles.Count; ++i)
             tiles[i].GetComponent<TileBehaviour>().id = i;
     }
-    private void DEBUG_sort()
-    {
-        Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
-        Material yellowMat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
-        Material orangeMat = Resources.Load("Materials/DUMMY_mat_orange", typeof(Material)) as Material;
-        Material redMat = Resources.Load("Materials/DUMMY_mat_red", typeof(Material)) as Material;
-        List<Material> colorMats = new List<Material>() { greenMat, yellowMat, orangeMat, redMat };
-        // There should be:
-        // 12 Pentagons
-        // 30*(2^EHN-1) edge hexagons (deg-1)
-        // 60*(2^EHN-3) deg-2 hexagons (neighbors of edge hexagons)
-        // 60*(2^EHN-6) deg 3 hexagons (neighbors of deg-2 hexagons)
-        // 60*(2^EHN-9) deg 4 hexagons
-        // ...
-        // 60*(2^EHN-3(i-1)) deg i hexagons
-        // ...
-        // until i satisfies 3(i-1)>=2^EHN.
-        // Color the ranges different colors.
-        // Pentagons:
-        int offset = 0;
-        for (int i = 0; i < 12; ++i)
-            tiles[i].GetComponent<MeshRenderer>().material = colorMats[0];
-        offset += 12;
-        // Edge hexes (coefficient 30, not 60)
-        for (int i =offset; i < offset + 30 * (Tools.IntPow(2, expHexNumber) - 1); ++i)
-            tiles[i].GetComponent<MeshRenderer>().material = colorMats[1];
-        offset += 30 * ((int)Tools.IntPow(2, expHexNumber) - 1);
-        // Color 
-        for (int deg =2; 3*(deg-1) < Tools.IntPow(2, expHexNumber); ++deg)
-        {
-            for (int i=offset; i < offset + 60 * (Tools.IntPow(2, expHexNumber) - 3*(deg-1)); ++i)
-                tiles[i].GetComponent<MeshRenderer>().material = colorMats[deg % colorMats.Count];
-            offset += 60 * ((int)Tools.IntPow(2, expHexNumber) - 3 * (deg - 1));
-        }
-        /*
-        for (int i = offset; i < offset + 60 * (Tools.IntPow(2, expHexNumber) - 3); ++i)
-            tiles[i].GetComponent<MeshRenderer>().material = colorMats[2];
-            */
-    }
 
     // Call this to set up neighbors list.
     // To do so, just sweep the tile list (quadratic) and build each pentagon's five neighbors
@@ -534,50 +436,6 @@ public class GeoSphereGenerator : MonoBehaviour
                 Debug.LogError(string.Format("Only {0} neighbors found for tile {1}", foundNeighbors.Count, i));
             neighbors.Add(foundNeighbors);
         }
-    }
-    private void DEBUG_neighborList()
-    {
-        rng = new System.Random();
-        Invoke("DEBUG_neighborList_aux", 2);
-        // OK, seems like hex 427 gets pent 1 as a neighbor instead of hex 431. Why?
-        // Other (good) neighbors are 177, 178, 192, 191, 429
-        int badHex = 427;
-        List<int> candidates = new List<int>();
-        for (int i=0; i<tiles.Count; ++i)
-        {
-            if (i == badHex)
-                continue;
-            if (areNeighbors(i, badHex))
-                candidates.Add(i);
-        }
-        Debug.Log(string.Format("Got neighbors: " + string.Join(",", candidates)));
-        candidates = candidates.OrderBy(idx => distanceBetweenTiles(badHex, idx)).ToList();
-        Debug.Log(string.Format("Ordered: " + string.Join(",", candidates)));
-        candidates = candidates.Take(6).ToList();
-        // Hex 262 still doesn't find neighbor 266... why not?
-        badHex = 262;
-        candidates = new List<int>();
-        for (int i = 0; i < tiles.Count; ++i)
-        {
-            if (i == badHex)
-                continue;
-            if (areNeighbors(i, badHex))
-                candidates.Add(i);
-        }
-        Debug.Log(string.Format("Got neighbors: " + string.Join(",", candidates)));
-        candidates = candidates.OrderBy(idx => distanceBetweenTiles(badHex, idx)).ToList();
-        Debug.Log(string.Format("Ordered: " + string.Join(",", candidates)));
-        candidates = candidates.Take(6).ToList();
-    }
-    private void DEBUG_neighborList_aux()
-    {
-        int tileIdx = rng.Next(tiles.Count);
-        Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
-        Material yellowMat = Resources.Load("Materials/DUMMY_mat_yellow", typeof(Material)) as Material;
-        tiles[tileIdx].GetComponent<MeshRenderer>().material = yellowMat;
-        foreach (int i in neighbors[tileIdx])
-            tiles[i].GetComponent<MeshRenderer>().material = greenMat;
-        Invoke("DEBUG_neighborList_aux", 2);
     }
 
     // Do this in two parts:
@@ -885,20 +743,4 @@ public class GeoSphereGenerator : MonoBehaviour
             prevPentEdgeMultiplier = pentEdgeMultiplier;
         }
     }
-
-    private void DEBUG_update()
-    {
-        Debug.Log(string.Format("Physics sphere centered at {1} with radius {2} collided with {0} objects",
-            Physics.OverlapSphere(tiles[0].transform.position, 200 * baseEdgeLength()).Length, tiles[0].transform.position, 200 * baseEdgeLength()));
-    }
-
-    /*
-    void OnDrawGizmos()
-    {
-        Vector3 from = tiles[0].transform.position;
-        Vector3 to = from + neighborTileDistance() * tiles[0].transform.right;
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(from, to);
-    }
-    */
 }

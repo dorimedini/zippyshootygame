@@ -7,8 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class TileBehaviour : MonoBehaviour
 {
-    public bool DEBUG;
-
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
     public static float timeToHeightDelta = 2f;
@@ -43,7 +41,6 @@ public class TileBehaviour : MonoBehaviour
         float r,
         float h,
         float collExpansion,
-        bool debug,
         int tileId = -1)
     {
         Object obj = isHexagon ? Resources.Load("Prefabs/HexRenderer") : Resources.Load("Prefabs/PentRenderer");
@@ -61,7 +58,6 @@ public class TileBehaviour : MonoBehaviour
         tile.extending = false;
         tile.primedToLaunch = false;
         tile.heightLocked = false;
-        tile.DEBUG = debug;
         tile.id = tileId;
         tile.mesh = new Mesh();
         tile.collMesh = new Mesh();

@@ -201,7 +201,7 @@ PrefabInstance:
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
       propertyPath: collisionExpansion
-      value: 0.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
