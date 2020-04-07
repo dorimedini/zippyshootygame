@@ -12,6 +12,8 @@ public class Projectile : MonoBehaviour
     // Projectiles should ignore collision with the shooter player
     public int shooterId;
 
+    private bool destroyed;
+
     Mesh mesh;
     MeshRenderer renderer;
     Rigidbody rb;
@@ -21,6 +23,7 @@ public class Projectile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        destroyed = false;
         rb = GetComponent<Rigidbody>();
         mesh = GetComponent<MeshFilter>().mesh;
         renderer = GetComponent<MeshRenderer>();
@@ -65,6 +68,8 @@ public class Projectile : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
+        if (destroyed) return; // Don' process more than one collision... hope this helps...?
+
         // The first thing a projectile hits should destroy it (unless it's the shooter)
         GameObject obj = col.gameObject;
         if (obj.GetInstanceID() == shooterId)
@@ -84,5 +89,6 @@ public class Projectile : MonoBehaviour
 
         Debug.Log(string.Format("Projectile destroyed after hitting a {0} object", fps == null ? "non-player" : "player"));
         Destroy(gameObject);
+        destroyed = true;
     }
 }
