@@ -88,6 +88,7 @@ public class FirstPersonController : MonoBehaviour
             Vector3 projectileSpawn = camera.transform.position + camera.transform.forward;
             GameObject projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn, camera.transform.rotation);
             projectile.GetComponent<Rigidbody>().AddForce(camera.transform.forward * projectileImpulse, ForceMode.Impulse);
+            projectile.GetComponent<Projectile>().shooterId = gameObject.GetInstanceID();
         }
         if (weaponCooldown < 0f)
             weaponCooldown = 0f;

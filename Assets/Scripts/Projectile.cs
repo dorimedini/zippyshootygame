@@ -9,6 +9,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
+    // Projectiles should ignore collision with the shooter player
+    public int shooterId;
+
     Mesh mesh;
     MeshRenderer renderer;
     Rigidbody rb;
@@ -58,5 +61,28 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         GeoPhysics.ApplyGravity(rb);
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        // The first thing a projectile hits should destroy it (unless it's the shooter)
+        GameObject obj = col.gameObject;
+        if (obj.GetInstanceID() == shooterId)
+            return;
+
+        // Did we hit a tile or a player?
+        TileBehaviour tile = obj.GetComponent<TileBehaviour>();
+        FirstPersonController fps = obj.GetComponent<FirstPersonController>();
+        if (tile != null)
+        {
+            tile.projectileHit();
+        }
+        else if (fps != null)
+        {
+            // TODO: Implement damage
+        }
+
+        Debug.Log(string.Format("Projectile destroyed after hitting a {0} object", fps == null ? "non-player" : "player"));
+        Destroy(gameObject);
     }
 }

@@ -9,14 +9,22 @@ public class TileBehaviour : MonoBehaviour
 {
     public bool DEBUG;
 
-    public float targetHeight;
-    private float currentHeight;
+    public static float maxHeightPercentage = 0.9f;
+    public static float extensionDeltaPercentage = 0.3f;
+    public static float timeToHeightDelta = 2f;
+    public float currentHeight;
+    private float maxHeight;
+    private float targetHeight;
     private float timeToTarget;
+    private bool heightLocked;
     private bool extending;
+    private float extensionDelta;
+
     public float edge;
     public float radius;
-    public int id;           // Set by Geosphere generator
     public float collisionExpansion;  // How much wider the collider is (percentage)
+
+    public int id;           // Set by Geosphere generator
 
     public Mesh mesh;
     public Mesh collMesh;   // Collider's mesh is different than the renderer's mesh
@@ -46,6 +54,8 @@ public class TileBehaviour : MonoBehaviour
         tile.radius = r;
         tile.targetHeight = h;
         tile.currentHeight = h;
+        tile.maxHeight = maxHeightPercentage * r;
+        tile.extensionDelta = extensionDeltaPercentage * r;
         tile.timeToTarget = 0f;
         tile.collisionExpansion = collExpansion;
         tile.DEBUG = debug;
@@ -61,15 +71,17 @@ public class TileBehaviour : MonoBehaviour
     {
         mesh = new Mesh();
         collMesh = new Mesh();
-        collidedWithTile = new Dictionary<int, GameObject>();
-        launchCooldownList = new Dictionary<int, float>();
         needRedraw = true;
         extending = false;
+        heightLocked = false;
+        maxHeight = maxHeightPercentage * radius;
+        extensionDelta = extensionDeltaPercentage * radius;
     }
 
     void Start()
     {
-        
+        collidedWithTile = new Dictionary<int, GameObject>();
+        launchCooldownList = new Dictionary<int, float>();
     }
 
     void FixedUpdate()
@@ -106,15 +118,19 @@ public class TileBehaviour : MonoBehaviour
     void OnCollisionEnter(Collision col)
     {
         GameObject obj = col.gameObject;
+
+        // We ignore projectiles. The projectile itself handles hits
+        if (obj.GetComponent<Projectile>() != null) return;
+
         int objId = obj.GetInstanceID();
-        if (!collidedWithTile.ContainsKey(objId))
-        {
+        if (obj.GetComponent<Rigidbody>() != null && !collidedWithTile.ContainsKey(objId))
             collidedWithTile[objId] = obj;
-        }
     }
     void OnCollisionExit(Collision col)
     {
-        collidedWithTile.Remove(col.gameObject.GetInstanceID());
+        int objId = col.gameObject.GetInstanceID();
+        if (collidedWithTile.ContainsKey(objId))
+            collidedWithTile.Remove(objId);
     }
 
     public void redraw()
@@ -141,7 +157,29 @@ public class TileBehaviour : MonoBehaviour
         extending = false;
         needRedraw = true;
     }
-    public void extendTo(float height, float timeToHeight) {
+
+    // Call this from a projectile's OnCollisionEnter() method
+    public void projectileHit()
+    {
+        if (heightLocked)
+            return;
+
+        // Compute the target height.
+        // Take current height + delta. If this new height is under the maximal height, fine;
+        // just use the default time-to-height.
+        // If not, multiply the extension time by the ratio between the actual delta (distance
+        // to max) and the default delta.
+        float desiredTarget = currentHeight + extensionDelta;
+        float actualTarget = desiredTarget > maxHeight ? maxHeight : desiredTarget;
+        float timeMultiplier = (desiredTarget <= maxHeight ? 1 : (actualTarget - currentHeight) / extensionDelta);
+        extendTo(actualTarget, timeToHeightDelta * timeMultiplier);
+    }
+    private void onFullExtend()
+    {
+        // Lock the tile
+        heightLocked = true;
+    }
+    private void extendTo(float height, float timeToHeight) {
         extending = true;
         targetHeight = height;
         timeToTarget = timeToHeight;
@@ -200,6 +238,10 @@ public class TileBehaviour : MonoBehaviour
                 launchCooldownList[objId] = launchCooldown;
             }
         }
+
+        // If this hit the end of extension and we're at max height, trigger onFullExtend
+        if (!extending && Tools.NearlyEqual(currentHeight, maxHeight, 0.01f))
+            onFullExtend();
 
         // Set redraw
         needRedraw = true;
