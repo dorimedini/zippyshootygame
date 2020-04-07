@@ -48,7 +48,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 25
   lookSpeedX: 10
-  gravity: 9.8
+  lookSpeedY: 0
+  jumpSpeed: 0
+  projectilePrefab: {fileID: 8071147925390502188, guid: bb94abe2f5dd36846bbf778de6c28a1c,
+    type: 3}
+  projectileImpulse: 50
+  weaponCooldown: 0.5
 --- !u!54 &4594609659454184973
 Rigidbody:
   m_ObjectHideFlags: 0

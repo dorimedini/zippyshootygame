@@ -10,6 +10,11 @@ public class FirstPersonController : MonoBehaviour
     public float lookSpeedY;
     public float jumpSpeed;
 
+    public GameObject projectilePrefab;
+    public float projectileImpulse;
+    public float weaponCooldown;
+    private float weaponCooldownCounter;
+
     private Rigidbody rb;
     private Camera camera;
 
@@ -18,6 +23,7 @@ public class FirstPersonController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         camera = GetComponentInChildren<Camera>();
+        weaponCooldownCounter = 0f;
     }
 
     bool grounded() {
@@ -73,6 +79,18 @@ public class FirstPersonController : MonoBehaviour
         // Jump
         if (grounded() && Input.GetButtonDown("Jump"))
             rb.velocity = rb.velocity + jumpSpeed * transform.up;
+
+        // Fire
+        weaponCooldownCounter -= Time.deltaTime;
+        if (weaponCooldownCounter <= 0 && Input.GetButton("Fire1"))
+        {
+            weaponCooldownCounter = weaponCooldown;
+            Vector3 projectileSpawn = camera.transform.position + camera.transform.forward;
+            GameObject projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn, camera.transform.rotation);
+            projectile.GetComponent<Rigidbody>().AddForce(camera.transform.forward * projectileImpulse, ForceMode.Impulse);
+        }
+        if (weaponCooldown < 0f)
+            weaponCooldown = 0f;
     }
 
     void OnCollisionEnter(Collision other)
