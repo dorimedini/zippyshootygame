@@ -10,14 +10,16 @@ public class TileBehaviour : MonoBehaviour
     public bool DEBUG;
 
     public static float maxHeightPercentage = 0.9f;
-    public static float extensionDeltaPercentage = 0.3f;
+    public static float extensionDeltaPercentage = 0.1f;
     public static float timeToHeightDelta = 2f;
+    public static float launchForceMultiplier = 8f; // Multiplied by the distance to the target height
     public float currentHeight;
     private float maxHeight;
     private float targetHeight;
     private float timeToTarget;
     private bool heightLocked;
     private bool extending;
+    private bool primedToLaunch;
     private float extensionDelta;
 
     public float edge;
@@ -31,10 +33,8 @@ public class TileBehaviour : MonoBehaviour
     public bool needRedraw;
     public bool isHex;
 
-    // Need these to handle player launching
+    // Need these to handle player/rigidbody launching
     private Dictionary<int, GameObject> collidedWithTile;
-    private Dictionary<int, float> launchCooldownList;
-    public const float launchCooldown = 1.5f;
 
     public static TileBehaviour Create(
         bool isHexagon,
@@ -58,12 +58,14 @@ public class TileBehaviour : MonoBehaviour
         tile.extensionDelta = extensionDeltaPercentage * r;
         tile.timeToTarget = 0f;
         tile.collisionExpansion = collExpansion;
+        tile.extending = false;
+        tile.primedToLaunch = false;
+        tile.heightLocked = false;
         tile.DEBUG = debug;
         tile.id = tileId;
         tile.mesh = new Mesh();
         tile.collMesh = new Mesh();
         tile.collidedWithTile = new Dictionary<int, GameObject>();
-        tile.launchCooldownList = new Dictionary<int, float>();
         return tile;
     }
 
@@ -73,6 +75,7 @@ public class TileBehaviour : MonoBehaviour
         collMesh = new Mesh();
         needRedraw = true;
         extending = false;
+        primedToLaunch = false;
         heightLocked = false;
         maxHeight = maxHeightPercentage * radius;
         extensionDelta = extensionDeltaPercentage * radius;
@@ -81,7 +84,6 @@ public class TileBehaviour : MonoBehaviour
     void Start()
     {
         collidedWithTile = new Dictionary<int, GameObject>();
-        launchCooldownList = new Dictionary<int, float>();
     }
 
     void FixedUpdate()
@@ -94,29 +96,23 @@ public class TileBehaviour : MonoBehaviour
             UpdateMesh();
             needRedraw = false;
         }
-        UpdateLaunchCooldowns();
     }
     void UpdateMesh()
     {
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshCollider>().sharedMesh = collMesh;
     }
-    void UpdateLaunchCooldowns()
-    {
-        if (launchCooldownList.Count > 0)
-        {
-            var objIds = launchCooldownList.Keys.ToList();
-            foreach (int objId in objIds)
-            {
-                launchCooldownList[objId] -= Time.deltaTime;
-                if (launchCooldownList[objId] <= 0)
-                    launchCooldownList.Remove(objId);
-            }
-        }
-    }
 
     void OnCollisionEnter(Collision col)
     {
+        // FIXME: THIS KEEPS HAPPENING
+        // I don't know why we sometimes get here with an uninitialized list... but catch it here
+        if (collidedWithTile == null)
+        {
+            Debug.LogError(string.Format("Registered collision on tile {0} but collided list not initialized!", id));
+            collidedWithTile = new Dictionary<int, GameObject>();
+        }
+
         GameObject obj = col.gameObject;
 
         // We ignore projectiles. The projectile itself handles hits
@@ -164,6 +160,9 @@ public class TileBehaviour : MonoBehaviour
         if (heightLocked)
             return;
 
+        // On hit, the tile gets the energy to launch rigidbodies again.
+        primedToLaunch = true;
+
         // Compute the target height.
         // Take current height + delta. If this new height is under the maximal height, fine;
         // just use the default time-to-height.
@@ -203,10 +202,9 @@ public class TileBehaviour : MonoBehaviour
         // Don't update currentHeight yet! isOverTile uses is
 
         // First, get a list of Rigidbodies standing on the tile so we can
-        // launch them. Objects that have been launched have a cooldown.
-        // Only launch if height increased!
+        // launch them. Only launch if height increased!
         Dictionary<int, Rigidbody> rbs = new Dictionary<int, Rigidbody>();
-        if (deltaHeight > 0)
+        if (primedToLaunch && deltaHeight > 0)
         {
             foreach (var kvp in collidedWithTile)
             {
@@ -217,8 +215,6 @@ public class TileBehaviour : MonoBehaviour
                     continue;
                 if (!isOverTile(rb))
                     continue;
-                if (launchCooldownList.ContainsKey(objId))
-                    continue;
                 rbs[objId] = rb;
             }
         }
@@ -226,16 +222,15 @@ public class TileBehaviour : MonoBehaviour
         // Update current height after checking which rigidbodies are eligible for launch.
         currentHeight += deltaHeight;
 
-        // Fix locations of objects (if height increases).
-        if (deltaHeight > 0) {
-            float force = 25f * deltaHeight;
+        // Launch objects
+        if (primedToLaunch && deltaHeight > 0) {
+            primedToLaunch = false; // Only launch objects that were on the tile WHEN IT WAS HIT
             foreach (var kvp in rbs)
             {
                 Rigidbody rb = kvp.Value;
-                int objId = kvp.Key;
-                Vector3 dir = -rb.transform.position.normalized;
-                rb.AddForce(force * dir, ForceMode.Impulse);
-                launchCooldownList[objId] = launchCooldown;
+                Vector3 force = -rb.transform.position.normalized;
+                force *= launchForceMultiplier * (targetHeight - currentHeight);
+                rb.AddForce(force, ForceMode.Impulse);
             }
         }
 
@@ -251,7 +246,12 @@ public class TileBehaviour : MonoBehaviour
     // TODO: This could be given some more thought...
     private bool isOverTile(Rigidbody rb)
     {
-        return rb.transform.position.magnitude <= radius - currentHeight + 0.1f;
+        GameObject groundOfRb;
+        if (!GeoPhysics.IsPlayerGrounded(rb, out groundOfRb))
+            return false;
+        // Return true <==> the object is grounded on this specific tile
+        TileBehaviour tile = groundOfRb.GetComponent<TileBehaviour>();
+        return tile != null ? tile.id == id : false;
     }
 
     int totalEdges() { return isHex ? 6 : 5; }

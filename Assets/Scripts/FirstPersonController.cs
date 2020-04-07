@@ -31,7 +31,7 @@ public class FirstPersonController : MonoBehaviour
         // Check if there's a collider somewhere between 1 meter into the players body
         // and 1.1 meters "downward", where "downward" in global coordinates depends on the
         // player's location on the sphere.
-        return Physics.Raycast(transform.position + transform.up, -transform.up, 1.1f);
+        return GeoPhysics.IsPlayerGrounded(rb);
     }
 
     // Update is called once per frame
