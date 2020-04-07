@@ -120,6 +120,7 @@ public class TileBehaviour : MonoBehaviour
         mesh.vertices = getVertices();
         mesh.triangles = getTriangles();
         mesh.RecalculateNormals();
+        mesh.MarkDynamic();
         collMesh.vertices = getVertices(true);
         collMesh.triangles = mesh.triangles;
         collMesh.RecalculateNormals();
