@@ -10,7 +10,7 @@ using UnityEngine;
 public class GeoSphereGenerator : MonoBehaviour
 {
     // Useful for visualizing tile structure
-    public bool colorTiles;
+    public bool colorTilesByDegree;
 
     // Positive integer. Controls how many tile center-points the geodesic sphere has.
     // In the end there will be:
@@ -21,6 +21,9 @@ public class GeoSphereGenerator : MonoBehaviour
 
     // Radius of the sphere - distance from the center to any center of any tile.
     public float radius;
+
+    // Different tiles may be drawn differently. Keep this flexible in the inspector
+    public List<Material> tileMaterials;
 
     // Number of lights, between 1 and 4
     public int numLights;
@@ -84,8 +87,10 @@ public class GeoSphereGenerator : MonoBehaviour
     void Start()
     {
         BuildSphere();
-        if (colorTiles)
+        if (colorTilesByDegree)
             colorTilesByDeg();
+        else
+            setTileMaterials();
     }
 
     void BuildSphere()
@@ -103,6 +108,13 @@ public class GeoSphereGenerator : MonoBehaviour
     }
 
     // ONLY CALL AFTER SORTING TILES
+    private void setTileMaterials()
+    {
+        for (int i = 0; i < tiles.Count; ++i)
+        {
+            tiles[i].GetComponent<MeshRenderer>().material = tileMaterials[i % tileMaterials.Count];
+        }
+    }
     private void colorTilesByDeg()
     {
         Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
@@ -559,10 +571,10 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         // Create colored lights. Edit list for different behaviour
         List<Color> lightColors = new List<Color>{
-            Color.yellow,
-            Color.yellow,
-            Color.yellow,
-            Color.yellow
+            Color.white,
+            Color.white,
+            Color.white,
+            Color.white
         };
         List<GameObject> lights = new List<GameObject>();
         for (int i=0; i<numLights; ++i)
