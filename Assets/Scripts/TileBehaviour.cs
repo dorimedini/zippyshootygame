@@ -131,6 +131,7 @@ public class TileBehaviour : MonoBehaviour
         collMesh = new Mesh();
         mesh.vertices = getVertices();
         mesh.triangles = getTriangles();
+        mesh.uv = getUVs();
         mesh.RecalculateNormals();
         mesh.MarkDynamic();
         collMesh.vertices = getVertices(true);
@@ -464,4 +465,17 @@ public class TileBehaviour : MonoBehaviour
         }
     }
 
+    Vector2[] getUVs()
+    {
+        // For now, just texture the edge faces and not the two bases
+        int nEdges = totalEdges();
+        Vector2[] uvs = new Vector2[nEdges * 2];
+        for (int i=0; i<nEdges; ++i)
+        {
+            float horizontal = (float)i / (float)nEdges;
+            uvs[i] = new Vector2(0f, horizontal);
+            uvs[i + nEdges] = new Vector2(1f, horizontal);
+        }
+        return uvs;
+    }
 }

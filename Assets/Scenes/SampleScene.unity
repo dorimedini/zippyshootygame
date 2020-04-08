@@ -133,11 +133,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GeoSphere
       objectReference: {fileID: 0}
-    - target: {fileID: 3774444423744258074, guid: 0dba6bb3f498990499a22519804e33d5,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6013923678964798075, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -289,11 +284,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 0bf93fe055180334d98f6be6a553a278, type: 2}
     m_RemovedComponents:
-    - {fileID: 3063156705808600628, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
-    - {fileID: 4154293110063296997, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
-    - {fileID: -9050177866546081978, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
-    - {fileID: 3847381631105897276, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
-    - {fileID: 3774444423744258074, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 0dba6bb3f498990499a22519804e33d5, type: 3}
 --- !u!1001 &4594609659658526174
 PrefabInstance:
