@@ -10,7 +10,7 @@ public class TileBehaviour : MonoBehaviour
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
     public static float timeToHeightDelta = 2f;
-    public static float launchForceMultiplier = 8f; // Multiplied by the distance to the target height
+    public static float launchForceMultiplier = 7f; // Multiplied by the distance to the target height
     public float currentHeight;
     private float maxHeight;
     private float targetHeight;
