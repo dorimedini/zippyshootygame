@@ -90,7 +90,7 @@ public class GeoSphereGenerator : MonoBehaviour
 
     void BuildSphere()
     {
-        initializeSpherePoints();
+        initializeSpherePoints();   // Compute the vertex locations of the tile midpoints
         addTiles();                 // Instantiate the tile objects
         initializePlanes();         // Each neighboring pair of pentagons, along with the origin, define a plane
         sortTiles();                // Pentagons, then hexagons on pentagon arcs, then by distance from arc hexagons
