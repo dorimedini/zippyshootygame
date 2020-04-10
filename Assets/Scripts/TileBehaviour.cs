@@ -29,6 +29,15 @@ public class TileBehaviour : MonoBehaviour
     public Mesh mesh;
     public Mesh collMesh;   // Collider's mesh is different than the renderer's mesh
     public bool needRedraw;
+
+    // This dictionary maps indices in the mesh.vertices list to integers better describing the vertices'
+    // 'function'; i.e. for hexagons, mesh.vertices[i] is a bottom-base vertex <==> meshVertexMap[i] is
+    // one of 0,1,2,3,4,5.
+    // Different keys may map to the same value! At time of writing, imported hexagons have 36 vertices,
+    // but only 12 distinct vertices, so each number in 0,1,...,11 exists as a value exactly 3 times in
+    // the resulting dictionary.
+    private Dictionary<int, int> meshVertexMap;
+
     public bool isHex;
 
     // Need these to handle player/rigidbody launching
@@ -43,7 +52,7 @@ public class TileBehaviour : MonoBehaviour
         float collExpansion,
         int tileId = -1)
     {
-        Object obj = isHexagon ? Resources.Load("Prefabs/HexRenderer") : Resources.Load("Prefabs/PentRenderer");
+        Object obj = isHexagon ? Resources.Load("Prefabs/Hexagon") : Resources.Load("Prefabs/Pentagon");
         GameObject tile_obj = Instantiate(obj, location, Quaternion.identity) as GameObject;
         TileBehaviour tile = tile_obj.GetComponent<TileBehaviour>();
         tile.isHex = isHexagon;
@@ -62,6 +71,8 @@ public class TileBehaviour : MonoBehaviour
         tile.mesh = new Mesh();
         tile.collMesh = new Mesh();
         tile.collidedWithTile = new Dictionary<int, GameObject>();
+        tile.needRedraw = true;
+        tile.meshVertexMap = new Dictionary<int, int>();
         return tile;
     }
 
@@ -69,6 +80,7 @@ public class TileBehaviour : MonoBehaviour
     {
         mesh = new Mesh();
         collMesh = new Mesh();
+        meshVertexMap = new Dictionary<int, int>();
         needRedraw = true;
         extending = false;
         primedToLaunch = false;
@@ -79,7 +91,117 @@ public class TileBehaviour : MonoBehaviour
 
     void Start()
     {
+        needRedraw = true;
         collidedWithTile = new Dictionary<int, GameObject>();
+        meshVertexMap = new Dictionary<int, int>();
+        InitTile();
+        UpdateMesh();
+    }
+
+    /** Mesh imported from blender prefab requires some initial analysis and fixups to be workable */
+    private void InitTile()
+    {
+        // Build the vertex dict
+        meshVertexMap.Clear();
+        int nEdges = totalEdges();
+        List<Vector3> v = new List<Vector3>(GetComponent<MeshFilter>().mesh.vertices);
+        for (int i=0; i<v.Count; ++i)
+        {
+            // To determine the index of a vertex by it's X,Y,Z coordinates, it matters if the tile is
+            // a pentagon or hexagon.
+            // Both hexagon and pentagon vertices have Y coordinates equal to 0 or 2 (approximately).
+            // These are the bottom / top bases, respectively. The XZ coordinates differ between the
+            // shapes:
+            // * For hexagons, the X value comes from {0,+-0.9} and the Z value comes from {+-1,+-0.5}:
+            //   (X,Z) is in {(0,-1),(-0.9,-0.5),(-0.9,0.5),(0,1),(0.9,0.5),(0.9,-0.5)}
+            // * For pentagons, the X value is in {0,+-1,+-0.6} and the Z value comes from {-1,-0.3,0.8}:
+            //   (X,Z) is in {(0,-1),(-1,-0.3),(-0.6,0.8),(0.6,0.8),(1,-0.3)}
+            //
+            // XZ map:               (0,1)                        (-0.6,0.8)  (0.6,0.8)
+            //            (-0.9,0.5)       (0.9,0.5)
+            //
+            //           (-0.9,-0.5)       (0.9,-0.5)          (-1,-0.3)          (1,-0.3)
+            //                       (0,-1)                               (0,-1)
+            //
+            // Map (bottom) to:
+            //                         0                              2          3
+            //                  5             1
+            //
+            //                  4             2                    1                 4
+            //                         3                                    0
+            // For top, add nEdges.
+            float X = v[i].x, Y = v[i].y, Z = v[i].z;
+            if (isHex)
+            {
+                if (Tools.NearlyEqual(X, 0, 0.1f))
+                    meshVertexMap[i] = Z > 0 ? 0 : 3;
+                else if (Tools.NearlyEqual(X, 0.9f, 0.1f))
+                    meshVertexMap[i] = Z > 0 ? 1 : 2;
+                else
+                    meshVertexMap[i] = Z > 0 ? 5 : 4;
+            }
+            else
+            {
+                if (Tools.NearlyEqual(Z, 0.8f, 0.1f))
+                    meshVertexMap[i] = X > 0 ? 3 : 2;
+                else if (Tools.NearlyEqual(Z, -0.3f, 0.1f))
+                    meshVertexMap[i] = X > 0 ? 4 : 1;
+                else // Z == -1, X == 0
+                    meshVertexMap[i] = 0;
+            }
+
+            // Modify mapped value if this is the top base
+            if (Y > 1)
+                meshVertexMap[i] += nEdges;
+        }
+        // Next, do an initial Y rotation of all vertices because rotation data doesn't seem to survive
+        // the trip from blender...
+        List<Vector3> rotated = new List<Vector3>();
+        for (int i = 0; i < v.Count; ++i)
+            rotated.Add(Quaternion.Euler(0, isHex ? 90 : 180, 0) * v[i]);
+        SetupMeshWithVertices(rotated);
+    }
+
+    private void UpdateMesh()
+    {
+        /**
+         * Use the mesh-vertex dictionary to re-compute the vectors describing the mesh.
+         *
+         * All base vertices need to be stretched the size
+         */
+        int nEdges = totalEdges();
+        Mesh currentMesh = GetComponent<MeshFilter>().mesh;
+        Vector3[] v = currentMesh.vertices;
+        List<Vector3> distinctVerts = new List<Vector3>(new Vector3[2 * nEdges]);
+        // Populate the distinct verts list in order (bottom base, top base)
+        for (int i = 0; i < v.Length; ++i)
+            distinctVerts[meshVertexMap[i]] = v[i];
+        float currentEdge = (distinctVerts[0] - distinctVerts[1]).magnitude;
+        // Extend each bottom base vector by edge ratio
+        for (int i = 0; i < nEdges; ++i)
+            distinctVerts[i] *= (edge / currentEdge);
+        // Now, set each top vector to the correct height and on the radial direction from
+        // it's bottom-base counterpart
+        Vector3 origin = new Vector3(0, radius, 0);
+        for (int i = nEdges; i < 2 * nEdges; ++i)
+        {
+            Vector3 radialDirection = (origin - distinctVerts[i - nEdges]).normalized;
+            distinctVerts[i] = distinctVerts[i - nEdges] + (radialDirection * currentHeight);
+        }
+        // Update the original mesh
+        List<Vector3> newVerts = new List<Vector3>();
+        for (int i = 0; i < v.Length; ++i)
+            newVerts.Add(distinctVerts[meshVertexMap[i]]);
+        SetupMeshWithVertices(newVerts);
+    }
+
+    private void SetupMeshWithVertices(List<Vector3> v)
+    {
+        GetComponent<MeshFilter>().mesh.SetVertices(v.ToArray());
+        GetComponent<MeshFilter>().mesh.RecalculateBounds();
+        GetComponent<MeshFilter>().mesh.RecalculateNormals();
+        GetComponent<MeshFilter>().mesh.MarkDynamic();
+        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
     }
 
     void FixedUpdate()
@@ -88,15 +210,9 @@ public class TileBehaviour : MonoBehaviour
             extendStep();
         if (needRedraw)
         {
-            redraw();
             UpdateMesh();
             needRedraw = false;
         }
-    }
-    void UpdateMesh()
-    {
-        GetComponent<MeshFilter>().mesh = mesh;
-        GetComponent<MeshCollider>().sharedMesh = collMesh;
     }
 
     void OnCollisionEnter(Collision col)
@@ -120,15 +236,17 @@ public class TileBehaviour : MonoBehaviour
     }
     void OnCollisionExit(Collision col)
     {
+        // FIXME: THIS KEEPS HAPPENING
+        // I don't know why we sometimes get here with an uninitialized list... but catch it here
+        if (collidedWithTile == null)
+        {
+            Debug.LogError(string.Format("Exited collision on tile {0} but collided list not initialized!", id));
+            collidedWithTile = new Dictionary<int, GameObject>();
+        }
+
         int objId = col.gameObject.GetInstanceID();
         if (collidedWithTile.ContainsKey(objId))
             collidedWithTile.Remove(objId);
-    }
-
-    public void redraw()
-    {
-        mesh = MeshFactory.Tile.GetMesh(currentHeight, edge, radius, isHex);
-        collMesh = MeshFactory.Tile.GetMesh(currentHeight, edge, radius, isHex);
     }
 
     public Mesh getMesh() { return mesh; }

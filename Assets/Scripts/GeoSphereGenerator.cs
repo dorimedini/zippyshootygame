@@ -22,9 +22,6 @@ public class GeoSphereGenerator : MonoBehaviour
     // Radius of the sphere - distance from the center to any center of any tile.
     public float radius;
 
-    // Different tiles may be drawn differently. Keep this flexible in the inspector
-    public List<Material> tileMaterials;
-
     // Number of lights, between 1 and 4
     public int numLights;
     public float lightRadiusMultiplier; // 0.8f?
@@ -89,8 +86,6 @@ public class GeoSphereGenerator : MonoBehaviour
         BuildSphere();
         if (colorTilesByDegree)
             colorTilesByDeg();
-        else
-            setTileMaterials();
     }
 
     void BuildSphere()
@@ -108,13 +103,6 @@ public class GeoSphereGenerator : MonoBehaviour
     }
 
     // ONLY CALL AFTER SORTING TILES
-    private void setTileMaterials()
-    {
-        for (int i = 0; i < tiles.Count; ++i)
-        {
-            tiles[i].GetComponent<MeshRenderer>().material = tileMaterials[i % tileMaterials.Count];
-        }
-    }
     private void colorTilesByDeg()
     {
         Material greenMat = Resources.Load("Materials/DUMMY_mat_green", typeof(Material)) as Material;
