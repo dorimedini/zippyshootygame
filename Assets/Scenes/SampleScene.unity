@@ -216,7 +216,7 @@ PrefabInstance:
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
       propertyPath: baseEdgeMultiplier
-      value: 0.7
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
@@ -370,7 +370,7 @@ PrefabInstance:
     - target: {fileID: 4594609659454184974, guid: 78cd8cc038c0f3c44816df3357da2fd9,
         type: 3}
       propertyPath: m_Radius
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4594609659454184975, guid: 78cd8cc038c0f3c44816df3357da2fd9,
         type: 3}

@@ -43,15 +43,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorTilesByDegree: 0
+  hexMaterials: []
+  pentMaterials: []
   expHexNumber: 3
   radius: 100
-  tileMaterials: []
   numLights: 4
   lightRadiusMultiplier: 1.2
   lightIntensity: 6
   initialHeight: 0.1
   collisionExpansion: 0.15
-  baseEdgeMultiplier: 0.6
+  baseEdgeMultiplier: 0.65
   edgeDegreeMultiplier: 0.02
   pentEdgeMultiplier: 1.1
