@@ -71,8 +71,14 @@
  * -------------
  * FUTURE DREAMS
  * -------------
- * Weapon mods!
  * 
+ * EVENTS
+ * - The sun periodically sends a solar flare, maximizing tiles in an arc?
+ * - Shooting the sun:
+ *   . Charge it? The one who fires the last (overcharging) hit on the sun causes a RAIN OF FIRE, doing damage and expanding
+ *     a random X percent of tiles
+ * 
+ * WEAPON MODS
  * Explore other constructive/destructive ways to interact with this arena. Some ideas:
  * 
  * - BOTH GUNS
