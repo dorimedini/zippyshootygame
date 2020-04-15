@@ -31,6 +31,9 @@ public class GeoSphereGenerator : MonoBehaviour
     // The initial height of the tiles, as a percentage of the radius
     public float initialHeight;
 
+    // How far above ground do players spawn (in addition to the offset caused by initialHeight)
+    public float spawnHeight;
+
     // Tile's colliders are wider than their rendering mesh; this float value determines
     // how much wider (percentage of edge length)
     public float collisionExpansion;
@@ -86,6 +89,20 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         BuildSphere();
         colorTilesByDeg();
+    }
+
+    public List<Tuple<Vector3, Quaternion>> PlayerSpawnPoints()
+    {
+        // Players should spawn above one of the pentagons.
+        // Need to spawn them high enough s.t. they don't fall through; say, initialHeight+something.
+        // Also, after setting the 'up' direction as the center of the sphere, we need to give a random look direction.
+        var spawns = new List<Tuple<Vector3, Quaternion>>();
+        foreach (var pentPoint in pentCenters)
+            spawns.Add(new Tuple<Vector3, Quaternion>(
+                pentPoint + (initialHeight + spawnHeight) * (-pentPoint.normalized),
+                Quaternion.LookRotation(Tools.Geometry.RandomDirectionOnPlane(-pentPoint.normalized), -pentPoint.normalized)
+            ));
+        return spawns;
     }
 
     void BuildSphere()

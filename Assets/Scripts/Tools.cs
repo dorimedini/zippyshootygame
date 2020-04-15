@@ -46,5 +46,17 @@ public static class Tools
         return "[" + string.Join(",", kvps) + "]";
     }
 
+    public static class Geometry
+    {
+        public static Vector3 RandomDirectionOnPlane(Vector3 normal)
+        {
+            Vector3 randomPoint;
+            do
+            {
+                randomPoint = Vector3.Cross(Random.insideUnitSphere, normal);
+            } while (randomPoint == Vector3.zero);
+            return randomPoint.normalized;
+        }
+    }
 
 }

@@ -6,6 +6,8 @@ using Photon.Realtime;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public GameObject playerPrefab;
+
     public void Start()
     {
         Connect();
@@ -47,5 +49,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
+        SpawnMyPlayer();
+    }
+
+    void SpawnMyPlayer()
+    {
+        GameObject geoSphere = GameObject.Find("GeoSphere");
+        if (geoSphere == null)
+        {
+            Debug.LogError("GeoSphereGenerator not found on room join");
+            return;
+        }
+        GeoSphereGenerator gsg = geoSphere.GetComponent<GeoSphereGenerator>();
+        if (gsg == null)
+        {
+            Debug.LogError("GeoSphere game objects doesn't have a GeoSphereGenerator attached!");
+            return;
+        }
+        // Get possible spawn points / rotations from geosphere script
+        var spawnPoints = gsg.PlayerSpawnPoints();
+        int idx = Random.Range(0, spawnPoints.Count);
+        Vector3 spawnLoc = spawnPoints[idx].Item1;
+        Quaternion spawnRot = spawnPoints[idx].Item2;
+        Debug.Log(string.Format("Spawning player at location/rotation {0}/{1}", spawnLoc, spawnRot));
+        PhotonNetwork.Instantiate("Player", spawnLoc, spawnRot);
     }
 }
