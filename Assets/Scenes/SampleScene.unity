@@ -469,7 +469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4594609659454184977, guid: 78cd8cc038c0f3c44816df3357da2fd9,
     type: 3}
-  standbyCamera: {fileID: 1334825167}
+  standbyCamera: {fileID: 1334825165}
 --- !u!114 &1868763445
 MonoBehaviour:
   m_ObjectHideFlags: 0

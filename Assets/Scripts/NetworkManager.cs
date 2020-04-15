@@ -7,7 +7,7 @@ using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
-    public Camera standbyCamera;
+    public GameObject standbyCamera;
 
     GameObject myPlayer;
     SpawnManager spawner;
@@ -67,6 +67,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void SpawnMyPlayer()
     {
         myPlayer = spawner.SpawnMyself();
-        standbyCamera.enabled = false;
+        standbyCamera.SetActive(false);
     }
 }
