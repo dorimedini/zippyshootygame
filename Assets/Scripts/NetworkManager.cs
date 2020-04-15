@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
-public class NetworkManager : MonoBehaviour
+public class NetworkManager : MonoBehaviourPunCallbacks
 {
-    void Start()
+    public void Start()
     {
         Connect();
+    }
+
+    public void OnGUI()
+    {
+        GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
     }
 
     void Connect()
@@ -15,9 +21,31 @@ public class NetworkManager : MonoBehaviour
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    void OnGUI()
+    public override void OnConnectedToMaster()
     {
-        GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
+        if (!PhotonNetwork.JoinLobby())
+            Debug.LogError(string.Format("OnConnectedToMaster, JoinLobby() returned false!"));
     }
 
+    public override void OnJoinedLobby()
+    {
+        PhotonNetwork.JoinRandomRoom();
+    }
+
+    public override void OnJoinRandomFailed(short code, string msg)
+    {
+        Debug.Log("OnJoinRandomFailed, creating and joining room");
+        if (!PhotonNetwork.CreateRoom(null))
+            Debug.LogError("Failed to create a room!");
+    }
+
+    public override void OnCreateRoomFailed(short code, string msg)
+    {
+        Debug.LogError(string.Format("OnCreateRoomFailed. Code: {0}, message: '{1}'", code, msg));
+    }
+
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("OnJoinedRoom");
+    }
 }
