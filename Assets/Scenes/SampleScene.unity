@@ -483,6 +483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnHeight: 5
+  playerGraphicsObjectName: NPC_angry
 --- !u!1001 &8623038837500012816
 PrefabInstance:
   m_ObjectHideFlags: 0
