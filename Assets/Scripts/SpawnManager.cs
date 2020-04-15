@@ -47,9 +47,9 @@ public class SpawnManager : MonoBehaviour
         Debug.Log(string.Format("Spawning player at location/rotation {0}/{1}", spawnLoc, spawnRot));
         GameObject player = PhotonNetwork.Instantiate("Player", spawnLoc, spawnRot);
         // Good, now activate all relevant scripts
-        player.GetComponentInChildren<FirstPersonController>().enabled = true;
         player.GetComponentInChildren<Camera>().enabled = true;
         player.GetComponentInChildren<AudioListener>().enabled = true;
+        player.GetComponentInChildren<FirstPersonController>().enabled = true;
         return player;
     }
 }

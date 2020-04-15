@@ -3,10 +3,14 @@
  * <   > Connect network layer, play with it active without terrible performance
  * ------- V > Create room if can't random join, or join random room
  * ------- V > On join, instantiate player on random pentagon
- * -------   > Disable main camera on join
- * -------   > Disable physics, camera, audiolistener on player prefab, enable on self join room
+ * ------- V > Disable main camera on join
+ * ------- V > Disable physics, camera, audiolistener on player prefab, enable on self join room
  * -------   > Find the equivalent of a PhotonView, make it watch a NetworkCharacter Monobehaviour
+ * -------   > Make sure projectiles don't have extra physics other than the syncing
  * -------   > NetworkCharacter should do a 0.1f Lerp from current position/rotation to actual position/rotation while moving
+ * <   > Send tile extend / retract event on network
+ * -------   > Implement
+ * -------   > Test: Self launch, launch another player
  * <   > Add player model and animation (ready-made, temporary)
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
