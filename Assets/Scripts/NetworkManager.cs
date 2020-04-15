@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
+    public Camera standbyCamera;
 
     public void Start()
     {
@@ -73,5 +74,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Quaternion spawnRot = spawnPoints[idx].Item2;
         Debug.Log(string.Format("Spawning player at location/rotation {0}/{1}", spawnLoc, spawnRot));
         PhotonNetwork.Instantiate("Player", spawnLoc, spawnRot);
+        // Disable standby camera
+        standbyCamera.enabled = false;
     }
 }
