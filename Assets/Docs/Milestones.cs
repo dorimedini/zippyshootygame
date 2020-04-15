@@ -5,13 +5,13 @@
  * ------- V > On join, instantiate player on random pentagon
  * ------- V > Disable main camera on join
  * ------- V > Disable physics, camera, audiolistener on player prefab, enable on self join room
- * -------   > Find the equivalent of a PhotonView, make it watch a NetworkCharacter Monobehaviour
- * -------   > Make sure projectiles don't have extra physics other than the syncing
- * -------   > NetworkCharacter should do a 0.1f Lerp from current position/rotation to actual position/rotation while moving
+ * ------- V > Find the equivalent of a PhotonView, attach to player
+ * ------- V > NetworkCharacter should do a 0.1f Lerp from current position/rotation to actual position/rotation while moving
+ * <   > Add player model and animation (ready-made, temporary)
  * <   > Send tile extend / retract event on network
  * -------   > Implement
+ * -------   > Make sure projectiles don't have extra physics other than the syncing (need new ProjectileManager class with RPC calls?)
  * -------   > Test: Self launch, launch another player
- * <   > Add player model and animation (ready-made, temporary)
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
