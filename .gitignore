@@ -17,6 +17,9 @@ Assets/Scenes/SandboxScene.unity
 # Visual Studio cache directory
 .vs/
 
+# CLion, if used...
+.idea/
+
 # Gradle cache directory
 .gradle/
 

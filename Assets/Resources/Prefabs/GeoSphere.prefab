@@ -51,6 +51,7 @@ MonoBehaviour:
   lightRadiusMultiplier: 1.2
   lightIntensity: 6
   initialHeight: 0.1
+  spawnHeight: 5
   collisionExpansion: 0.15
   baseEdgeMultiplier: 0.65
   edgeDegreeMultiplier: 0.02

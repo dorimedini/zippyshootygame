@@ -88,6 +88,8 @@ public class GeoSphereGenerator : MonoBehaviour
         colorTilesByDeg();
     }
 
+    public List<TileBehaviour> GetTiles() { return tiles; }
+
     void BuildSphere()
     {
         initializeSpherePoints();   // Compute the vertex locations of the tile midpoints
