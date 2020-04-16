@@ -1,6 +1,6 @@
 /**
  * < V > Stuff I already did
- * <   > Connect network layer, play with it active without terrible performance
+ * < V > Connect network layer, play with it active without terrible performance
  * ------- V > Create room if can't random join, or join random room
  * ------- V > On join, instantiate player on random pentagon
  * ------- V > Disable main camera on join
