@@ -126,6 +126,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSpeed: 5
+--- !u!114 &1702423238903577171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148042477976559911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e550dacd585cd4db3e564797679ec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2778773803360608355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +225,16 @@ PrefabInstance:
       propertyPath: m_Avatar
       value: 
       objectReference: {fileID: 9000000, guid: bc6342fc50bcbd040abf4c845df38da7, type: 3}
+    - target: {fileID: -6057140222963153312, guid: 8c2d2280e021b714c8f240044c3d0d1d,
+        type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6057140222963153312, guid: 8c2d2280e021b714c8f240044c3d0d1d,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8c2d2280e021b714c8f240044c3d0d1d,
         type: 3}
       propertyPath: m_LocalPosition.x

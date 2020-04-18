@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GeoPhysics
 {
-    public static float gravity = 9.8f;
+    public static float gravity = 9.8f * 25f;
 
     public static void ApplyGravity(Rigidbody rb)
     {
