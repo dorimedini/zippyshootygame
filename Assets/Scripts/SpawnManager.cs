@@ -49,7 +49,6 @@ public class SpawnManager : MonoBehaviour
         // Good, now activate all relevant scripts
         player.GetComponentInChildren<Camera>().enabled = true;
         player.GetComponentInChildren<AudioListener>().enabled = true;
-        player.GetComponentInChildren<FirstPersonController>().enabled = true;
         player.GetComponentInChildren<MouseLookController>().enabled = true;
         player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         return player;

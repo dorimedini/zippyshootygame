@@ -8,19 +8,19 @@ public class FirstPersonController : MonoBehaviour
     public float movementSpeed = 25;
     public float jumpSpeed = 12;
 
-    public GameObject projectilePrefab;     // ProjectileRenderer?
+    public GameObject projectilePrefab = Resources.Load("Prefabs/ProjectileRenderer") as GameObject;
     public float projectileImpulse = 50;
     public float weaponCooldown = 0.5f;
     private float weaponCooldownCounter;
 
     private Rigidbody rb;
-    private Camera camera;
+    private Camera cam;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        camera = GetComponentInChildren<Camera>();
+        cam = GetComponentInChildren<Camera>();
         weaponCooldownCounter = 0f;
     }
 
@@ -54,9 +54,9 @@ public class FirstPersonController : MonoBehaviour
         if (weaponCooldownCounter <= 0 && Input.GetButton("Fire1"))
         {
             weaponCooldownCounter = weaponCooldown;
-            Vector3 projectileSpawn = camera.transform.position + camera.transform.forward;
-            GameObject projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn, camera.transform.rotation);
-            projectile.GetComponent<Rigidbody>().AddForce(camera.transform.forward * projectileImpulse, ForceMode.Impulse);
+            Vector3 projectileSpawn = cam.transform.position + cam.transform.forward;
+            GameObject projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn, cam.transform.rotation);
+            projectile.GetComponent<Rigidbody>().AddForce(cam.transform.forward * projectileImpulse, ForceMode.Impulse);
             projectile.GetComponent<Projectile>().shooterId = gameObject.GetInstanceID();
         }
         if (weaponCooldown < 0f)
