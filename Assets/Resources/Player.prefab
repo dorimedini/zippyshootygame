@@ -126,8 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 25
-  lookSpeedX: 10
-  lookSpeedY: 5
   jumpSpeed: 12
   projectilePrefab: {fileID: 8071147925390502188, guid: bb94abe2f5dd36846bbf778de6c28a1c,
     type: 3}
@@ -179,6 +177,20 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &2778773803360608355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148042477976559911}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccf77429ff794b04ba4545e6307c802d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lookSpeedX: 10
+  lookSpeedY: 5
 --- !u!95 &1538462655
 Animator:
   serializedVersion: 3
