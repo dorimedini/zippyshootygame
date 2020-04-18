@@ -467,7 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad7e2d76d54b7ef4c9c5ec83b8e29da3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 4594609659454184977, guid: 78cd8cc038c0f3c44816df3357da2fd9,
+  playerPrefab: {fileID: 1148042477976559911, guid: eccec8ba68a103340a70b8dea6ba78d3,
     type: 3}
   standbyCamera: {fileID: 1334825165}
 --- !u!114 &1868763445
@@ -483,7 +483,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnHeight: 5
-  playerGraphicsObjectName: NPC_angry
 --- !u!1001 &8623038837500012816
 PrefabInstance:
   m_ObjectHideFlags: 0

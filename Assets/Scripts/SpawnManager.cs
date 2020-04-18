@@ -12,9 +12,6 @@ public class SpawnManager : MonoBehaviour
     // How far above ground do players spawn (in addition to the offset caused by initialHeight)
     public float spawnHeight;
 
-    // The player graphics gameobject name, to turn off on self (self player only needs to see hand animations)
-    public string playerGraphicsObjectName;
-
     void Start()
     {
         gsg = GameObject.Find("GeoSphere").GetComponent<GeoSphereGenerator>();
@@ -53,7 +50,7 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<Camera>().enabled = true;
         player.GetComponentInChildren<AudioListener>().enabled = true;
         player.GetComponentInChildren<FirstPersonController>().enabled = true;
-        player.transform.Find(playerGraphicsObjectName).gameObject.SetActive(false);
+        player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         return player;
     }
 }

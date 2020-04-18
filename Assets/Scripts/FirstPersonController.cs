@@ -5,14 +5,14 @@ using UnityEngine;
 public class FirstPersonController : MonoBehaviour
 {
 
-    public float movementSpeed;
-    public float lookSpeedX;
-    public float lookSpeedY;
-    public float jumpSpeed;
+    public float movementSpeed = 25;
+    public float lookSpeedX = 10;
+    public float lookSpeedY = 5;
+    public float jumpSpeed = 12;
 
-    public GameObject projectilePrefab;
-    public float projectileImpulse;
-    public float weaponCooldown;
+    public GameObject projectilePrefab;     // ProjectileRenderer?
+    public float projectileImpulse = 50;
+    public float weaponCooldown = 0.5f;
     private float weaponCooldownCounter;
 
     private Rigidbody rb;
