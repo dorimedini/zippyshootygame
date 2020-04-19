@@ -13,6 +13,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private Animator anim;
     private Rigidbody rb;
+    private Camera cam;
     private float fwdBack;
     private float leftRight;
     private Vector3 movement;
@@ -32,6 +33,11 @@ public class PlayerMovementController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        cam = GetComponentInChildren<Camera>();
+        if (cam == null)
+        {
+            Debug.LogError("PlayerMovementController requires the player to have a camera among it's children");
+        }
         anim.speed = animationSpeed;
         initialJump = inAir = false;
         airtimeCooldown = 0;
@@ -92,5 +98,12 @@ public class PlayerMovementController : MonoBehaviour
             Vector3 speed = rb.rotation * (airMovementSpeed * movement);
             rb.MovePosition(rb.position + Time.deltaTime * speed);
         }
+    }
+
+    void OnAnimatorIK(int layer)
+    {
+        // Move head to look in the direction the player is aiming
+        anim.SetLookAtWeight(1);
+        anim.SetLookAtPosition(cam.transform.position + cam.transform.forward);
     }
 }
