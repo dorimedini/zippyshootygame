@@ -60,6 +60,7 @@ public class GeoSphereGenerator : MonoBehaviour
             new Vector3(0.0f, Z, X),  new Vector3(0.0f, Z, -X), new Vector3(0.0f, -Z, X),  new Vector3(0.0f, -Z, -X),
             new Vector3(Z, X, 0.0f),  new Vector3(-Z, X, 0.0f), new Vector3(Z, -X, 0.0f),  new Vector3(-Z, -X, 0.0f)
         };
+    GameObject containingSphere;           // The inverted sphere surrounding the arena
     List<TileBehaviour> tiles;             // Updated in addTiles(). First 12 items are the pentagons.
     Dictionary<(int, int), Plane> planes;  // Indexed by pentagon-index pairs, updated in initializePlanes()
     List<List<int>> neighbors;             // Lists of tile IDs that touch the respective tile (lists are of length 5 or 6)
@@ -92,6 +93,7 @@ public class GeoSphereGenerator : MonoBehaviour
 
     void BuildSphere()
     {
+        initializeBoundingSphere();
         initializeSpherePoints();   // Compute the vertex locations of the tile midpoints
         addTiles();                 // Instantiate the tile objects
         initializePlanes();         // Each neighboring pair of pentagons, along with the origin, define a plane
@@ -241,6 +243,13 @@ public class GeoSphereGenerator : MonoBehaviour
         Debug.Log(string.Format("Found and removed {0} duplicate points", duplicatesFound));
         if (spherePoints.Count != expectedTiles)
             Debug.LogError(string.Format("Expected {0} tiles, spherePoints list contains {1} items", expectedTiles, spherePoints.Count));
+    }
+
+    private void initializeBoundingSphere()
+    {
+        containingSphere = Instantiate(Resources.Load("Prefabs/InvertableSphere"), origin, Quaternion.identity) as GameObject;
+        containingSphere.GetComponent<AddInvertedMeshCollider>().CreateInvertedMeshCollider();
+        containingSphere.transform.localScale *= radius;
     }
 
     private void subdivide(Vector3 v1, Vector3 v2, Vector3 v3, int depth) {
