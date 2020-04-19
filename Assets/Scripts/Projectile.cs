@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     private bool destroyed;
 
     Mesh mesh;
-    MeshRenderer renderer;
+    MeshRenderer rend;
     Rigidbody rb;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
         destroyed = false;
         rb = GetComponent<Rigidbody>();
         mesh = GetComponent<MeshFilter>().mesh;
-        renderer = GetComponent<MeshRenderer>();
+        rend = GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
         octoTriangles = new List<int>();
         hexTriangles = new List<int>();
@@ -57,7 +57,7 @@ public class Projectile : MonoBehaviour
         Material color1 = Resources.Load("Materials/projectile_blue_1", typeof(Material)) as Material;
         Material color2 = Resources.Load("Materials/projectile_blue_2", typeof(Material)) as Material;
         List<Material> colorMats = new List<Material>() { color0, color1, color2 };
-        renderer.materials = colorMats.ToArray();
+        rend.materials = colorMats.ToArray();
     }
 
     // Update is called once per frame

@@ -419,7 +419,6 @@ public class GeoSphereGenerator : MonoBehaviour
     private void computeNeighborLists()
     {
         neighbors.Clear();
-        Vector3 source, candidate;
         // Pentagons
         for (int i = 0; i < tiles.Count; ++i)
         {
