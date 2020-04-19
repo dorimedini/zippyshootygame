@@ -8,15 +8,14 @@
  * ------- V > Find the equivalent of a PhotonView, attach to player
  * ------- V > NetworkCharacter should do a 0.1f Lerp from current position/rotation to actual position/rotation while moving
  * <   > Add player model and animation (ready-made, temporary)
- * -------   > TBD: massage mocap animations to use the Kylebot?
- * -------   > Get walk animation working perfectly
- * -------   > Add option to run
- * -------   > Run, transitions, walk/run left/right
- * -------   > Jump (no roll?)
- * -------   > Fall, when in air after jump sequence or when falling without jumping first (launch, fall off cliff)
- * <   > Send tile extend / retract event on network
- * -------   > Implement
- * -------   > Make sure projectiles don't have extra physics other than the syncing (need new ProjectileManager class with RPC calls?)
+ * ------- V > TBD: massage mocap animations to use the Kylebot?
+ * ------- V > Get walk animation working perfectly
+ * ------- V > Add option to run
+ * ------- V > Run, transitions, walk/run left/right
+ * ------- V > Jump (no roll?)
+ * ------- V > Fall, when in air after jump sequence or when falling without jumping first (launch, fall off cliff)
+ * <   > Re-implement projectile firing on network
+ * <   > Implement tile extend / retract on network (on projectile hit)
  * -------   > Test: Self launch, launch another player
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
