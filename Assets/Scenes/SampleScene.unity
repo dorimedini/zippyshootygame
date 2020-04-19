@@ -470,6 +470,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 1148042477976559911, guid: eccec8ba68a103340a70b8dea6ba78d3,
     type: 3}
   standbyCamera: {fileID: 1334825165}
+  offlineMode: 1
 --- !u!114 &1868763445
 MonoBehaviour:
   m_ObjectHideFlags: 0

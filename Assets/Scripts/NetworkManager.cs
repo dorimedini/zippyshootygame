@@ -9,6 +9,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public GameObject standbyCamera;
 
+    public bool offlineMode;
+
     GameObject myPlayer;
     SpawnManager spawner;
 
@@ -24,11 +26,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Connect()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        if (offlineMode)
+        {
+            PhotonNetwork.OfflineMode = true;
+            OnJoinedLobby();
+        }
+        else
+            PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
+        if (PhotonNetwork.OfflineMode) return;
         if (!PhotonNetwork.JoinLobby())
             Debug.LogError(string.Format("OnConnectedToMaster, JoinLobby() returned false!"));
     }
