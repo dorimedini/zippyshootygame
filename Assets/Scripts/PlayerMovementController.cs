@@ -22,6 +22,11 @@ public class PlayerMovementController : MonoBehaviour
     private bool grounded;
     private float airtimeCooldown;
 
+    static int locomotionState = Animator.StringToHash("Base Layer.Locomotion");
+    static int jumpStartState = Animator.StringToHash("Base Layer.JumpStart");
+    static int jumpEndState = Animator.StringToHash("Base Layer.JumpEnd");
+    private AnimatorStateInfo currentBaseAnimState;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -73,6 +78,7 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetFloat("LeftRight", leftRight);
         anim.SetBool("InAir", inAir);
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
+        currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
 
         // If we're jumping we need to handle movement ourselves; the jump animation is stationary.
         // Give the initial burst of speed, and allow some XZ movement while in the air
