@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSpeed: 2
-  jumpSpeed: 12
+  jumpSpeed: 8
   minimalAirtime: 0.5
 --- !u!114 &2778773803360608355
 MonoBehaviour:

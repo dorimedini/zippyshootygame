@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerMovementController : MonoBehaviour
 {
     public float animationSpeed = 2;
+    public float airMovementSpeed = 5;
     public float jumpSpeed = 8;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
 
@@ -82,7 +83,8 @@ public class PlayerMovementController : MonoBehaviour
         }
         if (inAir)
         {
-            // If the ground is less than, say,
+            Vector3 speed = rb.rotation * (airMovementSpeed * movement);
+            rb.MovePosition(rb.position + Time.deltaTime * speed);
         }
     }
 }
