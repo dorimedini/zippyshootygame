@@ -129,6 +129,18 @@ MonoBehaviour:
   airMovementSpeed: 5
   jumpSpeed: 8
   minimalAirtime: 0.5
+--- !u!114 &1004506717127072884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148042477976559911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5533a5c17742e429d5afa29de459b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2778773803360608355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,21 +155,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lookSpeedX: 10
   lookSpeedY: 5
---- !u!114 &5309581720050285559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1148042477976559911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!114 &7930737281759850671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,7 +173,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 5309581720050285559}
+  - {fileID: 1004506717127072884}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
