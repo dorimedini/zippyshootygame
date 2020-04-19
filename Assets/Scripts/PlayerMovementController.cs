@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerMovementController : MonoBehaviour
 {
-    public float animationSpeed = 4;
-    public float jumpSpeed = 12;
+    public float animationSpeed = 2;
+    public float jumpSpeed = 8;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
 
     private Animator anim;
@@ -37,6 +37,8 @@ public class PlayerMovementController : MonoBehaviour
         fwdBack = Input.GetAxis("Vertical");
         leftRight = Input.GetAxis("Horizontal");
         grounded = GeoPhysics.IsPlayerGrounded(rb);
+
+        // Movement speed capped at 1
         movement = new Vector3(leftRight, 0, fwdBack);
         if (movement.magnitude > 1f)
             movement = movement.normalized;
