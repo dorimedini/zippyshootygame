@@ -20,6 +20,10 @@
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
+ * -------   > This is a good point to add arms to self-player
+ * <   > Projectile explosion effect
+ * <   > Tile hit effect
+ * <   > Player hit effect (GUI included)
  * <   > Movement mechanic - grapple on pillar edge and launch
  * <   > Better projectile animation (how to launch with precision without shooting from the camera?)
  *?<   > Better projectile model...?
