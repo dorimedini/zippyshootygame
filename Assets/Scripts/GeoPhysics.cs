@@ -14,18 +14,37 @@ public static class GeoPhysics
     /** Returns true if the rigidbody has an object at feet level. Optionally returns the object */
     public static bool IsPlayerGrounded(Rigidbody player)
     {
-        GameObject dud;
+        TileBehaviour dud;
         return IsPlayerGrounded(player, out dud);
     }
-    public static bool IsPlayerGrounded(Rigidbody player, out GameObject hit)
+    public static bool IsPlayerGrounded(Rigidbody player, out TileBehaviour hitTile)
+    {
+        float dist = DistanceFromGround(player, out hitTile);
+        return hitTile == null ? false : dist < 0.1f;
+    }
+
+    public static float DistanceFromGround(Rigidbody player)
+    {
+        TileBehaviour dud;
+        return DistanceFromGround(player, out dud);
+    }
+    public static float DistanceFromGround(Rigidbody player, out TileBehaviour hitTile)
     {
         RaycastHit rHit;
-        if (Physics.Raycast(player.transform.position + player.transform.up, -player.transform.up, out rHit, 1.1f))
+        hitTile = null;
+        if (!Physics.Raycast(player.transform.position + player.transform.up, -player.transform.up, out rHit))
         {
-            hit = rHit.collider.gameObject;
-            return true;
+            // FIXME Wrap the sphere with solid ground "under" the tiles so this raycast has something to hit
+            // FIXME when the player is in between tiles
+            return -1;
         }
-        hit = null;
-        return false;
+        hitTile = rHit.collider.gameObject.GetComponent<TileBehaviour>();
+        if (hitTile == null)
+        {
+            Debug.LogError(string.Format("Raycast didn't get a tile hit! Hit {0} instead", rHit.collider.gameObject.name));
+            return -1;
+        }
+        float dist = (hitTile.radius - hitTile.currentHeight) - player.position.magnitude; // Dist of tile surface from origin minus dist of player from origin
+        return dist;
     }
 }

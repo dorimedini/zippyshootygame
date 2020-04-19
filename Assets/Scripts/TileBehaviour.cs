@@ -353,12 +353,11 @@ public class TileBehaviour : MonoBehaviour
     // TODO: This could be given some more thought...
     private bool isOverTile(Rigidbody rb)
     {
-        GameObject groundOfRb;
-        if (!GeoPhysics.IsPlayerGrounded(rb, out groundOfRb))
+        TileBehaviour underneath;
+        if (!GeoPhysics.IsPlayerGrounded(rb, out underneath))
             return false;
         // Return true <==> the object is grounded on this specific tile
-        TileBehaviour tile = groundOfRb.GetComponent<TileBehaviour>();
-        return tile != null ? tile.id == id : false;
+        return underneath != null ? underneath.id == id : false;
     }
 
     int totalEdges() { return isHex ? 6 : 5; }

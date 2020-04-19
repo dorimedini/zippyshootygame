@@ -6,16 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerMovementController : MonoBehaviour
 {
-    public float animationSpeed = 1;
+    public float animationSpeed = 4;
     public float jumpSpeed = 12;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
 
     private Animator anim;
     private Rigidbody rb;
-    private float speed;
-    private float direction;
+    private float fwdBack;
+    private float leftRight;
+    private Vector3 movement;
+    private float distFromGround;
     private bool inAir;
     private bool initialJump;
+    private bool grounded;
     private float airtimeCooldown;
 
     // Start is called before the first frame update
@@ -31,9 +34,13 @@ public class PlayerMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speed = Input.GetAxis("Vertical");
-        direction = Input.GetAxis("Horizontal");
-        bool grounded = GeoPhysics.IsPlayerGrounded(rb);
+        fwdBack = Input.GetAxis("Vertical");
+        leftRight = Input.GetAxis("Horizontal");
+        grounded = GeoPhysics.IsPlayerGrounded(rb);
+        movement = new Vector3(leftRight, 0, fwdBack);
+        if (movement.magnitude > 1f)
+            movement = movement.normalized;
+        distFromGround = GeoPhysics.DistanceFromGround(rb);
 
         // Handle jumping
         if (!inAir && Input.GetButton("Jump") && grounded)
@@ -55,9 +62,10 @@ public class PlayerMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
-        anim.SetFloat("Speed", speed);
-        anim.SetFloat("Direction", direction);
+        anim.SetFloat("FwdBack", fwdBack);
+        anim.SetFloat("LeftRight", leftRight);
         anim.SetBool("InAir", inAir);
+        anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
 
         // If we're jumping we need to handle movement ourselves; the jump animation is stationary.
         // Give the initial burst of speed, and allow some XZ movement while in the air
@@ -68,7 +76,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         if (inAir)
         {
-            // TODO
+            // If the ground is less than, say,
         }
     }
 }
