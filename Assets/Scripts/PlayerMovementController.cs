@@ -42,7 +42,11 @@ public class PlayerMovementController : MonoBehaviour
         movement = new Vector3(leftRight, 0, fwdBack);
         if (movement.magnitude > 1f)
             movement = movement.normalized;
-        distFromGround = GeoPhysics.DistanceFromGround(rb);
+
+        // If the DistanceFromGround is negative keep the previous value; it just means the function failed
+        float newDist = GeoPhysics.DistanceFromGround(rb);
+        if (newDist >= 0)
+            distFromGround = newDist;
 
         // Handle jumping
         if (!inAir && Input.GetButton("Jump") && grounded)
