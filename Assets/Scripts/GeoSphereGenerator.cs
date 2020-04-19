@@ -21,7 +21,7 @@ public class GeoSphereGenerator : MonoBehaviour
     public int expHexNumber;
 
     // Radius of the sphere - distance from the center to any center of any tile.
-    public float radius;
+    private float radius = GeoPhysics.radius;
 
     // Number of lights, between 1 and 4
     public int numLights;

@@ -5,6 +5,7 @@ using UnityEngine;
 public static class GeoPhysics
 {
     public static float gravity = 9.8f;
+    public static float radius = 70;
 
     public static void ApplyGravity(Rigidbody rb)
     {
@@ -34,17 +35,19 @@ public static class GeoPhysics
         hitTile = null;
         if (!Physics.Raycast(player.transform.position + player.transform.up, -player.transform.up, out rHit))
         {
-            // FIXME Wrap the sphere with solid ground "under" the tiles so this raycast has something to hit
-            // FIXME when the player is in between tiles
+            Debug.LogError("Nothing under player!");
             return -1;
         }
         hitTile = rHit.collider.gameObject.GetComponent<TileBehaviour>();
         if (hitTile == null)
         {
-            Debug.LogError(string.Format("Raycast didn't get a tile hit! Hit {0} instead", rHit.collider.gameObject.name));
+            // We may have hit the bounding sphere between the tiles with this raycast. If so, ground is radius away from origin.
+            if (rHit.collider.gameObject.name == "InvertableSphere(Clone)")
+                return radius - player.position.magnitude;
+            Debug.LogError(string.Format("Raycast didn't get a tile / bounding-sphere hit! Hit {0} instead", rHit.collider.gameObject.name));
             return -1;
         }
-        float dist = (hitTile.radius - hitTile.currentHeight) - player.position.magnitude; // Dist of tile surface from origin minus dist of player from origin
+        float dist = (radius - hitTile.currentHeight) - player.position.magnitude; // Dist of tile surface from origin minus dist of player from origin
         return dist;
     }
 }
