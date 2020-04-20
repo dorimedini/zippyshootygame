@@ -166,6 +166,7 @@ MonoBehaviour:
   airMovementSpeed: 5
   jumpSpeed: 8
   minimalAirtime: 0.5
+  launchForceMultiplier: 4
 --- !u!114 &1004506717127072884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +193,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lookSpeedX: 10
   lookSpeedY: 5
+--- !u!114 &5163354516774611457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148042477976559911}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd85edb62537e54bb74f45ef3a2d3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponCooldown: 1
+  projectileImpulse: 50
+  projectilePrefab: {fileID: 8071147925390502188, guid: bb94abe2f5dd36846bbf778de6c28a1c,
+    type: 3}
 --- !u!114 &7468447513684206103
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ public class Projectile : MonoBehaviour
 
     Mesh mesh;
     MeshRenderer rend;
-    Rigidbody rb;
+    PillarExtensionController pillarCtrl;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
 
@@ -24,7 +24,9 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         destroyed = false;
-        rb = GetComponent<Rigidbody>();
+        pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
+        if (pillarCtrl == null)
+            Debug.LogError("Got null PillarExtensionController");
         mesh = GetComponent<MeshFilter>().mesh;
         rend = GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
@@ -60,12 +62,7 @@ public class Projectile : MonoBehaviour
         rend.materials = colorMats.ToArray();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        GeoPhysics.ApplyGravity(rb);
-    }
-
+    /** Only the shooter's instance of the projectile has a collider */
     void OnCollisionEnter(Collision col)
     {
         if (destroyed) return; // Don' process more than one collision... hope this helps...?
@@ -77,17 +74,18 @@ public class Projectile : MonoBehaviour
 
         // Did we hit a pillar or a player?
         PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
-        FirstPersonController fps = obj.GetComponent<FirstPersonController>();
+        PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
         if (pillar != null)
         {
-            pillar.projectileHit();
+            Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
+            pillarCtrl.BroadcastHitPillar(pillar.id);
         }
-        else if (fps != null)
+        else if (pmc != null)
         {
             // TODO: Implement damage
         }
 
-        Debug.Log(string.Format("Projectile destroyed after hitting a {0} object", fps == null ? "non-player" : "player"));
+        // TODO: May need to attach PhotonView to projectile to destroy it properly
         Destroy(gameObject);
         destroyed = true;
     }

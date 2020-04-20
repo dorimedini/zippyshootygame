@@ -104,6 +104,7 @@ public class GeoSphereGenerator : MonoBehaviour
         orientPillars();              // Rotate pillars so their edges align with their neighbors
         updateEdgeLengths();        // Enlarge some pillars to fill the gaps
         addLights();                // Between 1 and 4 point lights in the arena
+        updatePillarIds();
     }
 
     // ONLY CALL AFTER SORTING PILLARS

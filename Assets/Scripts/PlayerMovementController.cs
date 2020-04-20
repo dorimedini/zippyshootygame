@@ -10,6 +10,7 @@ public class PlayerMovementController : MonoBehaviour
     public float airMovementSpeed = 5;
     public float jumpSpeed = 8;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
+    public float launchForceMultiplier = 4f; // Multiplied by the distance to the target height
 
     private Animator anim;
     private Rigidbody rb;
@@ -92,5 +93,12 @@ public class PlayerMovementController : MonoBehaviour
             Vector3 speed = rb.rotation * (airMovementSpeed * movement);
             rb.MovePosition(rb.position + Time.deltaTime * speed);
         }
+    }
+
+    public void LaunchFromPillar(int pillarId, float pillarHeightChange)
+    {
+        Vector3 force = -rb.transform.position.normalized;
+        force *= launchForceMultiplier * pillarHeightChange;
+        rb.AddForce(force, ForceMode.Impulse);
     }
 }

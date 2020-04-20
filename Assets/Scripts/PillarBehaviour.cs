@@ -10,7 +10,6 @@ public class PillarBehaviour : MonoBehaviour
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
     public static float timeToHeightDelta = 2f;
-    public static float launchForceMultiplier = 7f; // Multiplied by the distance to the target height
     public float currentHeight;
     private float maxHeight;
     private float targetHeight;
@@ -19,6 +18,8 @@ public class PillarBehaviour : MonoBehaviour
     private bool extending;
     private bool primedToLaunch;
     private float extensionDelta;
+
+    private GameObject player = null;    // So the pillar can launch the player if need be
 
     public float edge;
     public float radius;
@@ -39,9 +40,6 @@ public class PillarBehaviour : MonoBehaviour
     private Dictionary<int, int> meshVertexMap;
 
     public bool isHex;
-
-    // Need these to handle player/rigidbody launching
-    private Dictionary<int, GameObject> collidedWithPillar;
 
     public static PillarBehaviour Create(
         bool isHexagon,
@@ -70,7 +68,6 @@ public class PillarBehaviour : MonoBehaviour
         pillar.id = pillarId;
         pillar.mesh = new Mesh();
         pillar.collMesh = new Mesh();
-        pillar.collidedWithPillar = new Dictionary<int, GameObject>();
         pillar.needRedraw = true;
         pillar.meshVertexMap = new Dictionary<int, int>();
         return pillar;
@@ -92,7 +89,6 @@ public class PillarBehaviour : MonoBehaviour
     void Start()
     {
         needRedraw = true;
-        collidedWithPillar = new Dictionary<int, GameObject>();
         meshVertexMap = new Dictionary<int, int>();
         InitPillar();
         UpdateMesh();
@@ -217,36 +213,24 @@ public class PillarBehaviour : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        // FIXME: THIS KEEPS HAPPENING
-        // I don't know why we sometimes get here with an uninitialized list... but catch it here
-        if (collidedWithPillar == null)
-        {
-            Debug.LogError(string.Format("Registered collision on pillar {0} but collided list not initialized!", id));
-            collidedWithPillar = new Dictionary<int, GameObject>();
-        }
-
         GameObject obj = col.gameObject;
 
         // We ignore projectiles. The projectile itself handles hits
         if (obj.GetComponent<Projectile>() != null) return;
 
-        int objId = obj.GetInstanceID();
-        if (obj.GetComponent<Rigidbody>() != null && !collidedWithPillar.ContainsKey(objId))
-            collidedWithPillar[objId] = obj;
+        // If this is a player, and it's OUR player, we need to store the movement script so if this pillar extends
+        // we can call launch()
+        var netchar = obj.GetComponent<NetworkCharacter>();
+        if (netchar != null && netchar.photonView.IsMine)
+            player = obj;
     }
     void OnCollisionExit(Collision col)
     {
-        // FIXME: THIS KEEPS HAPPENING
-        // I don't know why we sometimes get here with an uninitialized list... but catch it here
-        if (collidedWithPillar == null)
-        {
-            Debug.LogError(string.Format("Exited collision on pillar {0} but collided list not initialized!", id));
-            collidedWithPillar = new Dictionary<int, GameObject>();
-        }
-
-        int objId = col.gameObject.GetInstanceID();
-        if (collidedWithPillar.ContainsKey(objId))
-            collidedWithPillar.Remove(objId);
+        // Register player exiting the pillar so we don't launch
+        GameObject obj = col.gameObject;
+        var netchar = obj.GetComponent<NetworkCharacter>();
+        if (netchar != null && netchar.photonView.IsMine)
+            player = null;
     }
 
     public Mesh getMesh() { return mesh; }
@@ -261,9 +245,10 @@ public class PillarBehaviour : MonoBehaviour
         needRedraw = true;
     }
 
-    // Call this from a projectile's OnCollisionEnter() method
+    // Call this from PillarExtensionController
     public void projectileHit()
     {
+        Debug.Log(string.Format("Pillar {0} hit by projectile", id));
         if (heightLocked)
             return;
 
@@ -306,40 +291,19 @@ public class PillarBehaviour : MonoBehaviour
             deltaHeight = Mathf.Lerp(currentHeight, targetHeight, Mathf.Sqrt(Time.deltaTime / timeToTarget)) - currentHeight;
             timeToTarget -= Time.deltaTime;
         }
-        // Don't update currentHeight yet! isOverPillar uses is
 
-        // First, get a list of Rigidbodies standing on the pillar so we can
-        // launch them. Only launch if height increased!
-        Dictionary<int, Rigidbody> rbs = new Dictionary<int, Rigidbody>();
-        if (primedToLaunch && deltaHeight > 0)
-        {
-            foreach (var kvp in collidedWithPillar)
-            {
-                GameObject obj = kvp.Value;
-                int objId = kvp.Key;
-                Rigidbody rb = obj.GetComponent<Rigidbody>();
-                if (rb == null)
-                    continue;
-                if (!isOverPillar(rb))
-                    continue;
-                rbs[objId] = rb;
-            }
+        // Check if we should launch our local player
+        if (primedToLaunch &&
+            deltaHeight > 0 &&
+            player != null &&
+            isOverPillar(player.GetComponent<Rigidbody>())
+            ) {
+            player.GetComponent<PlayerMovementController>().LaunchFromPillar(id, targetHeight - currentHeight);
+            primedToLaunch = false; // Only launch objects that were on the pillar WHEN IT WAS HIT
         }
 
         // Update current height after checking which rigidbodies are eligible for launch.
         currentHeight += deltaHeight;
-
-        // Launch objects
-        if (primedToLaunch && deltaHeight > 0) {
-            primedToLaunch = false; // Only launch objects that were on the pillar WHEN IT WAS HIT
-            foreach (var kvp in rbs)
-            {
-                Rigidbody rb = kvp.Value;
-                Vector3 force = -rb.transform.position.normalized;
-                force *= launchForceMultiplier * (targetHeight - currentHeight);
-                rb.AddForce(force, ForceMode.Impulse);
-            }
-        }
 
         // If this hit the end of extension and we're at max height, trigger onFullExtend
         if (!extending && Tools.NearlyEqual(currentHeight, maxHeight, 0.01f))
