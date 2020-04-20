@@ -18,7 +18,7 @@ public class PlayerMovementController : MonoBehaviour
     private float leftRight;
     private Vector3 movement;
     private float distFromGround;
-    private bool inAir;
+    private bool jumping;
     private bool initialJump;
     private bool grounded;
     private float airtimeCooldown;
@@ -34,7 +34,7 @@ public class PlayerMovementController : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         anim.speed = animationSpeed;
-        initialJump = inAir = false;
+        initialJump = jumping = false;
         airtimeCooldown = 0;
     }
 
@@ -56,11 +56,11 @@ public class PlayerMovementController : MonoBehaviour
             distFromGround = newDist;
 
         // Handle jumping
-        if (!inAir && Input.GetButton("Jump") && grounded)
+        if (!jumping && Input.GetButton("Jump") && grounded)
         {
             airtimeCooldown = minimalAirtime;
             initialJump = true;
-            inAir = true;
+            jumping = true;
         }
 
         // Should we land?
@@ -68,8 +68,8 @@ public class PlayerMovementController : MonoBehaviour
         if (airtimeCooldown < 0)
         {
             airtimeCooldown = 0;
-            if (inAir && grounded)
-                inAir = false;
+            if (jumping && grounded)
+                jumping = false;
         }
     }
 
@@ -77,18 +77,18 @@ public class PlayerMovementController : MonoBehaviour
     {
         anim.SetFloat("FwdBack", fwdBack);
         anim.SetFloat("LeftRight", leftRight);
-        anim.SetBool("InAir", inAir);
+        anim.SetBool("InAir", !grounded);
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
         currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
 
-        // If we're jumping we need to handle movement ourselves; the jump animation is stationary.
         // Give the initial burst of speed, and allow some XZ movement while in the air
         if (initialJump)
         {
             rb.velocity += jumpSpeed * transform.up;
             initialJump = false;
         }
-        if (inAir)
+        // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
+        if (anim.GetBool("InAir"))
         {
             Vector3 speed = rb.rotation * (airMovementSpeed * movement);
             rb.MovePosition(rb.position + Time.deltaTime * speed);
