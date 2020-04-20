@@ -50,10 +50,7 @@ public class PlayerMovementController : MonoBehaviour
         if (movement.magnitude > 1f)
             movement = movement.normalized;
 
-        // If the DistanceFromGround is negative keep the previous value; it just means the function failed
-        float newDist = GeoPhysics.DistanceFromGround(rb);
-        if (newDist >= 0)
-            distFromGround = newDist;
+        distFromGround = GeoPhysics.DistanceFromGround(rb);
 
         // Handle jumping
         if (!jumping && Input.GetButton("Jump") && grounded)
@@ -88,7 +85,7 @@ public class PlayerMovementController : MonoBehaviour
             initialJump = false;
         }
         // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
-        if (anim.GetBool("InAir"))
+        if (!grounded)
         {
             Vector3 speed = rb.rotation * (airMovementSpeed * movement);
             rb.MovePosition(rb.position + Time.deltaTime * speed);

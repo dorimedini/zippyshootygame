@@ -20,7 +20,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!photonView.IsMine)
         {

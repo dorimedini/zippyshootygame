@@ -24,9 +24,7 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         destroyed = false;
-        pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
-        if (pillarCtrl == null)
-            Debug.LogError("Got null PillarExtensionController");
+        InitPillarCtrl();
         mesh = GetComponent<MeshFilter>().mesh;
         rend = GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
@@ -62,6 +60,13 @@ public class Projectile : MonoBehaviour
         rend.materials = colorMats.ToArray();
     }
 
+    void InitPillarCtrl()
+    {
+        pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
+        if (pillarCtrl == null)
+            Debug.LogError("Got null PillarExtensionController");
+    }
+
     /** Only the shooter's instance of the projectile has a collider */
     void OnCollisionEnter(Collision col)
     {
@@ -77,6 +82,9 @@ public class Projectile : MonoBehaviour
         PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
         if (pillar != null)
         {
+            // TODO: One day I'll find out why objects are suddenly null...
+            if (pillarCtrl == null)
+                InitPillarCtrl();
             Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
             pillarCtrl.BroadcastHitPillar(pillar.id);
         }

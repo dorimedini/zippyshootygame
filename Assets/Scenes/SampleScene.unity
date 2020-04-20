@@ -216,7 +216,7 @@ PrefabInstance:
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
       propertyPath: baseEdgeMultiplier
-      value: 0.65
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7048408702947457516, guid: 0dba6bb3f498990499a22519804e33d5,
         type: 3}
@@ -567,7 +567,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 1148042477976559911, guid: eccec8ba68a103340a70b8dea6ba78d3,
     type: 3}
   standbyCamera: {fileID: 1334825165}
-  offlineMode: 1
+  offlineMode: 0
 --- !u!114 &1868763445
 MonoBehaviour:
   m_ObjectHideFlags: 0
