@@ -15,8 +15,8 @@ public class Projectile : MonoBehaviour
     private bool destroyed;
 
     Mesh mesh;
-    MeshRenderer renderer;
-    Rigidbody rb;
+    MeshRenderer rend;
+    PillarExtensionController pillarCtrl;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
 
@@ -24,9 +24,9 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         destroyed = false;
-        rb = GetComponent<Rigidbody>();
+        InitPillarCtrl();
         mesh = GetComponent<MeshFilter>().mesh;
-        renderer = GetComponent<MeshRenderer>();
+        rend = GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
         octoTriangles = new List<int>();
         hexTriangles = new List<int>();
@@ -57,15 +57,17 @@ public class Projectile : MonoBehaviour
         Material color1 = Resources.Load("Materials/projectile_blue_1", typeof(Material)) as Material;
         Material color2 = Resources.Load("Materials/projectile_blue_2", typeof(Material)) as Material;
         List<Material> colorMats = new List<Material>() { color0, color1, color2 };
-        renderer.materials = colorMats.ToArray();
+        rend.materials = colorMats.ToArray();
     }
 
-    // Update is called once per frame
-    void Update()
+    void InitPillarCtrl()
     {
-        GeoPhysics.ApplyGravity(rb);
+        pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
+        if (pillarCtrl == null)
+            Debug.LogError("Got null PillarExtensionController");
     }
 
+    /** Only the shooter's instance of the projectile has a collider */
     void OnCollisionEnter(Collision col)
     {
         if (destroyed) return; // Don' process more than one collision... hope this helps...?
@@ -75,19 +77,23 @@ public class Projectile : MonoBehaviour
         if (obj.GetInstanceID() == shooterId)
             return;
 
-        // Did we hit a tile or a player?
-        TileBehaviour tile = obj.GetComponent<TileBehaviour>();
-        FirstPersonController fps = obj.GetComponent<FirstPersonController>();
-        if (tile != null)
+        // Did we hit a pillar or a player?
+        PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
+        PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
+        if (pillar != null)
         {
-            tile.projectileHit();
+            // TODO: One day I'll find out why objects are suddenly null...
+            if (pillarCtrl == null)
+                InitPillarCtrl();
+            Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
+            pillarCtrl.BroadcastHitPillar(pillar.id);
         }
-        else if (fps != null)
+        else if (pmc != null)
         {
             // TODO: Implement damage
         }
 
-        Debug.Log(string.Format("Projectile destroyed after hitting a {0} object", fps == null ? "non-player" : "player"));
+        // TODO: May need to attach PhotonView to projectile to destroy it properly
         Destroy(gameObject);
         destroyed = true;
     }
