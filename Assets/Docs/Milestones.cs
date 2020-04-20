@@ -14,9 +14,9 @@
  * ------- V > Run, transitions, walk/run left/right
  * ------- V > Jump (no roll?)
  * ------- V > Fall, when in air after jump sequence or when falling without jumping first (launch, fall off cliff)
- * <   > Re-implement projectile firing on network
- * <   > Implement pillar extend / retract on network (on projectile hit)
- * -------   > Test: Self launch, launch another player
+ * < V > Re-implement projectile firing on network
+ * < V > Implement pillar extend / retract on network (on projectile hit)
+ * ------- V > Test: Self launch, launch another player
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
