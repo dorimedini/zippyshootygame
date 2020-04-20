@@ -6,20 +6,20 @@
  * THE SETTING
  * -----------
  * FPS, Multiplayer Arena type game, in which several players are placed inside of a sphere
- * tiled by (mostly) hexagons. Gravity pushes away from the center point of the sphere (the
- * ORIGIN), so the players walk around on the tiles on the inside of the sphere.
+ * tiled by (mostly) hexagon pillars. Gravity pushes away from the center point of the sphere (the
+ * ORIGIN), so the players walk around on the pillars on the inside of the sphere.
  * 
- * Each tile can be EXPANDED to have a HEIGHT of X, and can be RETRACTED to some HEIGHT X.
- * This extends the inner face of the tile towards ORIGIN by X (X is capped at the RADIUS 
+ * Each pillar can be EXPANDED to have a HEIGHT of X, and can be RETRACTED to some HEIGHT X.
+ * This extends the inner face of the pillar towards ORIGIN by X (X is capped at the RADIUS 
  * of the sphere, but MAX_HEIGHT will be the real cap), or retracts the face back towards 
  * the sphere's bounderies.
  * 
- * If a tile's HEIGHT is reduced bellow MIN_HEIGHT, the tile becomes DESTROYED and is 
- * removed. Players can fall through DESTROYED tiles.
+ * If a pillar's HEIGHT is reduced bellow MIN_HEIGHT, the pillar becomes DESTROYED and is 
+ * removed. Players can fall through DESTROYED pillars.
  * 
- * All tiles begin UNLOCKED, and at height INITIAL_HEIGHT.
+ * All pillars begin UNLOCKED, and at height INITIAL_HEIGHT.
  * 
- * All UNLOCKED tiles that have not been EXPANDED or RETRACTED for TILE_DECAY seconds, start
+ * All UNLOCKED pillars that have not been EXPANDED or RETRACTED for PILLAR_DECAY seconds, start
  * to grow/shrink back to INITIAL_HEIGHT.
  * 
  * 
@@ -73,10 +73,10 @@
  * -------------
  * 
  * EVENTS
- * - The sun periodically sends a solar flare, maximizing tiles in an arc?
+ * - The sun periodically sends a solar flare, maximizing pillars in an arc?
  * - Shooting the sun:
  *   . Charge it? The one who fires the last (overcharging) hit on the sun causes a RAIN OF FIRE, doing damage and expanding
- *     a random X percent of tiles
+ *     a random X percent of pillars
  * 
  * WEAPON MODS
  * Explore other constructive/destructive ways to interact with this arena. Some ideas:
@@ -86,19 +86,19 @@
  *   > Explosive ammo. Doesn't EXPAND or RETRACT by much and BLUE doesn't launch very high, but covers
  *     more ground. Possible use case: imagine a game mode where INITIAL_HEIGHT is set to MIN_HEIGHT.
  *     A player can equip a BLUE GUN with explosive ammo and self-target to slightely increase the
- *     height of all tiles around the player, so the enemy can't one-shot destroy any of them.
+ *     height of all pillars around the player, so the enemy can't one-shot destroy any of them.
  * 
- *   > Shapes! Fire a line of projectiles (BLUE will create a wall and RED will hopefully destroy tiles
+ *   > Shapes! Fire a line of projectiles (BLUE will create a wall and RED will hopefully destroy pillars
  *     in a line), closed cycles for protection / encagement... etc
  *   
  *   > Charge fire: Aim steady for CHARGE_DELAY seconds to launch a CHARGED projectile. Two consecutive 
  *     charged hits (within CHARGE_HIT_WINDOW seconds) destroy (RED) or fully expand and lock (BLUE) 
- *     tiles.
+ *     pillars.
  *
  * 
  * - SPECIAL ROUNDS (rounds as in those things that are fired from guns)
  * 
- *   > BLUE GUN: BRIDGE round. Expands tiles in such a way that the player can walk to the tile H hit
+ *   > BLUE GUN: BRIDGE round. Expands pillars in such a way that the player can walk to the pillar H hit
  *     by the projectile, without curvature:
  *     
  *                                        O(rigin)
@@ -110,8 +110,8 @@
  *     This can be used to help allies in a different area of the sphere by raising a wall between them
  *     and enemies, or providing escape routes.
  *     
- *     Maybe it would be a good idea to expand the tiles around the walkway a bit more than the walkway
- *     tiles, to provide cover for those who cross.
+ *     Maybe it would be a good idea to expand the pillars around the walkway a bit more than the walkway
+ *     pillars, to provide cover for those who cross.
  *     
  *     This type of round shouldn't launch players in the air.
  */

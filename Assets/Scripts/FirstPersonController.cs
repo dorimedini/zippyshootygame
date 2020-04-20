@@ -66,20 +66,20 @@ public class FirstPersonController : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         GameObject obj = other.gameObject;
-        TileBehaviour tile = obj.GetComponent<TileBehaviour>();
-        if (tile != null)
+        PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
+        if (pillar != null)
         {
-            Debug.Log(string.Format("Collided with tile {0}", tile.id));
+            Debug.Log(string.Format("Collided with pillar {0}", pillar.id));
         }
     }
 
     void OnCollisionExit(Collision other)
     {
         GameObject obj = other.gameObject;
-        TileBehaviour tile = obj.GetComponent<TileBehaviour>();
-        if (tile != null)
+        PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
+        if (pillar != null)
         {
-            Debug.Log(string.Format("Exited collision with tile {0}", tile.id));
+            Debug.Log(string.Format("Exited collision with pillar {0}", pillar.id));
         }
     }
 

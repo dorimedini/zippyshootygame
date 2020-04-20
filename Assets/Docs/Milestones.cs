@@ -15,14 +15,14 @@
  * ------- V > Jump (no roll?)
  * ------- V > Fall, when in air after jump sequence or when falling without jumping first (launch, fall off cliff)
  * <   > Re-implement projectile firing on network
- * <   > Implement tile extend / retract on network (on projectile hit)
+ * <   > Implement pillar extend / retract on network (on projectile hit)
  * -------   > Test: Self launch, launch another player
  * <   > Add projectile damage
  * <   > Successfully play with 2 people concurrently, have one take damage from the other
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * <   > Projectile explosion effect
- * <   > Tile hit effect
+ * <   > Pillar hit effect
  * <   > Player hit effect (GUI included)
  * <   > Movement mechanic - grapple on pillar edge and launch
  * <   > Better projectile animation (how to launch with precision without shooting from the camera?)

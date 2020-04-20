@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshCollider))]
-public class TileBehaviour : MonoBehaviour
+public class PillarBehaviour : MonoBehaviour
 {
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
@@ -41,39 +41,39 @@ public class TileBehaviour : MonoBehaviour
     public bool isHex;
 
     // Need these to handle player/rigidbody launching
-    private Dictionary<int, GameObject> collidedWithTile;
+    private Dictionary<int, GameObject> collidedWithPillar;
 
-    public static TileBehaviour Create(
+    public static PillarBehaviour Create(
         bool isHexagon,
         Vector3 location,
         float edgeLength,
         float r,
         float h,
         float collExpansion,
-        int tileId = -1)
+        int pillarId = -1)
     {
         Object obj = isHexagon ? Resources.Load("Prefabs/Hexagon") : Resources.Load("Prefabs/Pentagon");
-        GameObject tile_obj = Instantiate(obj, location, Quaternion.identity) as GameObject;
-        TileBehaviour tile = tile_obj.GetComponent<TileBehaviour>();
-        tile.isHex = isHexagon;
-        tile.edge = edgeLength;
-        tile.radius = r;
-        tile.targetHeight = h;
-        tile.currentHeight = h;
-        tile.maxHeight = maxHeightPercentage * r;
-        tile.extensionDelta = extensionDeltaPercentage * r;
-        tile.timeToTarget = 0f;
-        tile.collisionExpansion = collExpansion;
-        tile.extending = false;
-        tile.primedToLaunch = false;
-        tile.heightLocked = false;
-        tile.id = tileId;
-        tile.mesh = new Mesh();
-        tile.collMesh = new Mesh();
-        tile.collidedWithTile = new Dictionary<int, GameObject>();
-        tile.needRedraw = true;
-        tile.meshVertexMap = new Dictionary<int, int>();
-        return tile;
+        GameObject pillarObj = Instantiate(obj, location, Quaternion.identity) as GameObject;
+        PillarBehaviour pillar = pillarObj.GetComponent<PillarBehaviour>();
+        pillar.isHex = isHexagon;
+        pillar.edge = edgeLength;
+        pillar.radius = r;
+        pillar.targetHeight = h;
+        pillar.currentHeight = h;
+        pillar.maxHeight = maxHeightPercentage * r;
+        pillar.extensionDelta = extensionDeltaPercentage * r;
+        pillar.timeToTarget = 0f;
+        pillar.collisionExpansion = collExpansion;
+        pillar.extending = false;
+        pillar.primedToLaunch = false;
+        pillar.heightLocked = false;
+        pillar.id = pillarId;
+        pillar.mesh = new Mesh();
+        pillar.collMesh = new Mesh();
+        pillar.collidedWithPillar = new Dictionary<int, GameObject>();
+        pillar.needRedraw = true;
+        pillar.meshVertexMap = new Dictionary<int, int>();
+        return pillar;
     }
 
     void Awake()
@@ -92,14 +92,14 @@ public class TileBehaviour : MonoBehaviour
     void Start()
     {
         needRedraw = true;
-        collidedWithTile = new Dictionary<int, GameObject>();
+        collidedWithPillar = new Dictionary<int, GameObject>();
         meshVertexMap = new Dictionary<int, int>();
-        InitTile();
+        InitPillar();
         UpdateMesh();
     }
 
     /** Mesh imported from blender prefab requires some initial analysis and fixups to be workable */
-    private void InitTile()
+    private void InitPillar()
     {
         // Build the vertex dict
         meshVertexMap.Clear();
@@ -107,7 +107,7 @@ public class TileBehaviour : MonoBehaviour
         List<Vector3> v = new List<Vector3>(GetComponent<MeshFilter>().mesh.vertices);
         for (int i=0; i<v.Count; ++i)
         {
-            // To determine the index of a vertex by it's X,Y,Z coordinates, it matters if the tile is
+            // To determine the index of a vertex by it's X,Y,Z coordinates, it matters if the pillar is
             // a pentagon or hexagon.
             // Both hexagon and pentagon vertices have Y coordinates equal to 0 or 2 (approximately).
             // These are the bottom / top bases, respectively. The XZ coordinates differ between the
@@ -219,10 +219,10 @@ public class TileBehaviour : MonoBehaviour
     {
         // FIXME: THIS KEEPS HAPPENING
         // I don't know why we sometimes get here with an uninitialized list... but catch it here
-        if (collidedWithTile == null)
+        if (collidedWithPillar == null)
         {
-            Debug.LogError(string.Format("Registered collision on tile {0} but collided list not initialized!", id));
-            collidedWithTile = new Dictionary<int, GameObject>();
+            Debug.LogError(string.Format("Registered collision on pillar {0} but collided list not initialized!", id));
+            collidedWithPillar = new Dictionary<int, GameObject>();
         }
 
         GameObject obj = col.gameObject;
@@ -231,22 +231,22 @@ public class TileBehaviour : MonoBehaviour
         if (obj.GetComponent<Projectile>() != null) return;
 
         int objId = obj.GetInstanceID();
-        if (obj.GetComponent<Rigidbody>() != null && !collidedWithTile.ContainsKey(objId))
-            collidedWithTile[objId] = obj;
+        if (obj.GetComponent<Rigidbody>() != null && !collidedWithPillar.ContainsKey(objId))
+            collidedWithPillar[objId] = obj;
     }
     void OnCollisionExit(Collision col)
     {
         // FIXME: THIS KEEPS HAPPENING
         // I don't know why we sometimes get here with an uninitialized list... but catch it here
-        if (collidedWithTile == null)
+        if (collidedWithPillar == null)
         {
-            Debug.LogError(string.Format("Exited collision on tile {0} but collided list not initialized!", id));
-            collidedWithTile = new Dictionary<int, GameObject>();
+            Debug.LogError(string.Format("Exited collision on pillar {0} but collided list not initialized!", id));
+            collidedWithPillar = new Dictionary<int, GameObject>();
         }
 
         int objId = col.gameObject.GetInstanceID();
-        if (collidedWithTile.ContainsKey(objId))
-            collidedWithTile.Remove(objId);
+        if (collidedWithPillar.ContainsKey(objId))
+            collidedWithPillar.Remove(objId);
     }
 
     public Mesh getMesh() { return mesh; }
@@ -267,7 +267,7 @@ public class TileBehaviour : MonoBehaviour
         if (heightLocked)
             return;
 
-        // On hit, the tile gets the energy to launch rigidbodies again.
+        // On hit, the pillar gets the energy to launch rigidbodies again.
         primedToLaunch = true;
 
         // Compute the target height.
@@ -282,7 +282,7 @@ public class TileBehaviour : MonoBehaviour
     }
     private void onFullExtend()
     {
-        // Lock the tile
+        // Lock the pillar
         heightLocked = true;
     }
     private void extendTo(float height, float timeToHeight) {
@@ -306,21 +306,21 @@ public class TileBehaviour : MonoBehaviour
             deltaHeight = Mathf.Lerp(currentHeight, targetHeight, Mathf.Sqrt(Time.deltaTime / timeToTarget)) - currentHeight;
             timeToTarget -= Time.deltaTime;
         }
-        // Don't update currentHeight yet! isOverTile uses is
+        // Don't update currentHeight yet! isOverPillar uses is
 
-        // First, get a list of Rigidbodies standing on the tile so we can
+        // First, get a list of Rigidbodies standing on the pillar so we can
         // launch them. Only launch if height increased!
         Dictionary<int, Rigidbody> rbs = new Dictionary<int, Rigidbody>();
         if (primedToLaunch && deltaHeight > 0)
         {
-            foreach (var kvp in collidedWithTile)
+            foreach (var kvp in collidedWithPillar)
             {
                 GameObject obj = kvp.Value;
                 int objId = kvp.Key;
                 Rigidbody rb = obj.GetComponent<Rigidbody>();
                 if (rb == null)
                     continue;
-                if (!isOverTile(rb))
+                if (!isOverPillar(rb))
                     continue;
                 rbs[objId] = rb;
             }
@@ -331,7 +331,7 @@ public class TileBehaviour : MonoBehaviour
 
         // Launch objects
         if (primedToLaunch && deltaHeight > 0) {
-            primedToLaunch = false; // Only launch objects that were on the tile WHEN IT WAS HIT
+            primedToLaunch = false; // Only launch objects that were on the pillar WHEN IT WAS HIT
             foreach (var kvp in rbs)
             {
                 Rigidbody rb = kvp.Value;
@@ -349,14 +349,14 @@ public class TileBehaviour : MonoBehaviour
         needRedraw = true;
     }
 
-    // Assumes rigidbody is collided with tile, and is just as close to the origin as the tile.
+    // Assumes rigidbody is collided with pillar, and is just as close to the origin as the pillar.
     // TODO: This could be given some more thought...
-    private bool isOverTile(Rigidbody rb)
+    private bool isOverPillar(Rigidbody rb)
     {
-        TileBehaviour underneath;
+        PillarBehaviour underneath;
         if (!GeoPhysics.IsPlayerGrounded(rb, out underneath))
             return false;
-        // Return true <==> the object is grounded on this specific tile
+        // Return true <==> the object is grounded on this specific pillar
         return underneath != null ? underneath.id == id : false;
     }
 

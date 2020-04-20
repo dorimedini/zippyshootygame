@@ -75,12 +75,12 @@ public class Projectile : MonoBehaviour
         if (obj.GetInstanceID() == shooterId)
             return;
 
-        // Did we hit a tile or a player?
-        TileBehaviour tile = obj.GetComponent<TileBehaviour>();
+        // Did we hit a pillar or a player?
+        PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
         FirstPersonController fps = obj.GetComponent<FirstPersonController>();
-        if (tile != null)
+        if (pillar != null)
         {
-            tile.projectileHit();
+            pillar.projectileHit();
         }
         else if (fps != null)
         {
