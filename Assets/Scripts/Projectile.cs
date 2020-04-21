@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Photon.Pun;
 
 
 [RequireComponent(typeof(MeshFilter))]
@@ -9,6 +10,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
+    public static int hitDamage = 15;
+
     // Projectiles should ignore collision with the shooter player
     public int shooterId;
 
@@ -17,6 +20,7 @@ public class Projectile : MonoBehaviour
     Mesh mesh;
     MeshRenderer rend;
     PillarExtensionController pillarCtrl;
+    DamageController dmgCtrl;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
 
@@ -24,7 +28,7 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         destroyed = false;
-        InitPillarCtrl();
+        InitControllers();
         mesh = GetComponent<MeshFilter>().mesh;
         rend = GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
@@ -60,11 +64,14 @@ public class Projectile : MonoBehaviour
         rend.materials = colorMats.ToArray();
     }
 
-    void InitPillarCtrl()
+    void InitControllers()
     {
         pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
         if (pillarCtrl == null)
             Debug.LogError("Got null PillarExtensionController");
+        dmgCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<DamageController>();
+        if (dmgCtrl == null)
+            Debug.LogError("Got null DamageController");
     }
 
     /** Only the shooter's instance of the projectile has a collider */
@@ -80,17 +87,22 @@ public class Projectile : MonoBehaviour
         // Did we hit a pillar or a player?
         PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
         PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
-        if (pillar != null)
+        bool hitPillar = (pillar != null);
+        bool hitPlayer = (pmc != null);
+        if (hitPillar)
         {
             // TODO: One day I'll find out why objects are suddenly null...
             if (pillarCtrl == null)
-                InitPillarCtrl();
+                InitControllers();
             Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
             pillarCtrl.BroadcastHitPillar(pillar.id);
         }
-        else if (pmc != null)
+        else if (hitPlayer)
         {
-            // TODO: Implement damage
+            // TODO: One day I'll find out why objects are suddenly null...
+            if (dmgCtrl == null)
+                InitControllers();
+            dmgCtrl.BroadcastInflictDamage(shooterId, hitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
         }
 
         // TODO: May need to attach PhotonView to projectile to destroy it properly

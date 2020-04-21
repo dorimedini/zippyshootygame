@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(Animator))]
-public class NetworkCharacter : MonoBehaviourPun, IPunObservable
+public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiateMagicCallback
 {
     Animator anim;
 
@@ -54,5 +54,10 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable
             isInAir = (bool)stream.ReceiveNext();
             realDistFromGround = (float)stream.ReceiveNext();
         }
+    }
+
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        info.Sender.TagObject = gameObject;
     }
 }

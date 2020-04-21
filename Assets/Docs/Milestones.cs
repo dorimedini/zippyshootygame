@@ -17,8 +17,8 @@
  * < V > Re-implement projectile firing on network
  * < V > Implement pillar extend / retract on network (on projectile hit)
  * ------- V > Test: Self launch, launch another player
- * <   > Add projectile damage
- * <   > Successfully play with 2 people concurrently, have one take damage from the other
+ * < V > Add projectile damage
+ * < V > Successfully play with 2 people concurrently, have one take damage from the other
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * <   > Projectile explosion effect
