@@ -220,8 +220,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponCooldown: 1
   projectileImpulse: 50
-  projectilePrefab: {fileID: 8071147925390502188, guid: bb94abe2f5dd36846bbf778de6c28a1c,
-    type: 3}
 --- !u!114 &7468447513684206103
 MonoBehaviour:
   m_ObjectHideFlags: 0

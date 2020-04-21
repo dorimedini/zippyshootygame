@@ -13,7 +13,10 @@ public class Projectile : MonoBehaviour
     public static int hitDamage = 15;
 
     // Projectiles should ignore collision with the shooter player
-    public int shooterId;
+    public string shooterId;
+
+    // Used to destroy all instances of projectile on all clients
+    public string projectileId;
 
     private bool destroyed;
 
@@ -21,6 +24,7 @@ public class Projectile : MonoBehaviour
     MeshRenderer rend;
     PillarExtensionController pillarCtrl;
     DamageController dmgCtrl;
+    ProjectileController projectileCtrl;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
 
@@ -72,6 +76,9 @@ public class Projectile : MonoBehaviour
         dmgCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<DamageController>();
         if (dmgCtrl == null)
             Debug.LogError("Got null DamageController");
+        projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
+        if (projectileCtrl == null)
+            Debug.LogError("Got null ProjectileController");
     }
 
     /** Only the shooter's instance of the projectile has a collider */
@@ -81,14 +88,24 @@ public class Projectile : MonoBehaviour
 
         // The first thing a projectile hits should destroy it (unless it's the shooter)
         GameObject obj = col.gameObject;
-        if (obj.GetInstanceID() == shooterId)
-            return;
+
+        // Check if it's a player. If it is, filter out the shooter.
+        PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
+        bool hitPlayer = (pmc != null);
+        if (hitPlayer)
+        {
+            // Is this the shooter?
+            if (obj.GetComponent<PhotonView>().Owner.UserId == shooterId)
+                return;
+            // TODO: One day I'll find out why objects are suddenly null...
+            if (dmgCtrl == null)
+                InitControllers();
+            dmgCtrl.BroadcastInflictDamage(shooterId, hitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
+        }
 
         // Did we hit a pillar or a player?
         PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
-        PlayerMovementController pmc = obj.GetComponent<PlayerMovementController>();
         bool hitPillar = (pillar != null);
-        bool hitPlayer = (pmc != null);
         if (hitPillar)
         {
             // TODO: One day I'll find out why objects are suddenly null...
@@ -97,16 +114,9 @@ public class Projectile : MonoBehaviour
             Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
             pillarCtrl.BroadcastHitPillar(pillar.id);
         }
-        else if (hitPlayer)
-        {
-            // TODO: One day I'll find out why objects are suddenly null...
-            if (dmgCtrl == null)
-                InitControllers();
-            dmgCtrl.BroadcastInflictDamage(shooterId, hitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
-        }
 
-        // TODO: May need to attach PhotonView to projectile to destroy it properly
-        Destroy(gameObject);
+        // In any case, all collisions destroy the projectile
+        projectileCtrl.BroadcastDestroyProjectile(projectileId);
         destroyed = true;
     }
 }
