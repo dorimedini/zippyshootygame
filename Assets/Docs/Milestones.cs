@@ -19,19 +19,20 @@
  * ------- V > Test: Self launch, launch another player
  * < V > Add projectile damage
  * < V > Successfully play with 2 people concurrently, have one take damage from the other
- * <   > Weapon model and animation (maybe make in blender? Or take ready made)
- * -------   > This is a good point to add arms to self-player
  * <   > Projectile explosion effect
  * <   > Pillar hit effect
  * <   > Player hit effect (GUI included)
- * <   > Movement mechanic - grapple on pillar edge and launch
  * <   > Better projectile animation (how to launch with precision without shooting from the camera?)
  *?<   > Better projectile model...?
  * <   > Texture the projectile
  * <   > Particle effects for projectile in air and on hit
+ * <   > Weapon model and animation (maybe make in blender? Or take ready made)
+ * -------   > This is a good point to add arms to self-player
+ * <   > Movement mechanic - grapple on pillar edge and launch
  * <   > Get non-temporary player models / animations
  * -------   > Add roll on land?
  * <   > Non-temporary weapon models
- * <   > Pentagon hit should exand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
+ * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
+ * <   > Add option for 3rd-person camera? Lots of angle issues, should probably follow a tut
  * <   > Make new list
  */
