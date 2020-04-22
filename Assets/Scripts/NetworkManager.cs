@@ -19,6 +19,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
         if (!PhotonNetwork.IsConnected)
         {
+            GUILayout.BeginArea(new Rect(0, 0, Screen.width / 4, Screen.height));
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginVertical();
+            GUILayout.FlexibleSpace();
             if (GUILayout.Button("Multiplayer"))
             {
                 PhotonNetwork.ConnectUsingSettings();
@@ -28,6 +33,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.OfflineMode = true;
                 OnJoinedLobby();
             }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
         }
     }
 
