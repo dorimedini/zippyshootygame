@@ -59,8 +59,9 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<MouseLookController>().enabled = true;
         player.GetComponentInChildren<PlayerMovementController>().enabled = true;
         player.GetComponentInChildren<GravityAffected>().enabled = true;
-        player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         player.GetComponentInChildren<ShootingCharacter>().enabled = true;
+        player.GetComponentInChildren<CrosshairGUIController>().enabled = true;
+        player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         return player;
     }
 }

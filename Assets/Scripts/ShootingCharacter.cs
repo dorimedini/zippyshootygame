@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(CrosshairGUIController))]
 public class ShootingCharacter : MonoBehaviourPun
 {
+    public float maxChargeTime = 1f;
     public float weaponCooldown = 1f;
     public float projectileImpulse = 50f;
 
     private Camera cam;
-    private int shooterId;
-    private bool shootPressed;
-    private float weaponCooldownCounter;
+    private bool initiateCharge, releaseCharge, charging;
+    private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
+    private CrosshairGUIController crosshairCtrl;
 
     // Start is called before the first frame update
     void Start()
     {
-        shooterId = gameObject.GetInstanceID();
-        shootPressed = false;
+        charging = false;
+        crosshairCtrl = GetComponent<CrosshairGUIController>();
         cam = gameObject.GetComponentInChildren<Camera>();
         if (cam == null)
             Debug.LogError("No camera on shooting character!");
@@ -30,20 +32,37 @@ public class ShootingCharacter : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        shootPressed = Input.GetButton("Fire1");
-    }
-
-    void FixedUpdate()
-    {
+        initiateCharge = Input.GetButtonDown("Fire1");
+        releaseCharge = Input.GetButtonUp("Fire1");
         weaponCooldownCounter -= Time.deltaTime;
-        if (weaponCooldownCounter <= 0 && shootPressed)
+
+        // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
+        if (weaponCooldownCounter <= 0 && initiateCharge && !charging)
         {
+            initiateCharge = false;
+            charging = true;
             weaponCooldownCounter = weaponCooldown;
-            Vector3 source = cam.transform.position + cam.transform.forward;
-            Vector3 force = cam.transform.forward * projectileImpulse;
-            projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
+            chargeTime = 0;
         }
-        if (weaponCooldown < 0f)
-            weaponCooldown = 0f;
+
+        // Update weapon charge (if charging) and GUI
+        if (charging)
+        {
+            chargeTime += Time.deltaTime;
+            crosshairCtrl.updateChargeState(chargeTime, maxChargeTime);
+        }
+
+        // Fire (when player releases button or max charge is reached)
+        if (charging && (releaseCharge || chargeTime >= maxChargeTime))
+        {
+            releaseCharge = false;
+            charging = false;
+            Vector3 force = chargeTime * cam.transform.forward * projectileImpulse;
+            Vector3 source = cam.transform.position + cam.transform.forward;
+            projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
+            crosshairCtrl.updateChargeState(0, maxChargeTime);
+        }
+
+        weaponCooldown = Mathf.Max(weaponCooldown, 0);
     }
 }

@@ -248,7 +248,6 @@ public class PillarBehaviour : MonoBehaviour
     // Call this from PillarExtensionController
     public void projectileHit()
     {
-        Debug.Log(string.Format("Pillar {0} hit by projectile", id));
         if (heightLocked)
             return;
 

@@ -111,7 +111,6 @@ public class Projectile : MonoBehaviour
             // TODO: One day I'll find out why objects are suddenly null...
             if (pillarCtrl == null)
                 InitControllers();
-            Debug.Log(string.Format("Hit pillar with id {0}", pillar.id));
             pillarCtrl.BroadcastHitPillar(pillar.id);
         }
 

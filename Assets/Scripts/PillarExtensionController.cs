@@ -18,7 +18,6 @@ public class PillarExtensionController : MonoBehaviourPun
 
     public void BroadcastHitPillar(int pillarId)
     {
-        Debug.Log(string.Format("Broadcasting pillar {0} was hit", pillarId));
         photonView.RPC("HitPillar", RpcTarget.All, pillarId);
     }
 

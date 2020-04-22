@@ -40,12 +40,10 @@ public class ProjectileController : MonoBehaviourPun
         projectile.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
         projectile.GetComponent<Projectile>().shooterId = shooterId;
         projectile.GetComponent<Projectile>().projectileId = projectileId;
-        Debug.Log(string.Format("PhotonView is {0}, ismine is {1}", photonView, photonView.IsMine));
         // FIXME: This seems to cause a single "master" player to be the only one who enables the colliders on projectiles.
         // FIXME: Maybe because this script isn't on a player prefab...?
         if (photonView.IsMine)
         {
-            Debug.Log(string.Format("Enabling collider on projectile {0}", projectileId));
             projectile.GetComponent<MeshCollider>().enabled = true;
         }
     }
