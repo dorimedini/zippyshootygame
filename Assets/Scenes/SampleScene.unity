@@ -448,8 +448,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1213035193}
-  - component: {fileID: 1213035195}
   - component: {fileID: 1213035194}
+  - component: {fileID: 1213035195}
   m_Layer: 0
   m_Name: PillarExtender
   m_TagString: Untagged
