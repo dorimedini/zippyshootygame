@@ -14,6 +14,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     GameObject myPlayer;
     SpawnManager spawner;
 
+    void Start()
+    {
+        PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("Username", "NOOBNOOB");
+    }
+
+    void OnDestroy()
+    {
+        PlayerPrefs.SetString("Username", PhotonNetwork.LocalPlayer.NickName);
+    }
+
     public void OnGUI()
     {
         GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
@@ -24,6 +34,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             GUILayout.FlexibleSpace();
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Username: ");
+            PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
+            GUILayout.EndHorizontal();
+
             if (GUILayout.Button("Multiplayer"))
             {
                 PhotonNetwork.ConnectUsingSettings();
@@ -33,6 +49,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 PhotonNetwork.OfflineMode = true;
                 OnJoinedLobby();
             }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
