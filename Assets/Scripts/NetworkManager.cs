@@ -14,25 +14,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     GameObject myPlayer;
     SpawnManager spawner;
 
-    public void Start()
-    {
-        Connect();
-    }
-
     public void OnGUI()
     {
         GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
-    }
-
-    void Connect()
-    {
-        if (offlineMode)
+        if (!PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.OfflineMode = true;
-            OnJoinedLobby();
+            if (GUILayout.Button("Multiplayer"))
+            {
+                PhotonNetwork.ConnectUsingSettings();
+            }
+            else if (GUILayout.Button("Singleplayer"))
+            {
+                PhotonNetwork.OfflineMode = true;
+                OnJoinedLobby();
+            }
         }
-        else
-            PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
