@@ -33,6 +33,6 @@
  * -------   > Add roll on land?
  * <   > Non-temporary weapon models
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
- * <   > Add option for 3rd-person camera? Lots of angle issues, should probably follow a tut
+ * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Make new list
  */
