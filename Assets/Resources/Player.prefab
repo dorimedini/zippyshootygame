@@ -298,6 +298,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4158497381526852404}
     m_Modifications:
+    - target: {fileID: 429618194097112107, guid: 9a7a1f0df5d38c74cba694c72af396a5,
+        type: 3}
+      propertyPath: m_Name
+      value: CrosshairCharge1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1651712488532635510, guid: 9a7a1f0df5d38c74cba694c72af396a5,
+        type: 3}
+      propertyPath: m_Name
+      value: CrosshairCharge3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242786489327105357, guid: 9a7a1f0df5d38c74cba694c72af396a5,
+        type: 3}
+      propertyPath: m_Name
+      value: CrosshairCharge2
+      objectReference: {fileID: 0}
     - target: {fileID: 4916721091546355868, guid: 9a7a1f0df5d38c74cba694c72af396a5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -403,10 +418,15 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6134314534374996102, guid: 9a7a1f0df5d38c74cba694c72af396a5,
+        type: 3}
+      propertyPath: m_Name
+      value: CrosshairDefault
+      objectReference: {fileID: 0}
     - target: {fileID: 6975779273814126691, guid: 9a7a1f0df5d38c74cba694c72af396a5,
         type: 3}
       propertyPath: m_Name
-      value: CrosshairGUI
+      value: UI
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a7a1f0df5d38c74cba694c72af396a5, type: 3}
