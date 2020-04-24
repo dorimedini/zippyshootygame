@@ -164,9 +164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationSpeed: 2
   airMovementSpeed: 5
-  jumpSpeed: 8
   minimalAirtime: 0.5
-  launchForceMultiplier: 4
 --- !u!114 &1004506717127072884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,8 +202,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf77429ff794b04ba4545e6307c802d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookSpeedX: 10
-  lookSpeedY: 5
 --- !u!114 &5163354516774611457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,9 +214,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd85edb62537e54bb74f45ef3a2d3b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxChargeTime: 1
-  weaponCooldown: 1
-  projectileImpulse: 50
 --- !u!114 &6061469911277925537
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,9 +8,7 @@ public class PlayerMovementController : MonoBehaviour
 {
     public float animationSpeed = 2;
     public float airMovementSpeed = 5;
-    public float jumpSpeed = 8;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
-    public float launchForceMultiplier = 4f; // Multiplied by the distance to the target height
 
     private Animator anim;
     private Rigidbody rb;
@@ -81,7 +79,7 @@ public class PlayerMovementController : MonoBehaviour
         // Give the initial burst of speed, and allow some XZ movement while in the air
         if (initialJump)
         {
-            rb.velocity += jumpSpeed * transform.up;
+            rb.velocity += UserDefinedConstants.jumpSpeed * transform.up;
             initialJump = false;
         }
         // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
@@ -95,7 +93,7 @@ public class PlayerMovementController : MonoBehaviour
     public void LaunchFromPillar(int pillarId, float pillarHeightChange)
     {
         Vector3 force = -rb.transform.position.normalized;
-        force *= launchForceMultiplier * pillarHeightChange;
+        force *= UserDefinedConstants.launchForceMultiplier * pillarHeightChange;
         rb.AddForce(force, ForceMode.Impulse);
     }
 }

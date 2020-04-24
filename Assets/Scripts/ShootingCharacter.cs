@@ -6,10 +6,6 @@ using Photon.Pun;
 [RequireComponent(typeof(CrosshairGUIController))]
 public class ShootingCharacter : MonoBehaviourPun
 {
-    public float maxChargeTime = 1f;
-    public float weaponCooldown = 1f;
-    public float projectileImpulse = 50f;
-
     private Camera cam;
     private bool initiateCharge, releaseCharge, charging;
     private float weaponCooldownCounter, chargeTime;
@@ -41,7 +37,7 @@ public class ShootingCharacter : MonoBehaviourPun
         {
             initiateCharge = false;
             charging = true;
-            weaponCooldownCounter = weaponCooldown;
+            weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
             chargeTime = 0;
         }
 
@@ -49,18 +45,18 @@ public class ShootingCharacter : MonoBehaviourPun
         if (charging)
         {
             chargeTime += Time.deltaTime;
-            crosshairCtrl.updateChargeState(chargeTime, maxChargeTime);
+            crosshairCtrl.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
         }
 
         // Fire (when player releases button or max charge is reached)
-        if (charging && (releaseCharge || chargeTime >= maxChargeTime))
+        if (charging && (releaseCharge || chargeTime >= UserDefinedConstants.maxChargeTime))
         {
             releaseCharge = false;
             charging = false;
-            Vector3 force = chargeTime * cam.transform.forward * projectileImpulse;
+            Vector3 force = chargeTime * cam.transform.forward * UserDefinedConstants.projectileImpulse;
             Vector3 source = cam.transform.position + cam.transform.forward;
             projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
-            crosshairCtrl.updateChargeState(0, maxChargeTime);
+            crosshairCtrl.updateChargeState(0, UserDefinedConstants.maxChargeTime);
         }
 
         weaponCooldown = Mathf.Max(weaponCooldown, 0);

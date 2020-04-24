@@ -5,9 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class MouseLookController : MonoBehaviour
 {
-    public float lookSpeedX = 10;
-    public float lookSpeedY = 5;
-
     private Rigidbody rb;
     private Camera cam;
 
@@ -25,7 +22,7 @@ public class MouseLookController : MonoBehaviour
         // Rotation
         float rotX = Input.GetAxis("Mouse X");
         float rotY = -Input.GetAxis("Mouse Y");
-        transform.rotation = rb.rotation * Quaternion.Euler(0, lookSpeedX * rotX, 0);
+        transform.rotation = rb.rotation * Quaternion.Euler(0, UserDefinedConstants.lookSpeedX * rotX, 0);
         // The "forward" direction needs to deviate from the natural XZ plane when walking inside
         // the sphere.
         // Project the current forward direction on the plane perpendicular to player's position
@@ -34,7 +31,7 @@ public class MouseLookController : MonoBehaviour
         Vector3 newForward = Vector3.ProjectOnPlane(transform.forward, -transform.position.normalized);
         transform.LookAt(transform.position + newForward, -transform.position);
         // Rotate the camera depending on Y axis input.
-        cam.transform.Rotate(lookSpeedY * rotY, 0, 0);
+        cam.transform.Rotate(UserDefinedConstants.lookSpeedY * rotY, 0, 0);
         // If we look too far up: the camera's "up" direction will form an angle of over 180 degrees with
         // the player's forward direction. We can check this by checking SignedAngle from player's forward
         // to camera's up. If this angle is negative and less than -90 degrees, we leaned too far back.

@@ -9,7 +9,7 @@ public static class GeoPhysics
 
     public static void ApplyGravity(Rigidbody rb)
     {
-        rb.AddForce(rb.mass * gravity * rb.position.normalized);
+        rb.AddForce(rb.mass * gravity * UserDefinedConstants.gravityMultiplier * rb.position.normalized);
     }
 
     /** Returns true if the rigidbody has an object at feet level. Optionally returns the object */
