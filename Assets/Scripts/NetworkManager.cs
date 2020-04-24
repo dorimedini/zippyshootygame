@@ -41,6 +41,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             UserDefinedConstants.nickname = PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
             GUILayout.EndHorizontal();
 
+            UserSettingsManager.ExposeDebugSettings();
+
             if (GUILayout.Button("Multiplayer"))
             {
                 PhotonNetwork.ConnectUsingSettings();
