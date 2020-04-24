@@ -59,6 +59,6 @@ public class ShootingCharacter : MonoBehaviourPun
             crosshairCtrl.updateChargeState(0, UserDefinedConstants.maxChargeTime);
         }
 
-        weaponCooldown = Mathf.Max(weaponCooldown, 0);
+        weaponCooldownCounter = Mathf.Max(weaponCooldownCounter, 0);
     }
 }
