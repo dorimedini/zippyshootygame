@@ -21,11 +21,11 @@
  * < V > Successfully play with 2 people concurrently, have one take damage from the other
  * < V > Smaller player collider
  * < V > Press and hold for more projectile launch power (add dummy GUI indication until weapong animation kicks in)
- * <VX > Fullscreen! (THIS IS JUST AN OPTION IN BUILD-->PLAYER SETTINGS)
+ * < V > Fullscreen! (THIS IS JUST AN OPTION IN BUILD-->PLAYER SETTINGS)
+ * <   > Game parameters: allow users (testers) to control gravity, jump force, look speed, projectile speed, launch height, projectile blast radius
+ * <   > Add option to spawn dummy player
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Health indication
- * <   > Higher jump, lower launch(?)
- * <   > Stronger gravity?
  * <   > Projectile explosion effect - blast radius, explosion force
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))

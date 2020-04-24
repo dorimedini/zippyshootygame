@@ -16,12 +16,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("Username", "NOOBNOOB");
+        UserDefinedConstants.LoadFromPlayerPrefs();
+        PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
     }
 
     void OnDestroy()
     {
-        PlayerPrefs.SetString("Username", PhotonNetwork.LocalPlayer.NickName);
+        UserDefinedConstants.SaveToPlayerPrefs();
     }
 
     public void OnGUI()
@@ -37,7 +38,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Username: ");
-            PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
+            UserDefinedConstants.nickname = PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
             GUILayout.EndHorizontal();
 
             if (GUILayout.Button("Multiplayer"))
