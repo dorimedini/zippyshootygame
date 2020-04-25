@@ -20,6 +20,7 @@ public class PlayerMovementController : MonoBehaviour
     private bool initialJump;
     private bool grounded;
     private float airtimeCooldown;
+    private float rootMotionOffFor;
 
     static int locomotionState = Animator.StringToHash("Base Layer.Locomotion");
     static int jumpStartState = Animator.StringToHash("Base Layer.JumpStart");
@@ -33,7 +34,7 @@ public class PlayerMovementController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         anim.speed = animationSpeed;
         initialJump = jumping = false;
-        airtimeCooldown = 0;
+        airtimeCooldown = rootMotionOffFor = 0;
     }
 
     // Update is called once per frame
@@ -66,6 +67,13 @@ public class PlayerMovementController : MonoBehaviour
             if (jumping && grounded)
                 jumping = false;
         }
+
+        // Should we re-apply root motion?
+        rootMotionOffFor = Mathf.Max(0, rootMotionOffFor - Time.deltaTime);
+        if (!anim.applyRootMotion && grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f))
+        {
+            anim.applyRootMotion = true;
+        }
     }
 
     void FixedUpdate()
@@ -83,8 +91,10 @@ public class PlayerMovementController : MonoBehaviour
             initialJump = false;
         }
         // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
+        // Also, root motion should NOT be applied while airborne!
         if (!grounded)
         {
+            anim.applyRootMotion = false;
             Vector3 speed = rb.rotation * (airMovementSpeed * movement);
             rb.MovePosition(rb.position + Time.deltaTime * speed);
         }
@@ -95,5 +105,11 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 force = -rb.transform.position.normalized;
         force *= UserDefinedConstants.launchForceMultiplier * pillarHeightChange;
         rb.AddForce(force, ForceMode.Impulse);
+    }
+
+    public void DisableRootMotionFor(float duration)
+    {
+        anim.applyRootMotion = false;
+        rootMotionOffFor = duration;
     }
 }

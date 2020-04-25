@@ -12,7 +12,8 @@ public class Projectile : MonoBehaviour
 {
     public static int hitDamage = 15;
 
-    // Projectiles should ignore collision with the shooter player
+    // Projectiles should ignore collision with the shooter player.
+    // This string may be empty if in offline mode, but that's OK we only use this for uniqueness
     public string shooterId;
 
     // Used to destroy all instances of projectile on all clients
@@ -25,6 +26,7 @@ public class Projectile : MonoBehaviour
     PillarExtensionController pillarCtrl;
     DamageController dmgCtrl;
     ProjectileController projectileCtrl;
+    ExplosionController explosionCtrl;
 
     List<int> octoTriangles, hexTriangles, squareTriangles;
 
@@ -79,6 +81,9 @@ public class Projectile : MonoBehaviour
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
+        explosionCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ExplosionController>();
+        if (explosionCtrl == null)
+            Debug.LogError("Got null ExplosionController");
     }
 
     /** Only the shooter's instance of the projectile has a collider */
@@ -101,6 +106,7 @@ public class Projectile : MonoBehaviour
             if (dmgCtrl == null)
                 InitControllers();
             dmgCtrl.BroadcastInflictDamage(shooterId, hitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
+            explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         }
 
         // Did we hit a pillar or a player?
@@ -112,6 +118,7 @@ public class Projectile : MonoBehaviour
             if (pillarCtrl == null)
                 InitControllers();
             pillarCtrl.BroadcastHitPillar(pillar.id);
+            explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         }
 
         // In any case, all collisions destroy the projectile
