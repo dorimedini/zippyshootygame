@@ -109,6 +109,11 @@ public class PlayerMovementController : MonoBehaviour
 
     public void DisableRootMotionFor(float duration)
     {
+        if (anim == null)
+        {
+            Debug.LogWarning("DisableRootMotion() called on character with no active animator!");
+            return;
+        }
         anim.applyRootMotion = false;
         rootMotionOffFor = duration;
     }
