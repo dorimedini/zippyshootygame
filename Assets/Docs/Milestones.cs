@@ -23,7 +23,7 @@
  * < V > Press and hold for more projectile launch power (add dummy GUI indication until weapong animation kicks in)
  * < V > Fullscreen! (THIS IS JUST AN OPTION IN BUILD-->PLAYER SETTINGS)
  * < V > Game parameters: allow users (testers) to control gravity, jump force, look speed, projectile speed, launch height, projectile blast radius
- * <   > Health indication
+ * < V > Health indication
  * <   > Projectile explosion effect - blast radius, explosion force
  * <   > Add option to spawn dummy player
  * <   > Sounds: walk, fire, hit, launch (only self hears)
