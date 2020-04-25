@@ -32,6 +32,8 @@
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
+ * <   > For explosions to work correctly it would be better to put colliders on all projectiles, let each player handle explosion-on-hit (and maybe even momentarily
+ *       stop hit player's transform updates to give an explosion force locally?). As is, projectiles are exploding inside pillars due to delay in Destroy RPC
  * <   > Sun should damage on proximity
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
