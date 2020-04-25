@@ -11,7 +11,10 @@ public static class UserSettingsManager
         UserDefinedConstants.lookSpeedX = GetSetting("Horizontal look speed: ", UserDefinedConstants.lookSpeedX);
         UserDefinedConstants.lookSpeedY = GetSetting("Vertical look speed: ", UserDefinedConstants.lookSpeedY);
         UserDefinedConstants.maxChargeTime = GetSetting("Max weapon charge time: ", UserDefinedConstants.maxChargeTime);
+        UserDefinedConstants.explosionLift = GetSetting("Explosion lift force: ", UserDefinedConstants.explosionLift);
+        UserDefinedConstants.explosionForce = GetSetting("Explosion force: ", UserDefinedConstants.explosionForce);
         UserDefinedConstants.weaponCooldown = GetSetting("Weapon cooldown: ", UserDefinedConstants.weaponCooldown);
+        UserDefinedConstants.explosionRadius = GetSetting("Explosion radius: ", UserDefinedConstants.explosionRadius);
         UserDefinedConstants.projectileImpulse = GetSetting("Max projectile speed: ", UserDefinedConstants.projectileImpulse);
         UserDefinedConstants.gravityMultiplier = GetSetting("Gravity multiplier: ", UserDefinedConstants.gravityMultiplier);
         UserDefinedConstants.minProjectileCharge = GetSetting("Min projectile speed: ", UserDefinedConstants.minProjectileCharge);

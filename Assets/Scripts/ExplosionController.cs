@@ -13,10 +13,7 @@ public class ExplosionController : MonoBehaviourPun
     [PunRPC]
     public void Explosion(Vector3 position, string shooterId)
     {
-        float radius = 15f;
-        float force = 25f;
-        float upforce = 1f;
-        Collider[] colliders = Physics.OverlapSphere(position, radius);
+        Collider[] colliders = Physics.OverlapSphere(position, UserDefinedConstants.explosionRadius);
         foreach (Collider col in colliders)
         {
             // Only affect the local player, provided he's not the shooter.
@@ -27,13 +24,15 @@ public class ExplosionController : MonoBehaviourPun
             {
                 Rigidbody rb = col.GetComponent<Rigidbody>();
                 float dist = (rb.position - position).magnitude;
-                if (dist <= radius)
+                if (dist <= UserDefinedConstants.explosionRadius)
                 {
                     // When player is off the ground, root motion isn't applied. In case player is grounded when explosion hit,
                     // momentarily turn off root motion until player is lifted off the ground.
                     col.GetComponent<PlayerMovementController>().DisableRootMotionFor(0.1f);
                     // Some force from the explosion source, and some "upward" (inward-radial) force. Must be proportional to distance
-                    Vector3 explosionForce = ((rb.position - position).normalized * force + (-rb.position * upforce)) / dist;
+                    Vector3 explosionForce = (  UserDefinedConstants.explosionForce * (rb.position - position).normalized +
+                                                UserDefinedConstants.explosionLift * (-rb.position)
+                                             ) / dist;
                     rb.AddForce(explosionForce, ForceMode.Impulse);
                 }
             }

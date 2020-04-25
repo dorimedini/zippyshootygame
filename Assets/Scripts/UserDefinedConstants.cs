@@ -11,7 +11,10 @@ public static class UserDefinedConstants
     public static float lookSpeedX;
     public static float lookSpeedY;
     public static float maxChargeTime;
+    public static float explosionLift;
+    public static float explosionForce;
     public static float weaponCooldown;
+    public static float explosionRadius;
     public static float projectileImpulse;
     public static float gravityMultiplier;
     public static float minProjectileCharge;
@@ -25,7 +28,10 @@ public static class UserDefinedConstants
         lookSpeedX = PlayerPrefs.GetFloat("lookSpeedX", 10f);
         lookSpeedY = PlayerPrefs.GetFloat("lookSpeedY", 5f);
         maxChargeTime = PlayerPrefs.GetFloat("maxChargeTime", 1f);
+        explosionLift = PlayerPrefs.GetFloat("explosionLift", 1f);
+        explosionForce = PlayerPrefs.GetFloat("explosionForce", 25f);
         weaponCooldown = PlayerPrefs.GetFloat("weaponCooldown", 1f);
+        explosionRadius = PlayerPrefs.GetFloat("explosionRadius", 15f);
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
         minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
@@ -40,7 +46,10 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("lookSpeedX", lookSpeedX);
         PlayerPrefs.SetFloat("lookSpeedY", lookSpeedY);
         PlayerPrefs.SetFloat("maxChargeTime", maxChargeTime);
+        PlayerPrefs.SetFloat("explosionLift", explosionLift);
+        PlayerPrefs.SetFloat("explosionForce", explosionForce);
         PlayerPrefs.SetFloat("weaponCooldown", weaponCooldown);
+        PlayerPrefs.SetFloat("explosionRadius", explosionRadius);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
