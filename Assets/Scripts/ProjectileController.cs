@@ -57,8 +57,9 @@ public class ProjectileController : MonoBehaviourPun
     [PunRPC]
     void DestroyProjectile(string projectileId)
     {
-        Instantiate(explosionPrefab, activeProjectiles[projectileId].transform.position, activeProjectiles[projectileId].transform.rotation);
+        var explosion = Instantiate(explosionPrefab, activeProjectiles[projectileId].transform.position, activeProjectiles[projectileId].transform.rotation);
         Destroy(activeProjectiles[projectileId]);
         activeProjectiles.Remove(projectileId);
+        Destroy(explosion, 3f);
     }
 }
