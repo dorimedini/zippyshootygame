@@ -37,7 +37,7 @@ public class ShootingCharacter : MonoBehaviourPun
             initiateCharge = false;
             charging = true;
             weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
-            chargeTime = 0;
+            chargeTime = UserDefinedConstants.minProjectileCharge;
         }
 
         // Update weapon charge (if charging) and GUI

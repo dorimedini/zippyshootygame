@@ -14,6 +14,7 @@ public static class UserDefinedConstants
     public static float weaponCooldown;
     public static float projectileImpulse;
     public static float gravityMultiplier;
+    public static float minProjectileCharge;
     public static float launchForceMultiplier;
 
     public static void LoadFromPlayerPrefs()
@@ -27,6 +28,7 @@ public static class UserDefinedConstants
         weaponCooldown = PlayerPrefs.GetFloat("weaponCooldown", 1f);
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
+        minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
         launchForceMultiplier = PlayerPrefs.GetFloat("launchForceMultiplier", 4f);
     }
 
@@ -41,6 +43,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("weaponCooldown", weaponCooldown);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
+        PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
     }
 }
