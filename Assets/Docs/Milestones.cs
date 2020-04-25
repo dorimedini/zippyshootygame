@@ -26,6 +26,7 @@
  * < V > Health indication
  * <   > Projectile explosion effect - blast radius, explosion force
  * < ? > Die, respawn
+ * <   > Fix IsGrounded to use RaycastAll so we don't get annoying errors for finding a projectile / other player under us
  * <   > Movement mechanic - grapple to floor (simple raycast and acceleration until either a. speed goes down (collision) or b. we get close enough)
  * <   > Sounds: walk, fire, hit, launch (only self hears)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
