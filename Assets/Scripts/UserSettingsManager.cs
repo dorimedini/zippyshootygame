@@ -6,6 +6,7 @@ public static class UserSettingsManager
 {
     public static void ExposeDebugSettings()
     {
+        UserDefinedConstants.maxHealth = GetSetting("Max health: ", UserDefinedConstants.maxHealth);
         UserDefinedConstants.jumpSpeed = GetSetting("Jump speed: ", UserDefinedConstants.jumpSpeed);
         UserDefinedConstants.lookSpeedX = GetSetting("Horizontal look speed: ", UserDefinedConstants.lookSpeedX);
         UserDefinedConstants.lookSpeedY = GetSetting("Vertical look speed: ", UserDefinedConstants.lookSpeedY);
