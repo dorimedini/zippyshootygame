@@ -5,16 +5,15 @@ using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
-    public static int maxHealth = 100;
     public HealthBar bar;
     public Image redOverlay;
 
-    private int currentHealth;
+    private float currentHealth;
 
     void Start()
     {
-        currentHealth = maxHealth;
-        bar.SetMaxHealth(maxHealth);
+        currentHealth = UserDefinedConstants.maxHealth;
+        bar.SetMaxHealth(UserDefinedConstants.maxHealth);
         bar.HealToMax();
     }
 

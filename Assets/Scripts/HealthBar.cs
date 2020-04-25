@@ -8,7 +8,7 @@ public class HealthBar : MonoBehaviour
     public Image greenBar;
     public Image reductionBar;
 
-    private int maxHealth;
+    private float maxHealth;
     private float currentHealth, prevCurrentHealth;
     private float waitToReduce, initialWaitToReduce;
 
@@ -39,7 +39,7 @@ public class HealthBar : MonoBehaviour
         }
     }
 
-    public void SetMaxHealth(int mh) { maxHealth = mh; }
+    public void SetMaxHealth(float mh) { maxHealth = mh; }
 
     public void HealToMax()
     {
