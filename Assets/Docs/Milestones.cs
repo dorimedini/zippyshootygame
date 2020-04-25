@@ -26,6 +26,7 @@
  * <   > Health indication
  * <   > Projectile explosion effect - blast radius, explosion force
  * <   > Add option to spawn dummy player
+ * <   > Sounds: walk, fire, hit, launch (only self hears)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
