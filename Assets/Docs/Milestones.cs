@@ -25,7 +25,8 @@
  * < V > Game parameters: allow users (testers) to control gravity, jump force, look speed, projectile speed, launch height, projectile blast radius
  * < V > Health indication
  * <   > Projectile explosion effect - blast radius, explosion force
- * <   > Add option to spawn dummy player
+ * < ? > Die, respawn
+ * <   > Movement mechanic - grapple to floor (simple raycast and acceleration until either a. speed goes down (collision) or b. we get close enough)
  * <   > Sounds: walk, fire, hit, launch (only self hears)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
@@ -40,7 +41,6 @@
  *?<   > Better projectile model...?
  * <   > Texture the projectile
  * <   > Particle effects for projectile in air and on hit
- *?<   > Movement mechanic - grapple on pillar edge and launch? Grapple to the floor of something?
  * <   > Get non-temporary player models / animations
  * -------   > Add roll on land?
  * <   > Non-temporary weapon models
