@@ -837,8 +837,9 @@ GameObject:
   - component: {fileID: 4689910694189898746}
   - component: {fileID: 8277435731306499787}
   - component: {fileID: 8186030447744285648}
+  - component: {fileID: 1475710648346359874}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -900,6 +901,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1475710648346359874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8562437454230679550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641178836e5ce2e4dae9e2ebaed0e8f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9108460948245356737
 GameObject:
   m_ObjectHideFlags: 0
