@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviourPun
 {
     public HealthBar bar;
     public Image redOverlay;
@@ -41,6 +42,14 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        // TODO:
+        if (photonView.InstantiationId == 0)
+        {
+            // Local offline player
+            Destroy(gameObject);
+        }
+        else if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 }
