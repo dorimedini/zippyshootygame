@@ -5,19 +5,17 @@ using Photon.Pun;
 
 public class ShootingCharacter : MonoBehaviourPun
 {
+    public CrosshairGUIController crosshairCtrl;
+
     private Camera cam;
     private bool initiateCharge, releaseCharge, charging;
     private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
-    private CrosshairGUIController crosshairCtrl;
 
     // Start is called before the first frame update
     void Start()
     {
         charging = false;
-        crosshairCtrl = GetComponentInChildren<CrosshairGUIController>();
-        if (crosshairCtrl == null)
-            Debug.LogError("Got null CrosshairGUIController");
         cam = gameObject.GetComponentInChildren<Camera>();
         if (cam == null)
             Debug.LogError("No camera on shooting character!");
