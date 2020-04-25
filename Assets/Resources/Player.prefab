@@ -162,7 +162,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30c666b034006b4cbec75e7558fcc05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationSpeed: 2
   airMovementSpeed: 5
   minimalAirtime: 0.5
 --- !u!114 &1004506717127072884

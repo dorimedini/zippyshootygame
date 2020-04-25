@@ -6,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerMovementController : MonoBehaviour
 {
-    public float animationSpeed = 2;
     public float airMovementSpeed = 5;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
 
@@ -32,7 +31,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        anim.speed = animationSpeed;
+        anim.speed = 2 * UserDefinedConstants.movementSpeed;
         initialJump = jumping = false;
         airtimeCooldown = rootMotionOffFor = 0;
     }
