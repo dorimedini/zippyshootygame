@@ -8,6 +8,7 @@ public class ProjectileController : MonoBehaviourPun
     public static int projectileIdLength = 10;
 
     public GameObject projectilePrefab;
+    public GameObject explosionPrefab;
 
     private Dictionary<string, GameObject> activeProjectiles;
 
@@ -56,6 +57,7 @@ public class ProjectileController : MonoBehaviourPun
     [PunRPC]
     void DestroyProjectile(string projectileId)
     {
+        Instantiate(explosionPrefab, activeProjectiles[projectileId].transform.position, activeProjectiles[projectileId].transform.rotation);
         Destroy(activeProjectiles[projectileId]);
         activeProjectiles.Remove(projectileId);
     }
