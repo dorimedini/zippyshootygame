@@ -24,7 +24,7 @@
  * < V > Fullscreen! (THIS IS JUST AN OPTION IN BUILD-->PLAYER SETTINGS)
  * < V > Game parameters: allow users (testers) to control gravity, jump force, look speed, projectile speed, launch height, projectile blast radius
  * < V > Health indication
- * <   > Projectile explosion effect - blast radius, explosion force
+ * < V > Projectile explosion effect - blast radius, explosion force
  * < ? > Die, respawn
  * <   > Fix IsGrounded to use RaycastAll so we don't get annoying errors for finding a projectile / other player under us
  * <   > Movement mechanic - grapple to floor (simple raycast and acceleration until either a. speed goes down (collision) or b. we get close enough)
