@@ -4,16 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
+[RequireComponent(typeof(NetworkCharacter))]
 public class Health : MonoBehaviourPun
 {
     public HealthBar bar;
     public Image redOverlay;
+    public GameObject playerRagdoll;
 
     private float currentHealth;
+    private SpawnManager spawnMngr;
 
     void Start()
     {
         currentHealth = UserDefinedConstants.maxHealth;
+        spawnMngr = GameObject.Find("_SCRIPTS").GetComponent<SpawnManager>();
+        if (spawnMngr == null)
+            Debug.LogError("No spawn manager found!");
         bar.SetMaxHealth(UserDefinedConstants.maxHealth);
         bar.HealToMax();
     }
@@ -36,20 +42,13 @@ public class Health : MonoBehaviourPun
         currentHealth -= damage;
         bar.TakeDamage(damage);
         redOverlay.color = new Color(redOverlay.color.r, redOverlay.color.g, redOverlay.color.b, 0.5f);
-        if (currentHealth <= 0)
-            Die();
+        // All clients need to update health, but only the player owner should initiate death sequence
+        if (currentHealth <= 0 && photonView.IsMine)
+            DieAndRespawn();
     }
 
-    void Die()
+    void DieAndRespawn()
     {
-        if (photonView.InstantiationId == 0)
-        {
-            // Local offline player
-            Destroy(gameObject);
-        }
-        else if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.Destroy(gameObject);
-        }
+        spawnMngr.KillAndRespawn(gameObject);
     }
 }

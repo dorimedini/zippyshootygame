@@ -6,6 +6,7 @@ public static class UserDefinedConstants
 {
     public static string nickname;
 
+    public static float spawnTime;
     public static float maxHealth;
     public static float jumpSpeed;
     public static float lookSpeedX;
@@ -24,6 +25,7 @@ public static class UserDefinedConstants
     public static void LoadFromPlayerPrefs()
     {
         nickname = PlayerPrefs.GetString("nickname", "NOOBNOOB");
+        spawnTime = PlayerPrefs.GetFloat("spawnTime", 5f);
         maxHealth = PlayerPrefs.GetFloat("maxHealth", 100f);
         jumpSpeed = PlayerPrefs.GetFloat("jumpSpeed", 8f);
         lookSpeedX = PlayerPrefs.GetFloat("lookSpeedX", 10f);
@@ -43,6 +45,7 @@ public static class UserDefinedConstants
     public static void SaveToPlayerPrefs()
     {
         PlayerPrefs.SetString("nickname", nickname);
+        PlayerPrefs.SetFloat("spawnTime", spawnTime);
         PlayerPrefs.SetFloat("maxHealth", maxHealth);
         PlayerPrefs.SetFloat("jumpSpeed", jumpSpeed);
         PlayerPrefs.SetFloat("lookSpeedX", lookSpeedX);

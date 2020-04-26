@@ -6,8 +6,13 @@ using Photon.Pun;
 
 public class SpawnManager : MonoBehaviour
 {
-    GeoSphereGenerator gsg = null;
+    public GameObject spawnCam;
+    public GeoSphereGenerator gsg;
+    public RagdollController ragdollCtrl;
+
     List<PillarBehaviour> pillars = null;
+    private float respawnTime;
+    private bool ragdollActive;
 
     // How far above ground do players spawn (in addition to the offset caused by initialHeight)
     public float spawnHeight;
@@ -17,11 +22,19 @@ public class SpawnManager : MonoBehaviour
         InitLocalVariables();
     }
 
+    void Update()
+    {
+        respawnTime = Mathf.Max(0, respawnTime - Time.deltaTime);
+        if (ragdollActive && Tools.NearlyEqual(respawnTime, 0, 0.01f))
+        {
+            ragdollActive = false;
+            SpawnMyself();
+            SetSpawnCameraActiveState(false);
+        }
+    }
+
     void InitLocalVariables()
     {
-        gsg = GameObject.Find("GeoSphere").GetComponent<GeoSphereGenerator>();
-        if (gsg == null)
-            Debug.LogError("Got null GeoSphereGenerator");
         pillars = gsg.GetPillars();
     }
 
@@ -45,6 +58,24 @@ public class SpawnManager : MonoBehaviour
         return spawns;
     }
 
+    public void KillAndRespawn(GameObject player)
+    {
+        if (player.transform.GetComponent<PhotonView>().InstantiationId == 0)
+        {
+            // Local offline player
+            Destroy(player);
+        }
+        else
+        {
+            // Ragdoll is basically graphics, have every player instantiate it locally. Desync in location of the ragdoll is acceptable.
+            ragdollCtrl.BroadcastRagdoll(player.transform.position, player.transform.rotation, UserDefinedConstants.spawnTime);
+            ragdollActive = true;
+            respawnTime = UserDefinedConstants.spawnTime;
+            SetSpawnCameraActiveState(true);
+            PhotonNetwork.Destroy(player);
+        }
+    }
+
     public GameObject SpawnMyself()
     {
         var spawnPoints = PlayerSpawnPoints();
@@ -64,5 +95,10 @@ public class SpawnManager : MonoBehaviour
         player.transform.Find("UI").gameObject.SetActive(true);
         player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         return player;
+    }
+
+    private void SetSpawnCameraActiveState(bool active)
+    {
+        spawnCam.SetActive(active);
     }
 }

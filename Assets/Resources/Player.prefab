@@ -190,6 +190,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 4963612859731630141}
   redOverlay: {fileID: 4963612859731630143}
+  playerRagdoll: {fileID: 4317719112586419975, guid: e2baed11b1fbf194bb79bdd8457bb565,
+    type: 3}
 --- !u!114 &2778773803360608355
 MonoBehaviour:
   m_ObjectHideFlags: 0
