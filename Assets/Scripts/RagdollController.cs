@@ -5,11 +5,16 @@ using Photon.Pun;
 
 public class RagdollController : MonoBehaviourPun
 {
-    public GameObject ragdoll;
+    public static GameObject ragdoll;
+
+    void Awake()
+    {
+        ragdoll = Resources.Load("PlayerRagdoll") as GameObject;
+    }
 
     public void BroadcastRagdoll(Vector3 position, Quaternion rotation, float timeout)
     {
-        photonView.RPC("Ragdoll", RpcTarget.All, position, rotation, timeout);
+        photonView.RPC("Ragdoll", RpcTarget.Others, position, rotation, timeout);
     }
 
     [PunRPC]

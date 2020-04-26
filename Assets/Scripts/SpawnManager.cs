@@ -13,6 +13,7 @@ public class SpawnManager : MonoBehaviour
     List<PillarBehaviour> pillars = null;
     private float respawnTime;
     private bool ragdollActive;
+    private GameObject activeRagdoll;
 
     // How far above ground do players spawn (in addition to the offset caused by initialHeight)
     public float spawnHeight;
@@ -25,11 +26,15 @@ public class SpawnManager : MonoBehaviour
     void Update()
     {
         respawnTime = Mathf.Max(0, respawnTime - Time.deltaTime);
-        if (ragdollActive && Tools.NearlyEqual(respawnTime, 0, 0.01f))
+        if (ragdollActive)
         {
-            ragdollActive = false;
-            SpawnMyself();
-            SetSpawnCameraActiveState(false);
+            spawnCam.transform.LookAt(activeRagdoll.transform.position);
+            if (Tools.NearlyEqual(respawnTime, 0, 0.01f))
+            {
+                ragdollActive = false;
+                SpawnMyself();
+                DisableSpawnCamera();
+            }
         }
     }
 
@@ -68,10 +73,13 @@ public class SpawnManager : MonoBehaviour
         else
         {
             // Ragdoll is basically graphics, have every player instantiate it locally. Desync in location of the ragdoll is acceptable.
+            // We spawn our own ragdoll though, so we can tell the spawn camera to follow the ragdoll
             ragdollCtrl.BroadcastRagdoll(player.transform.position, player.transform.rotation, UserDefinedConstants.spawnTime);
+            activeRagdoll = Instantiate(RagdollController.ragdoll, player.transform.position, player.transform.rotation);
+            Destroy(activeRagdoll, UserDefinedConstants.spawnTime + 0.2f); // Give some legroom so the spawn camera can access position of ragdoll while waiting to spawn
             ragdollActive = true;
             respawnTime = UserDefinedConstants.spawnTime;
-            SetSpawnCameraActiveState(true);
+            ActivateSpawnCam(activeRagdoll);
             PhotonNetwork.Destroy(player);
         }
     }
@@ -97,8 +105,11 @@ public class SpawnManager : MonoBehaviour
         return player;
     }
 
-    private void SetSpawnCameraActiveState(bool active)
+    private void ActivateSpawnCam(GameObject follow)
     {
-        spawnCam.SetActive(active);
+        spawnCam.SetActive(true);
+        spawnCam.transform.LookAt(follow.transform.position);
     }
+
+    private void DisableSpawnCamera() { spawnCam.SetActive(false); }
 }
