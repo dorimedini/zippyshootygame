@@ -235,13 +235,7 @@ public class PlayerMovementController : MonoBehaviour
     }
     void FixedUpdateGrappleRampup()
     {
-        /*
-        // If we're past the halfway of rampup, accelerate towards target speed.
-        if (grappleRampupCountdown < UserDefinedConstants.grappleRampupTime / 2)
-        {
-            AccelerateTowardsGrappleTarget();
-        }
-        */
+        RotateFlightGraphic();
         AccelerateTowardsGrappleTarget();
     }
     void FixedUpdateGrappling()
@@ -258,6 +252,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
+            RotateFlightGraphic();
             AccelerateTowardsGrappleTarget();
         }
     }
@@ -318,5 +313,10 @@ public class PlayerMovementController : MonoBehaviour
     bool InGrappleSequence()
     {
         return grappleRampup || grappling || initialGrapple;
+    }
+    void RotateFlightGraphic()
+    {
+        // TODO: When animation is in place, rotate graphic to face target here. This should be done manually since the headTowardsOrigin
+        // TODO: component may be lerping our rotation
     }
 }
