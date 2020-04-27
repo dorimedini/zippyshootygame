@@ -290,6 +290,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 8945275936811725004}
+--- !u!114 &7529408703907135849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148042477976559911}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e90603284c31424aac0da65fc136dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &1538462655
 Animator:
   serializedVersion: 3

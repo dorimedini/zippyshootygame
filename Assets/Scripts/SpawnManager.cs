@@ -100,6 +100,7 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<GravityAffected>().enabled = true;
         player.GetComponentInChildren<ShootingCharacter>().enabled = true;
         player.GetComponentInChildren<CrosshairGUIController>().enabled = true;
+        player.GetComponentInChildren<HeadTowardsOrigin>().enabled = true;
         player.transform.Find("UI").gameObject.SetActive(true);
         player.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;   // First-person doesn't see own body
         return player;

@@ -15,13 +15,6 @@ public class MouseLookController : MonoBehaviour
         float rotX = Input.GetAxis("Mouse X");
         float rotY = -Input.GetAxis("Mouse Y");
         transform.rotation = rb.rotation * Quaternion.Euler(0, UserDefinedConstants.lookSpeedX * rotX, 0);
-        // The "forward" direction needs to deviate from the natural XZ plane when walking inside
-        // the sphere.
-        // Project the current forward direction on the plane perpendicular to player's position
-        // and call LookAt to orientate the player so his head is towards the origin.
-        // LookAt needs a target to look at, and the "up" direction.
-        Vector3 newForward = Vector3.ProjectOnPlane(transform.forward, -transform.position.normalized);
-        transform.LookAt(transform.position + newForward, -transform.position);
         // Rotate the camera depending on Y axis input.
         cam.transform.Rotate(UserDefinedConstants.lookSpeedY * rotY, 0, 0);
         // If we look too far up: the camera's "up" direction will form an angle of over 180 degrees with
