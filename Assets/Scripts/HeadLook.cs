@@ -2,20 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Animator))]
 public class HeadLook : MonoBehaviour
 {
-    Animator anim;
-    Camera cam;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        anim = GetComponent<Animator>();
-        cam = GetComponentInChildren<Camera>();
-        if (cam == null)
-            Debug.LogError("HeadLook requires camera to function properly");
-    }
+    public Animator anim;
+    public Camera cam;
 
     void OnAnimatorIK(int layer)
     {

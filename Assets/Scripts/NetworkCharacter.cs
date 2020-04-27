@@ -6,18 +6,12 @@ using Photon.Pun;
 [RequireComponent(typeof(Animator))]
 public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiateMagicCallback
 {
-    Animator anim;
+    public Animator anim;
 
     Vector3 realPosition;
     Quaternion realRotation;
     float realFwdBack, realLeftRight, realDistFromGround;
     bool isInAir;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        anim = GetComponent<Animator>();
-    }
 
     // Update is called once per frame
     void FixedUpdate()

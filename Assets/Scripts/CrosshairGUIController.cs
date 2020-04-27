@@ -5,15 +5,11 @@ using UnityEngine.UI;
 
 public class CrosshairGUIController : MonoBehaviour
 {
-    private List<Image> images;
+    public List<Image> images;
 
     // Start is called before the first frame update
     void Start()
     {
-        images = new List<Image>();
-        var imageMarkers = GetComponentsInChildren<CrosshairImageState>();
-        foreach (var marker in imageMarkers)
-            images.Add(marker.GetComponent<Image>());
         // Disable all but the idle image
         for (int i = 1; i < images.Count; ++i)
             images[i].enabled = false;

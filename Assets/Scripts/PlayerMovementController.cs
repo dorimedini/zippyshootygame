@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour
 {
     public float airMovementSpeed = 5;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
+    public Camera cam;
+    public Animator anim;
+    public Rigidbody rb;
 
-    private Animator anim;
-    private Rigidbody rb;
     private float fwdBack;
     private float leftRight;
     private Vector3 movement;
@@ -29,8 +31,6 @@ public class PlayerMovementController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
         anim.speed = 2 * UserDefinedConstants.movementSpeed;
         initialJump = jumping = false;
         airtimeCooldown = rootMotionOffFor = 0;

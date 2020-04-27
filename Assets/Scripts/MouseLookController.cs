@@ -2,20 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Rigidbody))]
 public class MouseLookController : MonoBehaviour
 {
-    private Rigidbody rb;
-    private Camera cam;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        cam = GetComponentInChildren<Camera>();
-        if (cam == null)
-            Debug.LogError("No camera found in the children of GameObject with MouseLook!");
-    }
+    public Camera cam;
+    public Rigidbody rb;
 
     void Update()
     {

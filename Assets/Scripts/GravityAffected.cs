@@ -5,13 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class GravityAffected : MonoBehaviour
 {
-    private Rigidbody rb;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    public Rigidbody rb;
 
     // Update is called once per frame
     void FixedUpdate()

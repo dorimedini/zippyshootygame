@@ -94,7 +94,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 0
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8156870392999314590, guid: ec915c816559af1428573a966c6011f7, type: 3}
@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shooterId: 0
+  projectileId: 
 --- !u!114 &273932345894738322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e550dacd585cd4db3e564797679ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 8071147925390502189}
 --- !u!114 &7152891525226011693
 MonoBehaviour:
   m_ObjectHideFlags: 0

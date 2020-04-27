@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(CrosshairGUIController))]
+[RequireComponent(typeof(Camera))]
 public class ShootingCharacter : MonoBehaviourPun
 {
     public CrosshairGUIController crosshairCtrl;
+    public Camera cam;
 
-    private Camera cam;
     private bool initiateCharge, releaseCharge, charging;
     private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
@@ -16,9 +18,6 @@ public class ShootingCharacter : MonoBehaviourPun
     void Start()
     {
         charging = false;
-        cam = gameObject.GetComponentInChildren<Camera>();
-        if (cam == null)
-            Debug.LogError("No camera on shooting character!");
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
