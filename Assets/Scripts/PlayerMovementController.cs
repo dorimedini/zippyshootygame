@@ -82,7 +82,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         // Should we re-apply root motion?
         rootMotionOffFor = Mathf.Max(0, rootMotionOffFor - Time.deltaTime);
-        if (!anim.applyRootMotion && grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f))
+        if (grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f))
         {
             anim.applyRootMotion = true;
         }
