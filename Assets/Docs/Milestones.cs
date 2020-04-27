@@ -31,6 +31,7 @@
  * <   > For explosions to work correctly it would be better to put colliders on all projectiles, let each player handle explosion-on-hit (and maybe even momentarily
  *       stop hit player's transform updates to give an explosion force locally?). As is, projectiles are exploding inside pillars due to delay in Destroy RPC
  * <   > Show respawn timer while waiting
+ * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Sounds: walk, fire, hit, launch (only self hears)
  * <   > Message box (for game alerts, and later for chat)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
