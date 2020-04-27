@@ -34,7 +34,7 @@ public static class GeoPhysics
         // Find the highest pillar cllider under the player and return the distance from it
         hitPillar = null;
         float highestHit = -1;
-        var hits = Physics.RaycastAll(player.transform.position + player.transform.up, -player.transform.up);
+        var hits = Physics.RaycastAll(player.transform.position + player.transform.up, -player.transform.up, 2 * radius, 1 << LayerMask.NameToLayer("Environment"));
         if (hits.Length == 0)
         {
             Debug.LogError("Nothing under player!");

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2193239297206704404}
   - component: {fileID: 6099643678106168601}
   - component: {fileID: 4641963789677909528}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InvertableSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}

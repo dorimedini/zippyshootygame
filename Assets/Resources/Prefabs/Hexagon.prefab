@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8495643820519857344}
   - component: {fileID: 6247723409162451366}
   - component: {fileID: 1439390701454146321}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hexagon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2534964839176971238, guid: 6f55aa25812817f4496a1aad3e8d005f, type: 3}
@@ -107,13 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f76a0933ecb4ce4c89f897c60034496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 0}
   currentHeight: 5
   edge: 10
   radius: 100
   collisionExpansion: 0
   id: 0
-  textureHeight: 0
   mesh: {fileID: 0}
   collMesh: {fileID: 0}
   needRedraw: 0

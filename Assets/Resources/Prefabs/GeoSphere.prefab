@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6013923678964798075}
   - component: {fileID: 7048408702947457516}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GeoSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}

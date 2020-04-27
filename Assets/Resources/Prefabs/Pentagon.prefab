@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5369946896232451872}
   - component: {fileID: -2511318881363458649}
   - component: {fileID: -8521852579269410404}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pentagon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2534964839176971238, guid: 4e42dea7dfff6104abfb06d3529cb229, type: 3}
