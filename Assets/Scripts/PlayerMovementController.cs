@@ -42,14 +42,23 @@ public class PlayerMovementController : MonoBehaviour
         fwdBack = Input.GetAxis("Vertical");
         leftRight = Input.GetAxis("Horizontal");
         grounded = GeoPhysics.IsPlayerGrounded(rb);
+        distFromGround = GeoPhysics.DistanceFromGround(rb);
 
+        UpdateMove();
+        UpdateJump();
+        UpdateLand();
+        UpdateApplyRootMotion();
+    }
+
+    void UpdateMove()
+    {
         // Movement speed capped at 1
         movement = new Vector3(leftRight, 0, fwdBack);
         if (movement.magnitude > 1f)
             movement = movement.normalized;
-
-        distFromGround = GeoPhysics.DistanceFromGround(rb);
-
+    }
+    void UpdateJump()
+    {
         // Handle jumping
         if (!jumping && Input.GetButton("Jump") && grounded)
         {
@@ -57,7 +66,9 @@ public class PlayerMovementController : MonoBehaviour
             initialJump = true;
             jumping = true;
         }
-
+    }
+    void UpdateLand()
+    {
         // Should we land?
         airtimeCooldown -= Time.deltaTime;
         if (airtimeCooldown < 0)
@@ -66,7 +77,9 @@ public class PlayerMovementController : MonoBehaviour
             if (jumping && grounded)
                 jumping = false;
         }
-
+    }
+    void UpdateApplyRootMotion()
+    {
         // Should we re-apply root motion?
         rootMotionOffFor = Mathf.Max(0, rootMotionOffFor - Time.deltaTime);
         if (!anim.applyRootMotion && grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f))
@@ -83,20 +96,29 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
         currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
 
-        // Give the initial burst of speed, and allow some XZ movement while in the air
         if (initialJump)
         {
-            rb.velocity += UserDefinedConstants.jumpSpeed * transform.up;
-            initialJump = false;
+            FixedUpdateInitialJump();
         }
-        // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
-        // Also, root motion should NOT be applied while airborne!
         if (!grounded)
         {
-            anim.applyRootMotion = false;
-            Vector3 speed = rb.rotation * (airMovementSpeed * movement);
-            rb.MovePosition(rb.position + Time.deltaTime * speed);
+            FixedUpdateHandleAirborneMovement();
         }
+    }
+
+    void FixedUpdateInitialJump()
+    {
+        // Give the initial burst of speed, and allow some XZ movement while in the air
+        rb.velocity += UserDefinedConstants.jumpSpeed * transform.up;
+        initialJump = false;
+    }
+    void FixedUpdateHandleAirborneMovement()
+    {
+        // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
+        // Also, root motion should NOT be applied while airborne!
+        anim.applyRootMotion = false;
+        Vector3 speed = rb.rotation * (airMovementSpeed * movement);
+        rb.MovePosition(rb.position + Time.deltaTime * speed);
     }
 
     public void LaunchFromPillar(int pillarId, float pillarHeightChange)
