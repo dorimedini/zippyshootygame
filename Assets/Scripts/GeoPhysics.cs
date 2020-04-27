@@ -32,7 +32,6 @@ public static class GeoPhysics
     public static float DistanceFromGround(Rigidbody player, out PillarBehaviour hitPillar)
     {
         // Find the highest pillar cllider under the player and return the distance from it
-        RaycastHit rHit;
         hitPillar = null;
         float highestHit = -1;
         var hits = Physics.RaycastAll(player.transform.position + player.transform.up, -player.transform.up);
