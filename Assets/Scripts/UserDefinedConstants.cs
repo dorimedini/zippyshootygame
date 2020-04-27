@@ -19,6 +19,7 @@ public static class UserDefinedConstants
     public static float explosionRadius;
     public static float projectileImpulse;
     public static float gravityMultiplier;
+    public static float maxGrappleDistance;
     public static float minProjectileCharge;
     public static float launchForceMultiplier;
 
@@ -38,6 +39,7 @@ public static class UserDefinedConstants
         explosionRadius = PlayerPrefs.GetFloat("explosionRadius", 15f);
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
+        maxGrappleDistance = PlayerPrefs.GetFloat("maxGrappleDistance", 50f);
         minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
         launchForceMultiplier = PlayerPrefs.GetFloat("launchForceMultiplier", 4f);
     }
@@ -58,6 +60,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("explosionRadius", explosionRadius);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
+        PlayerPrefs.SetFloat("maxGrappleDistance", maxGrappleDistance);
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
     }
