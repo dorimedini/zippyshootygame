@@ -11,6 +11,7 @@ public static class UserSettingsManager
         UserDefinedConstants.jumpSpeed = GetSetting("Jump speed: ", UserDefinedConstants.jumpSpeed);
         UserDefinedConstants.lookSpeedX = GetSetting("Horizontal look speed: ", UserDefinedConstants.lookSpeedX);
         UserDefinedConstants.lookSpeedY = GetSetting("Vertical look speed: ", UserDefinedConstants.lookSpeedY);
+        UserDefinedConstants.grappleSpeed = GetSetting("Grapple fly speed: ", UserDefinedConstants.grappleSpeed);
         UserDefinedConstants.movementSpeed = GetSetting("Movement speed multiplier: ", UserDefinedConstants.movementSpeed);
         UserDefinedConstants.maxChargeTime = GetSetting("Max weapon charge time: ", UserDefinedConstants.maxChargeTime);
         UserDefinedConstants.explosionLift = GetSetting("Explosion lift force: ", UserDefinedConstants.explosionLift);
@@ -19,6 +20,7 @@ public static class UserSettingsManager
         UserDefinedConstants.explosionRadius = GetSetting("Explosion radius: ", UserDefinedConstants.explosionRadius);
         UserDefinedConstants.projectileImpulse = GetSetting("Max projectile speed: ", UserDefinedConstants.projectileImpulse);
         UserDefinedConstants.gravityMultiplier = GetSetting("Gravity multiplier: ", UserDefinedConstants.gravityMultiplier);
+        UserDefinedConstants.grappleRampupTime = GetSetting("Grapple ramp-up time: ", UserDefinedConstants.grappleRampupTime);
         UserDefinedConstants.maxGrappleDistance = GetSetting("Grapple distance: ", UserDefinedConstants.maxGrappleDistance);
         UserDefinedConstants.minProjectileCharge = GetSetting("Min projectile speed: ", UserDefinedConstants.minProjectileCharge);
         UserDefinedConstants.launchForceMultiplier = GetSetting("Pillar launch force: ", UserDefinedConstants.launchForceMultiplier);

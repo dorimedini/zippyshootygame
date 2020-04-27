@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(HeadTowardsOrigin))]
 public class PlayerMovementController : MonoBehaviour
 {
     public float airMovementSpeed = 5;
@@ -12,6 +13,8 @@ public class PlayerMovementController : MonoBehaviour
     public Camera cam;
     public Animator anim;
     public Rigidbody rb;
+    public HeadTowardsOrigin headTowardsOrigin;
+    public NetworkCharacter networkCharacter;
 
     private float fwdBack;
     private float leftRight;
@@ -22,8 +25,11 @@ public class PlayerMovementController : MonoBehaviour
     private bool grounded;
     private bool grappling;
     private bool initialGrapple;
+    private bool grappleRampup;
     private Vector3 grapplePoint;
     private GameObject grappleObject;
+    private float grappleRampupCountdown;
+    private Vector3 grappleCameraPullback, originalCamLocalPos;
     private float airtimeCooldown;
     private float rootMotionOffFor;
 
@@ -36,8 +42,10 @@ public class PlayerMovementController : MonoBehaviour
     void Start()
     {
         anim.speed = 2 * UserDefinedConstants.movementSpeed;
-        initialGrapple = grappling = initialJump = jumping = false;
+        grappleRampup = initialGrapple = grappling = initialJump = jumping = false;
         airtimeCooldown = rootMotionOffFor = 0;
+        originalCamLocalPos = cam.transform.localPosition;
+        grappleCameraPullback = originalCamLocalPos + new Vector3(0, 0, -0.3f);
     }
 
     // Update is called once per frame
@@ -50,6 +58,7 @@ public class PlayerMovementController : MonoBehaviour
 
         UpdateMove();
         UpdateGrapple();
+        UpdateCancelGrapple();
         UpdateJump();
         UpdateLand();
         UpdateApplyRootMotion();
@@ -72,6 +81,12 @@ public class PlayerMovementController : MonoBehaviour
             jumping = true;
         }
     }
+    void UpdateCancelGrapple()
+    {
+        // Cancel grapple on jump, even if not grounded
+        if (Input.GetButtonDown("Jump"))
+            CancelGrapple();
+    }
     void UpdateGrapple()
     {
         // Player should be able to grapple at any time, even while grappling.
@@ -84,8 +99,37 @@ public class PlayerMovementController : MonoBehaviour
             if (Physics.Raycast(ray, out hit, UserDefinedConstants.maxGrappleDistance, 1 << LayerMask.NameToLayer("Environment")))
             {
                 initialGrapple = true;
+                headTowardsOrigin.enabled = false;
+                grappleRampupCountdown = UserDefinedConstants.grappleRampupTime;
                 grapplePoint = hit.point;
                 grappleObject = hit.collider.gameObject;
+            }
+        }
+
+        // Only actual updates happen during rampup
+        if (grappleRampup)
+        {
+            // TODO: Maybe wider camera FOV increases speed 'feel'?
+            grappleRampupCountdown = Mathf.Max(0, grappleRampupCountdown - Time.deltaTime);
+            if (grappleRampupCountdown > UserDefinedConstants.grappleRampupTime / 2)
+            {
+                // In the first half of the rampup, pull the camera back a bit
+                float pullbackPercentage = 2 * (1 - (grappleRampupCountdown / UserDefinedConstants.grappleRampupTime));
+                cam.transform.localPosition = Vector3.Lerp(originalCamLocalPos, grappleCameraPullback, pullbackPercentage);
+            }
+            else
+            {
+                // In the second half of the rampup, push the camera back towards the original location
+                float pushForwardPercentage = 1 - (2 * grappleRampupCountdown / UserDefinedConstants.grappleRampupTime);
+                cam.transform.localPosition = Vector3.Lerp(grappleCameraPullback, originalCamLocalPos, pushForwardPercentage);
+            }
+            // Should we stop rampup phase?
+            if (Tools.NearlyEqual(grappleRampupCountdown, 0, 0.01f))
+            {
+                // At this point, just set the camera location back to normal
+                cam.transform.localPosition = originalCamLocalPos;
+                grappleRampup = false;
+                grappling = true;
             }
         }
     }
@@ -103,8 +147,9 @@ public class PlayerMovementController : MonoBehaviour
     void UpdateApplyRootMotion()
     {
         // Should we re-apply root motion?
+        // Note that we may be "grounded" and grappling at the same time
         rootMotionOffFor = Mathf.Max(0, rootMotionOffFor - Time.deltaTime);
-        if (grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f))
+        if (grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f) && !InGrappleSequence())
         {
             anim.applyRootMotion = true;
         }
@@ -118,20 +163,32 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
         currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
 
+        // Jump (may cancel grapple)
         if (initialJump)
         {
             FixedUpdateInitialJump();
         }
+
+        // Grapple (first register initial click, then proceed to rampup stage, then to grappling stage).
         if (initialGrapple)
         {
             FixedUpdateInitialGrapple();
         }
+        if (grappleRampup)
+        {
+            FixedUpdateGrappleRampup();
+        }
+        else if (grappling)
+        {
+            FixedUpdateGrappling();
+        }
+
+        // Airborne
         if (!grounded)
         {
             FixedUpdateHandleAirborneMovement();
         }
     }
-
     void FixedUpdateInitialJump()
     {
         // Give the initial burst of speed, and allow some XZ movement while in the air
@@ -140,7 +197,12 @@ public class PlayerMovementController : MonoBehaviour
     }
     void FixedUpdateInitialGrapple()
     {
+        // FIXME: Disable gravity on player for duration
         initialGrapple = false;
+        grappleRampup = true;
+        anim.SetBool("Grappling", true);
+        anim.applyRootMotion = false;
+
         // TODO: This is how grappling is going to work:
         // Grappling momentarily cancels all other player-input movement (and root motion), but keeps applied movement. This means that player 
         // keeps falling, if he's on a rising pillar he keeps launching, if blown by explosion keep flying backwards... etc. Only exception: on
@@ -167,6 +229,37 @@ public class PlayerMovementController : MonoBehaviour
         // In any case, the animator will need an ease-in-ease-out of the flying pose. Grappling can be done from any state, even from grappling,
         // so maybe this should be 3 states (enter-, during-, exit-grapple), or maybe use a Grappling bool parameter and simply ease transitions
         // via Animator controls?
+        // NETWORKING
+        // Movement and animation can be handled by the network character. However, it would be better if the rope graphics were handled locally.
+        // If a player is grappling (any player!) stretch a rope from the player's right hand to the target position, LOCALLY.
+    }
+    void FixedUpdateGrappleRampup()
+    {
+        /*
+        // If we're past the halfway of rampup, accelerate towards target speed.
+        if (grappleRampupCountdown < UserDefinedConstants.grappleRampupTime / 2)
+        {
+            AccelerateTowardsGrappleTarget();
+        }
+        */
+        AccelerateTowardsGrappleTarget();
+    }
+    void FixedUpdateGrappling()
+    {
+        // When we reach this point (after rampup), we should have already pretty much reached the target speed.
+        // So, if our grapple speed (speed in the target direction) is less than half the desired grapple speed, we probably
+        // hit something along the way and should cancel the grapple.
+        // Otherwise, we may have bumped into something that shouldn't cancel our movement - if so, fix the speed by adding more
+        // acceleration in the target direction.
+        float speedInDirection = Vector3.Dot(rb.velocity, (GetGrappleTarget() - transform.position).normalized);
+        if (speedInDirection < UserDefinedConstants.grappleSpeed / 2)
+        {
+            CancelGrapple();
+        }
+        else
+        {
+            AccelerateTowardsGrappleTarget();
+        }
     }
     void FixedUpdateHandleAirborneMovement()
     {
@@ -193,5 +286,37 @@ public class PlayerMovementController : MonoBehaviour
         }
         anim.applyRootMotion = false;
         rootMotionOffFor = duration;
+    }
+
+    public Vector3 GetGrappleTarget() { return grapplePoint; }
+    void CancelGrapple()
+    {
+        anim.SetBool("Grappling", false);
+        // FIXME: 1. Camera jerks into position when grapple stops, because we suddenly activate headTowardsOrigin. Make it lerp.
+        // FIXME: 2. Re-enable gravity
+        // FIXME: 3. Don't completely disable headTowardsOrigin, but give it a gentle lerp so the player stays orientated during flight...
+        // FIXME:    ... or maybe make this a boolean option? I don't know what's better.
+        headTowardsOrigin.enabled = true;
+        if (InGrappleSequence())
+        {
+            initialGrapple = grappling = grappleRampup = false;
+        }
+    }
+    void AccelerateTowardsGrappleTarget()
+    {
+        // If we're already at the desired speed in the target direction, do nothing.
+        // Otherwise, give a bit of additive speed in the direction, proportional to deltatime.
+        // Acceleration rate is defined as follows: we want to accelerate from *any* speed & direction to target speed & direction
+        // in exactly grappleRampupTime/2 seconds.
+        // So, lerp from current speed to target speed.
+        rb.velocity = Vector3.Lerp(
+                rb.velocity,
+                UserDefinedConstants.grappleSpeed * (GetGrappleTarget() - transform.position).normalized,
+                0.1f
+            );
+    }
+    bool InGrappleSequence()
+    {
+        return grappleRampup || grappling || initialGrapple;
     }
 }

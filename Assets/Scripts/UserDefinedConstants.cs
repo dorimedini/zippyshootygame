@@ -11,6 +11,7 @@ public static class UserDefinedConstants
     public static float jumpSpeed;
     public static float lookSpeedX;
     public static float lookSpeedY;
+    public static float grappleSpeed;
     public static float movementSpeed;
     public static float maxChargeTime;
     public static float explosionLift;
@@ -19,6 +20,7 @@ public static class UserDefinedConstants
     public static float explosionRadius;
     public static float projectileImpulse;
     public static float gravityMultiplier;
+    public static float grappleRampupTime;
     public static float maxGrappleDistance;
     public static float minProjectileCharge;
     public static float launchForceMultiplier;
@@ -31,6 +33,7 @@ public static class UserDefinedConstants
         jumpSpeed = PlayerPrefs.GetFloat("jumpSpeed", 8f);
         lookSpeedX = PlayerPrefs.GetFloat("lookSpeedX", 10f);
         lookSpeedY = PlayerPrefs.GetFloat("lookSpeedY", 5f);
+        grappleSpeed = PlayerPrefs.GetFloat("grappleSpeed", 50f);
         movementSpeed = PlayerPrefs.GetFloat("movementSpeed", 1f);
         maxChargeTime = PlayerPrefs.GetFloat("maxChargeTime", 1f);
         explosionLift = PlayerPrefs.GetFloat("explosionLift", 1f);
@@ -39,6 +42,7 @@ public static class UserDefinedConstants
         explosionRadius = PlayerPrefs.GetFloat("explosionRadius", 15f);
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
+        grappleRampupTime = PlayerPrefs.GetFloat("grappleRampupTime", 0.5f);
         maxGrappleDistance = PlayerPrefs.GetFloat("maxGrappleDistance", 50f);
         minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
         launchForceMultiplier = PlayerPrefs.GetFloat("launchForceMultiplier", 4f);
@@ -52,6 +56,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("jumpSpeed", jumpSpeed);
         PlayerPrefs.SetFloat("lookSpeedX", lookSpeedX);
         PlayerPrefs.SetFloat("lookSpeedY", lookSpeedY);
+        PlayerPrefs.SetFloat("grappleSpeed", grappleSpeed);
         PlayerPrefs.SetFloat("movementSpeed", movementSpeed);
         PlayerPrefs.SetFloat("maxChargeTime", maxChargeTime);
         PlayerPrefs.SetFloat("explosionLift", explosionLift);
@@ -60,6 +65,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("explosionRadius", explosionRadius);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
+        PlayerPrefs.SetFloat("grappleRampupTime", grappleRampupTime);
         PlayerPrefs.SetFloat("maxGrappleDistance", maxGrappleDistance);
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
