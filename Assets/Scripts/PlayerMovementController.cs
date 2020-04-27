@@ -27,7 +27,6 @@ public class PlayerMovementController : MonoBehaviour
     private bool initialGrapple;
     private bool grappleRampup;
     private Vector3 grapplePoint;
-    private GameObject grappleObject;
     private float grappleRampupCountdown;
     private Vector3 grappleCameraPullback, originalCamLocalPos;
     private float airtimeCooldown;
@@ -102,7 +101,6 @@ public class PlayerMovementController : MonoBehaviour
                 headTowardsOrigin.enabled = false;
                 grappleRampupCountdown = UserDefinedConstants.grappleRampupTime;
                 grapplePoint = hit.point;
-                grappleObject = hit.collider.gameObject;
             }
         }
 
