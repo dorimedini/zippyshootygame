@@ -31,6 +31,8 @@ public class PlayerMovementController : MonoBehaviour
     private float airtimeCooldown;
     private float rootMotionOffFor;
 
+    private int baseLayerIdx, flyGrappleArmLayerIdx, flyRestOfBodyLayerIdx;
+
     static int locomotionState = Animator.StringToHash("Base Layer.Locomotion");
     static int jumpStartState = Animator.StringToHash("Base Layer.JumpStart");
     static int jumpEndState = Animator.StringToHash("Base Layer.JumpEnd");
@@ -46,6 +48,9 @@ public class PlayerMovementController : MonoBehaviour
         grappleCameraPullback = originalCamLocalPos + new Vector3(0, 0, -0.3f);
         cameraOriginalFOV = cam.fieldOfView;
         cameraGrappleFOV = 1.5f * cameraOriginalFOV;
+        baseLayerIdx = anim.GetLayerIndex("Base Layer");
+        flyGrappleArmLayerIdx = anim.GetLayerIndex("FlyGrappleArm");
+        flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
     }
 
     // Update is called once per frame
@@ -171,6 +176,9 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
         currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
 
+        // If we're not grappling make sure we're either at or transitioning to the correct animation layer
+        LerpGrappleBodyAnimation();
+
         // Jump (may cancel grapple)
         if (initialJump)
         {
@@ -241,6 +249,7 @@ public class PlayerMovementController : MonoBehaviour
     }
     void FixedUpdateGrappleRampup()
     {
+        LerpGrappleBodyAnimation();
         RotateFlightGraphic();
         AccelerateTowardsGrappleTarget();
     }
@@ -321,5 +330,12 @@ public class PlayerMovementController : MonoBehaviour
     {
         // TODO: When animation is in place, rotate graphic to face target here. This should be done manually since the headTowardsOrigin
         // TODO: component may be lerping our rotation
+    }
+    void LerpGrappleBodyAnimation()
+    {
+        float baseLayerTarget = InGrappleSequence() ? 0 : 1;
+        anim.SetLayerWeight(baseLayerIdx, Mathf.Lerp(anim.GetLayerWeight(baseLayerIdx), baseLayerTarget, 0.1f));
+        anim.SetLayerWeight(flyGrappleArmLayerIdx, Mathf.Lerp(anim.GetLayerWeight(flyGrappleArmLayerIdx), 1 - baseLayerTarget, 0.1f));
+        anim.SetLayerWeight(flyRestOfBodyLayerIdx, Mathf.Lerp(anim.GetLayerWeight(flyRestOfBodyLayerIdx), 1 - baseLayerTarget, 0.1f));
     }
 }

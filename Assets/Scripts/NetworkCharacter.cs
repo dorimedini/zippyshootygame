@@ -18,10 +18,16 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     float realFwdBack, realLeftRight, realDistFromGround;
     bool isInAir, grappling;
 
+    int baseLayerIdx, flyGrappleArmLayerIdx, flyRestOfBodyLayerIdx;
+    float baseLayerWeight, grappleLayersWeight;
+
     void Start()
     {
         activeRope = null;
         prevGrappleTarget = Vector3.zero;
+        baseLayerIdx = anim.GetLayerIndex("Base Layer");
+        flyGrappleArmLayerIdx = anim.GetLayerIndex("FlyGrappleArm");
+        flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
     }
 
     // Update is called once per frame
@@ -37,6 +43,10 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             anim.SetFloat("DistFromGround", Mathf.Lerp(anim.GetFloat("DistFromGround"), realDistFromGround, lerpConst));
             anim.SetBool("InAir", isInAir);  // Can't lerp booleans
             anim.SetBool("Grappling", grappling);
+            anim.SetLayerWeight(baseLayerIdx, baseLayerWeight);
+            anim.SetLayerWeight(flyGrappleArmLayerIdx, grappleLayersWeight);
+            anim.SetLayerWeight(flyRestOfBodyLayerIdx, grappleLayersWeight);
+
         }
         // As the grapple rope shares common behaviour across the network and we want the graphics updated locally, the NetworkCharacter
         // is responsible for drawing it's own grapple rope.
@@ -55,6 +65,8 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             stream.SendNext(anim.GetFloat("DistFromGround"));
             stream.SendNext(anim.GetBool("Grappling"));
             stream.SendNext(playerMovement.GetGrappleTarget());
+            stream.SendNext(anim.GetLayerWeight(baseLayerIdx));
+            stream.SendNext(anim.GetLayerWeight(flyGrappleArmLayerIdx));
         }
         else
         {
@@ -72,6 +84,8 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
                 prevGrappleTarget = grappleTarget;
                 grappleTarget = newGrappleTarget;
             }
+            baseLayerWeight = (float)stream.ReceiveNext();
+            grappleLayersWeight = (float)stream.ReceiveNext();
         }
     }
 
