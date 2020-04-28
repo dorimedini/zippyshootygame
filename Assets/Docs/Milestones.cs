@@ -28,6 +28,7 @@
  * < V > Die, respawn
  * < V > Fix IsGrounded to use RaycastAll so we don't get annoying errors for finding a projectile / other player under us
  * <   > Movement mechanic - grapple to floor (simple raycast and acceleration until either a. speed goes down (collision) or b. we get close enough)
+ * <   > Explosions should damage the enemy players in the radius, proportional to distance
  * <   > For explosions to work correctly it would be better to put colliders on all projectiles, let each player handle explosion-on-hit (and maybe even momentarily
  *       stop hit player's transform updates to give an explosion force locally?). As is, projectiles are exploding inside pillars due to delay in Destroy RPC
  * <   > Show respawn timer while waiting
@@ -36,6 +37,7 @@
  * <   > Message box (for game alerts, and later for chat)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
+ * <   > Grapple superman animation should be fixed-oriented towards target point
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
  * <   > Sun should damage on proximity
