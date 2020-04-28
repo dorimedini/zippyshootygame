@@ -184,6 +184,7 @@ MonoBehaviour:
     type: 3}
   anim: {fileID: 6287008124743745102}
   grappleHand: {fileID: 6939456590825648860}
+  localPlayerMaterial: {fileID: 2100000, guid: 12eb21ce665eea44092f794048a94558, type: 2}
   playerMovement: {fileID: 642572647237074428}
 --- !u!114 &2526693595332246113
 MonoBehaviour:
@@ -612,6 +613,16 @@ PrefabInstance:
     - target: {fileID: -1649218382573798814, guid: 8c2d2280e021b714c8f240044c3d0d1d,
         type: 3}
       propertyPath: m_LightProbeUsage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1649218382573798814, guid: 8c2d2280e021b714c8f240044c3d0d1d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1ce663bab6e62b14d8d854d56c0e4f53, type: 2}
+    - target: {fileID: -1332346396016799987, guid: 8c2d2280e021b714c8f240044c3d0d1d,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 8c2d2280e021b714c8f240044c3d0d1d,

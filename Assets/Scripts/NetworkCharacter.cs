@@ -10,6 +10,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public GameObject ropePrefab;
     public Animator anim;
     public Transform grappleHand;
+    public Material localPlayerMaterial;
     public PlayerMovementController playerMovement;
 
     GameObject activeRope;
@@ -28,6 +29,8 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         baseLayerIdx = anim.GetLayerIndex("Base Layer");
         flyGrappleArmLayerIdx = anim.GetLayerIndex("FlyGrappleArm");
         flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
+        if (photonView.IsMine)
+            GetComponentInChildren<SkinnedMeshRenderer>().material = localPlayerMaterial;
     }
 
     // Update is called once per frame
