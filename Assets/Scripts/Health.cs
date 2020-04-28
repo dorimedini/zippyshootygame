@@ -37,7 +37,7 @@ public class Health : MonoBehaviourPun
         }
     }
 
-    public void InflictDamage(int damage)
+    public void InflictDamage(float damage)
     {
         currentHealth -= damage;
         bar.TakeDamage(damage);

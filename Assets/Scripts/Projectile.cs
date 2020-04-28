@@ -10,8 +10,6 @@ using Photon.Pun;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
-    public static int hitDamage = 15;
-
     // Projectiles should ignore collision with the shooter player.
     // This string may be empty if in offline mode, but that's OK we only use this for uniqueness
     public string shooterId;
@@ -105,7 +103,7 @@ public class Projectile : MonoBehaviour
             // TODO: One day I'll find out why objects are suddenly null...
             if (dmgCtrl == null)
                 InitControllers();
-            dmgCtrl.BroadcastInflictDamage(shooterId, hitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
+            dmgCtrl.BroadcastInflictDamage(shooterId, UserDefinedConstants.projectileHitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
             explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         }
 

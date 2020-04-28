@@ -6,14 +6,14 @@ using Photon.Realtime;
 
 public class DamageController : MonoBehaviourPun
 {
-    public void BroadcastInflictDamage(string shooterId, int damage, string targetUserId)
+    public void BroadcastInflictDamage(string shooterId, float damage, string targetUserId)
     {
         photonView.RPC("InflictDamage", RpcTarget.All, shooterId, damage, targetUserId);
     }
 
     /** Every client should run this so everyone knows how much health each player has */
     [PunRPC]
-    void InflictDamage(string shooterID, int damage, string targetUserId)
+    void InflictDamage(string shooterID, float damage, string targetUserId)
     {
         Dictionary<int, Player> playerDict = PhotonNetwork.CurrentRoom.Players;
         foreach (Player player in playerDict.Values)

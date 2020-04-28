@@ -48,7 +48,7 @@ public class HealthBar : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         prevCurrentHealth = currentHealth;
         currentHealth = Mathf.Max(currentHealth - damage, 0);
