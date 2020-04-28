@@ -5,6 +5,8 @@ using Photon.Pun;
 
 public class ExplosionController : MonoBehaviourPun
 {
+    public DamageController dmgCtrl;
+
     public void BroadcastExplosion(Vector3 position, string shooterId)
     {
         photonView.RPC("Explosion", RpcTarget.All, position, shooterId);
@@ -34,6 +36,11 @@ public class ExplosionController : MonoBehaviourPun
                                                 UserDefinedConstants.explosionLift * (-rb.position)
                                              ) / dist;
                     rb.AddForce(explosionForce, ForceMode.Impulse);
+                    // Do damage (AFTER adding force, so if the ragdoll replaces it it'll fly off).
+                    // Divide by dist+1 so it 1. decays with distance and 2. never actually deals more than a direct-hit worth of damage.
+                    float damage = UserDefinedConstants.projectileHitDamage / (dist+1);
+                    string hitUserId = col.GetComponent<PhotonView>().Owner.UserId;
+                    dmgCtrl.BroadcastInflictDamage(shooterId, damage, hitUserId);
                 }
             }
         }
