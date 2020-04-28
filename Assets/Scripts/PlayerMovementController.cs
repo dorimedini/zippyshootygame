@@ -26,6 +26,7 @@ public class PlayerMovementController : MonoBehaviour
     private bool grappleRampup;
     private Vector3 grapplePoint;
     private float grappleRampupCountdown;
+    private float cameraGrappleFOV, cameraOriginalFOV;
     private Vector3 grappleCameraPullback, originalCamLocalPos;
     private float airtimeCooldown;
     private float rootMotionOffFor;
@@ -43,6 +44,8 @@ public class PlayerMovementController : MonoBehaviour
         airtimeCooldown = rootMotionOffFor = 0;
         originalCamLocalPos = cam.transform.localPosition;
         grappleCameraPullback = originalCamLocalPos + new Vector3(0, 0, -0.3f);
+        cameraOriginalFOV = cam.fieldOfView;
+        cameraGrappleFOV = 1.5f * cameraOriginalFOV;
     }
 
     // Update is called once per frame
@@ -59,6 +62,7 @@ public class PlayerMovementController : MonoBehaviour
         UpdateJump();
         UpdateLand();
         UpdateApplyRootMotion();
+        UpdateCameraFOV();
     }
 
     void UpdateMove()
@@ -114,9 +118,11 @@ public class PlayerMovementController : MonoBehaviour
             }
             else
             {
-                // In the second half of the rampup, push the camera back towards the original location
+                // In the second half of the rampup, push the camera back towards the original location.
+                // Also, widen the FOV
                 float pushForwardPercentage = 1 - (2 * grappleRampupCountdown / UserDefinedConstants.grappleRampupTime);
                 cam.transform.localPosition = Vector3.Lerp(grappleCameraPullback, originalCamLocalPos, pushForwardPercentage);
+                cam.fieldOfView = Mathf.Lerp(cameraOriginalFOV, cameraGrappleFOV, pushForwardPercentage);
             }
             // Should we stop rampup phase?
             if (Tools.NearlyEqual(grappleRampupCountdown, 0, 0.01f))
@@ -147,6 +153,13 @@ public class PlayerMovementController : MonoBehaviour
         if (grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f) && !InGrappleSequence())
         {
             anim.applyRootMotion = true;
+        }
+    }
+    void UpdateCameraFOV()
+    {
+        if (!InGrappleSequence() && !Tools.NearlyEqual(cam.fieldOfView, cameraOriginalFOV, 0.01f))
+        {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, cameraOriginalFOV, 0.1f);
         }
     }
 
