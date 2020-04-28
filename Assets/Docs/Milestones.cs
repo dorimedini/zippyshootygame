@@ -41,7 +41,7 @@
  *       Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
- * <   > Sun should damage on proximity
+ * <   > Sun should damage on proximity?
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * -------   > Maybe don't launch projectile from directly in front of face
@@ -56,5 +56,7 @@
  * -------   > Add roll on land?
  * <   > Non-temporary weapon models
  * <   > Check the isMasterClient thing in Photon, maybe makes the projectile management better?
+ * <   > Moon: make some hard-to-hit, syncronized, random-orbit "moon" around the sun; players get rewarded / punished for hitting it directly, depending on
+ *       current health maybe..?
  * <   > Make new list
  */
