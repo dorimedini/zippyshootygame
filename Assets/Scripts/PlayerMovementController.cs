@@ -5,7 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(HeadTowardsOrigin))]
 public class PlayerMovementController : MonoBehaviour
 {
     public float airMovementSpeed = 5;
@@ -13,7 +12,6 @@ public class PlayerMovementController : MonoBehaviour
     public Camera cam;
     public Animator anim;
     public Rigidbody rb;
-    public HeadTowardsOrigin headTowardsOrigin;
     public NetworkCharacter networkCharacter;
 
     private float fwdBack;
@@ -98,7 +96,6 @@ public class PlayerMovementController : MonoBehaviour
             if (Physics.Raycast(ray, out hit, UserDefinedConstants.maxGrappleDistance, 1 << LayerMask.NameToLayer("Environment")))
             {
                 initialGrapple = true;
-                headTowardsOrigin.enabled = false;
                 grappleRampupCountdown = UserDefinedConstants.grappleRampupTime;
                 grapplePoint = hit.point;
             }
@@ -201,7 +198,7 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetBool("Grappling", true);
         anim.applyRootMotion = false;
 
-        // TODO: This is how grappling is going to work:
+        // This is how grappling is going to work:
         // Grappling momentarily cancels all other player-input movement (and root motion), but keeps applied movement. This means that player 
         // keeps falling, if he's on a rising pillar he keeps launching, if blown by explosion keep flying backwards... etc. Only exception: on
         // jump command, the grapple sequence cancels (even at this preliminary stage).
@@ -213,8 +210,6 @@ public class PlayerMovementController : MonoBehaviour
         // the grapple, and 2. if the player hits something on the way we should allow minor bumps but walls should stop the grapple.
         // As before, during this airtime, pressing jump should cancel the grapple BUT should keep the previous speed and let natural gravity
         // decay it.
-        // TODO: How should I handle speed decay? The moment air-movement control is restored current implementation will cap the airborne
-        // TODO: movement speed
         // After grapple reaches it's natural end (not cancelled by jump), I need to decide if the resulting behavior is what I want or not.
         // It could be that the player suddenly stops when root motion is given back, or maybe the player will fly forward with the previous
         // momentum... or maybe crash through the sphere for some reason.... anyway, tackle this when it comes up.
@@ -287,9 +282,6 @@ public class PlayerMovementController : MonoBehaviour
         anim.SetBool("Grappling", false);
         // FIXME: 1. Camera jerks into position when grapple stops, because we suddenly activate headTowardsOrigin. Make it lerp.
         // FIXME: 2. Re-enable gravity
-        // FIXME: 3. Don't completely disable headTowardsOrigin, but give it a gentle lerp so the player stays orientated during flight...
-        // FIXME:    ... or maybe make this a boolean option? I don't know what's better.
-        headTowardsOrigin.enabled = true;
         if (InGrappleSequence())
         {
             initialGrapple = grappling = grappleRampup = false;
