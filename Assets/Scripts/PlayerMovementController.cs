@@ -113,7 +113,6 @@ public class PlayerMovementController : MonoBehaviour
         // Only actual updates happen during rampup
         if (grappleRampup)
         {
-            // TODO: Maybe wider camera FOV increases speed 'feel'?
             grappleRampupCountdown = Mathf.Max(0, grappleRampupCountdown - Time.deltaTime);
             if (grappleRampupCountdown > UserDefinedConstants.grappleRampupTime / 2)
             {
@@ -213,39 +212,10 @@ public class PlayerMovementController : MonoBehaviour
     }
     void FixedUpdateInitialGrapple()
     {
-        // FIXME: Disable gravity on player for duration
         initialGrapple = false;
         grappleRampup = true;
         anim.SetBool("Grappling", true);
         anim.applyRootMotion = false;
-
-        // This is how grappling is going to work:
-        // Grappling momentarily cancels all other player-input movement (and root motion), but keeps applied movement. This means that player 
-        // keeps falling, if he's on a rising pillar he keeps launching, if blown by explosion keep flying backwards... etc. Only exception: on
-        // jump command, the grapple sequence cancels (even at this preliminary stage).
-        // During this small timespan, the player CAMERA has a move-back effect, to give the player indication he's about to be launched
-        // forward. During this timespan, disable mouselook (keep the camera focussed on the grapple target).
-        // After that timespan, the player gets mouselook back, Camera slides back into position and the player gets some initial speed burst 
-        // in the direction of grapple. The player steadily accelerates until the dot product between the speed and the direction of the target
-        // is small. Why use this method? Because 1. if the player reached the grapple destination he'll hit a wall and stop so this will stop
-        // the grapple, and 2. if the player hits something on the way we should allow minor bumps but walls should stop the grapple.
-        // As before, during this airtime, pressing jump should cancel the grapple BUT should keep the previous speed and let natural gravity
-        // decay it.
-        // After grapple reaches it's natural end (not cancelled by jump), I need to decide if the resulting behavior is what I want or not.
-        // It could be that the player suddenly stops when root motion is given back, or maybe the player will fly forward with the previous
-        // momentum... or maybe crash through the sphere for some reason.... anyway, tackle this when it comes up.
-        // ANIMATION AND GRAPHICS:
-        // First thing to note: the graphic representation of the grappling character needs to counter the default rotation setting! During 
-        // grapple we want to display a Superman-style flight, fist-forward and plank body, oriented in the flight direction.
-        // A good approach would be to simply disable rotation orientation while grappling.
-        // Note that the camera "forward" direction should now point from hips to head (body is horizontal). This is desired behaviour, so the
-        // player can look around as feels natural grappling.
-        // In any case, the animator will need an ease-in-ease-out of the flying pose. Grappling can be done from any state, even from grappling,
-        // so maybe this should be 3 states (enter-, during-, exit-grapple), or maybe use a Grappling bool parameter and simply ease transitions
-        // via Animator controls?
-        // NETWORKING
-        // Movement and animation can be handled by the network character. However, it would be better if the rope graphics were handled locally.
-        // If a player is grappling (any player!) stretch a rope from the player's right hand to the target position, LOCALLY.
     }
     void FixedUpdateGrappleRampup()
     {
@@ -302,8 +272,6 @@ public class PlayerMovementController : MonoBehaviour
     void CancelGrapple()
     {
         anim.SetBool("Grappling", false);
-        // FIXME: 1. Camera jerks into position when grapple stops, because we suddenly activate headTowardsOrigin. Make it lerp.
-        // FIXME: 2. Re-enable gravity
         if (InGrappleSequence())
         {
             initialGrapple = grappling = grappleRampup = false;
@@ -328,8 +296,18 @@ public class PlayerMovementController : MonoBehaviour
     }
     void RotateFlightGraphic()
     {
-        // TODO: When animation is in place, rotate graphic to face target here. This should be done manually since the headTowardsOrigin
-        // TODO: component may be lerping our rotation
+        // Two GameObjects are relevant here for Robot Kyle: the Robot2 object and the Root object.
+        // I suspect we only really need to rotate the Root object, because the animations derive from it, but it depends if the
+        // animator does animations relative to Root or what.
+        if (InGrappleSequence())
+        {
+            // TODO: When animation is in place, rotate graphic to face target here. This should be done manually since the headTowardsOrigin
+            // TODO: component may be lerping our rotation
+        }
+        else
+        {
+            // TODO: After grappling the graphic component of the character may be out of sync.
+        }
     }
     void LerpGrappleBodyAnimation()
     {
