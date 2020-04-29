@@ -34,10 +34,13 @@
  *       This is a good compromise, because each player sees his own projectile the most, and this ensures instantiation and collision gives immediate feedback to 
  *       the local player.
  * < V > Scrollable settings
- * <   > Message box (for game alerts, and later for chat)
- * <   > Show respawn timer while waiting
+ * < V > Message box (for game alerts, and later for chat)
+ * < V > Show respawn timer while waiting
  * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Sounds: walk, fire, hit, launch (only self hears)
+ * <   > Visible delay in player knockback on explosion. Is there something that can be done?
+ * <   > Grappling twice in a row jerks the camera; lerp it
+ * <   > Ragdoll doesn't get the explosion knockback if the hit kills a player. Fix it
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * <   > Grapple superman animation should be fixed-oriented towards target point.
