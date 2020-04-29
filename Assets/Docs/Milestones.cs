@@ -34,10 +34,10 @@
  *       This is a good compromise, because each player sees his own projectile the most, and this ensures instantiation and collision gives immediate feedback to 
  *       the local player.
  * < V > Scrollable settings
+ * <   > Message box (for game alerts, and later for chat)
  * <   > Show respawn timer while waiting
  * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Sounds: walk, fire, hit, launch (only self hears)
- * <   > Message box (for game alerts, and later for chat)
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * <   > Grapple superman animation should be fixed-oriented towards target point.
