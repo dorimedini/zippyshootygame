@@ -29,8 +29,11 @@
  * < V > Fix IsGrounded to use RaycastAll so we don't get annoying errors for finding a projectile / other player under us
  * < V > Movement mechanic - grapple to floor (simple raycast and acceleration until either a. speed goes down (collision) or b. we get close enough)
  * < V > Explosions should damage the enemy players in the radius, proportional to distance
- * <   > For explosions to work correctly it would be better to put colliders on all projectiles, let each player handle explosion-on-hit (and maybe even momentarily
- *       stop hit player's transform updates to give an explosion force locally?). As is, projectiles are exploding inside pillars due to delay in Destroy RPC
+ * < V > Projectiles: only the firing player puts a collider on the projectile and notifies all other players about collisions. Other players only instantiate
+ *       local graphic representations, and destroy the projectile when informed by the firer.
+ *       This is a good compromise, because each player sees his own projectile the most, and this ensures instantiation and collision gives immediate feedback to 
+ *       the local player.
+ * <   > Scrollable settings
  * <   > Show respawn timer while waiting
  * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Sounds: walk, fire, hit, launch (only self hears)
