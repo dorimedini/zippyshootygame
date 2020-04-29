@@ -33,7 +33,7 @@
  *       local graphic representations, and destroy the projectile when informed by the firer.
  *       This is a good compromise, because each player sees his own projectile the most, and this ensures instantiation and collision gives immediate feedback to 
  *       the local player.
- * <   > Scrollable settings
+ * < V > Scrollable settings
  * <   > Show respawn timer while waiting
  * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Sounds: walk, fire, hit, launch (only self hears)

@@ -2,10 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class UserSettingsManager
+public class UserSettingsManager
 {
-    public static void ExposeDebugSettings()
+    Vector2 scroll;
+
+    public UserSettingsManager()
     {
+        scroll = Vector2.zero;
+    }
+
+    public void ExposeDebugSettings()
+    {
+        scroll = GUILayout.BeginScrollView(scroll);
         UserDefinedConstants.spawnTime = GetSetting("Respawn time: ", UserDefinedConstants.spawnTime);
         UserDefinedConstants.maxHealth = GetSetting("Max health: ", UserDefinedConstants.maxHealth);
         UserDefinedConstants.jumpSpeed = GetSetting("Jump speed: ", UserDefinedConstants.jumpSpeed);
@@ -25,9 +33,10 @@ public static class UserSettingsManager
         UserDefinedConstants.minProjectileCharge = GetSetting("Min projectile speed: ", UserDefinedConstants.minProjectileCharge);
         UserDefinedConstants.projectileHitDamage = GetSetting("Projectile hit damage: ", UserDefinedConstants.projectileHitDamage);
         UserDefinedConstants.launchForceMultiplier = GetSetting("Pillar launch force: ", UserDefinedConstants.launchForceMultiplier);
+        GUILayout.EndScrollView();
     }
 
-    private static float GetSetting(string label, float defaultVal)
+    private float GetSetting(string label, float defaultVal)
     {
         GUILayout.BeginHorizontal();
         GUILayout.Label(label);
@@ -36,7 +45,7 @@ public static class UserSettingsManager
         return res;
     }
 
-    private static string FloatToStrWithDecimal(float f)
+    private string FloatToStrWithDecimal(float f)
     {
         string s = f.ToString();
         if (!s.Contains("."))

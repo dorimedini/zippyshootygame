@@ -13,10 +13,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     GameObject myPlayer;
     SpawnManager spawner;
+    UserSettingsManager settingsMngr;
 
     void Start()
     {
         UserDefinedConstants.LoadFromPlayerPrefs();
+        settingsMngr = new UserSettingsManager();
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
     }
 
@@ -34,6 +36,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             GUILayout.BeginVertical();
+            GUILayout.Space(20);
             GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
@@ -41,7 +44,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             UserDefinedConstants.nickname = PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
             GUILayout.EndHorizontal();
 
-            UserSettingsManager.ExposeDebugSettings();
+            settingsMngr.ExposeDebugSettings();
 
             if (GUILayout.Button("Multiplayer"))
             {
@@ -54,6 +57,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
 
             GUILayout.FlexibleSpace();
+            GUILayout.Space(20);
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
