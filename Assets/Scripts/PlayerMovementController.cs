@@ -102,7 +102,11 @@ public class PlayerMovementController : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray = new Ray(cam.transform.position + cam.transform.forward, cam.transform.forward);
-            if (Physics.Raycast(ray, out hit, UserDefinedConstants.maxGrappleDistance, 1 << LayerMask.NameToLayer("Environment")))
+            if (Physics.Raycast(
+                ray,
+                out hit,
+                UserDefinedConstants.sphereRadius * UserDefinedConstants.maxGrappleDistanceRatio,
+                1 << LayerMask.NameToLayer("Environment")))
             {
                 initialGrapple = true;
                 grappleRampupCountdown = UserDefinedConstants.grappleRampupTime;

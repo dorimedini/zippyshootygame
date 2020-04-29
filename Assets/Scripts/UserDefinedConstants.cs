@@ -23,7 +23,7 @@ public static class UserDefinedConstants
     public static float projectileImpulse;
     public static float gravityMultiplier;
     public static float grappleRampupTime;
-    public static float maxGrappleDistance;
+    public static float maxGrappleDistanceRatio;
     public static float minProjectileCharge;
     public static float projectileHitDamage;
     public static float launchForceMultiplier;
@@ -48,7 +48,7 @@ public static class UserDefinedConstants
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
         grappleRampupTime = PlayerPrefs.GetFloat("grappleRampupTime", 0.5f);
-        maxGrappleDistance = PlayerPrefs.GetFloat("maxGrappleDistance", 50f);
+        maxGrappleDistanceRatio = PlayerPrefs.GetFloat("maxGrappleDistanceRatio", 1f);
         minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
         projectileHitDamage = PlayerPrefs.GetFloat("projectileHitDamage", 15f);
         launchForceMultiplier = PlayerPrefs.GetFloat("launchForceMultiplier", 4f);
@@ -74,7 +74,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
         PlayerPrefs.SetFloat("grappleRampupTime", grappleRampupTime);
-        PlayerPrefs.SetFloat("maxGrappleDistance", maxGrappleDistance);
+        PlayerPrefs.SetFloat("maxGrappleDistanceRatio", maxGrappleDistanceRatio);
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("projectileHitDamage", projectileHitDamage);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);

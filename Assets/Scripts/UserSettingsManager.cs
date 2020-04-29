@@ -31,7 +31,7 @@ public class UserSettingsManager
         UserDefinedConstants.projectileImpulse = GetSetting("Max projectile speed: ", UserDefinedConstants.projectileImpulse);
         UserDefinedConstants.gravityMultiplier = GetSetting("Gravity multiplier: ", UserDefinedConstants.gravityMultiplier);
         UserDefinedConstants.grappleRampupTime = GetSetting("Grapple ramp-up time: ", UserDefinedConstants.grappleRampupTime);
-        UserDefinedConstants.maxGrappleDistance = GetSetting("Grapple distance: ", UserDefinedConstants.maxGrappleDistance);
+        UserDefinedConstants.maxGrappleDistanceRatio = GetSetting("Grapple distance / radius (ratio): ", UserDefinedConstants.maxGrappleDistanceRatio);
         UserDefinedConstants.minProjectileCharge = GetSetting("Min projectile speed: ", UserDefinedConstants.minProjectileCharge);
         UserDefinedConstants.projectileHitDamage = GetSetting("Projectile hit damage: ", UserDefinedConstants.projectileHitDamage);
         UserDefinedConstants.launchForceMultiplier = GetSetting("Pillar launch force: ", UserDefinedConstants.launchForceMultiplier);
