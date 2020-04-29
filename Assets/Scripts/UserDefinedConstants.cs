@@ -28,30 +28,43 @@ public static class UserDefinedConstants
     public static float projectileHitDamage;
     public static float launchForceMultiplier;
 
+    public static bool chargeMode;
+
     public static void LoadFromPlayerPrefs()
     {
-        nickname = PlayerPrefs.GetString("nickname", "NOOBNOOB");
-        spawnTime = PlayerPrefs.GetFloat("spawnTime", 5f);
-        maxHealth = PlayerPrefs.GetFloat("maxHealth", 100f);
-        jumpSpeed = PlayerPrefs.GetFloat("jumpSpeed", 8f);
-        lookSpeedX = PlayerPrefs.GetFloat("lookSpeedX", 10f);
-        lookSpeedY = PlayerPrefs.GetFloat("lookSpeedY", 5f);
-        grappleSpeed = PlayerPrefs.GetFloat("grappleSpeed", 50f);
-        sphereRadius = PlayerPrefs.GetFloat("sphereRadius", 70f);
-        movementSpeed = PlayerPrefs.GetFloat("movementSpeed", 1f);
-        maxChargeTime = PlayerPrefs.GetFloat("maxChargeTime", 1f);
-        explosionLift = PlayerPrefs.GetFloat("explosionLift", 1f);
-        explosionForce = PlayerPrefs.GetFloat("explosionForce", 25f);
-        weaponCooldown = PlayerPrefs.GetFloat("weaponCooldown", 1f);
-        explosionRadius = PlayerPrefs.GetFloat("explosionRadius", 15f);
-        messageBoxUpTime = PlayerPrefs.GetFloat("messageBoxUpTime", 5f);
-        projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
-        gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
-        grappleRampupTime = PlayerPrefs.GetFloat("grappleRampupTime", 0.5f);
-        maxGrappleDistanceRatio = PlayerPrefs.GetFloat("maxGrappleDistanceRatio", 1f);
-        minProjectileCharge = PlayerPrefs.GetFloat("minProjectileCharge", 0.3f);
-        projectileHitDamage = PlayerPrefs.GetFloat("projectileHitDamage", 15f);
-        launchForceMultiplier = PlayerPrefs.GetFloat("launchForceMultiplier", 4f);
+        LoadAux(true);
+    }
+
+    public static void LoadDefaultValues()
+    {
+        LoadAux(false);
+    }
+
+    static void LoadAux(bool fromPrefs)
+    {
+        nickname = fromPrefs ? PlayerPrefs.GetString("nickname", "NOOBNOOB") : "NOOBNOOB";
+        spawnTime = fromPrefs ? PlayerPrefs.GetFloat("spawnTime", 5f) : 5f;
+        maxHealth = fromPrefs ? PlayerPrefs.GetFloat("maxHealth", 100f) : 100f;
+        jumpSpeed = fromPrefs ? PlayerPrefs.GetFloat("jumpSpeed", 8f) : 8f;
+        lookSpeedX = fromPrefs ? PlayerPrefs.GetFloat("lookSpeedX", 10f) : 10f;
+        lookSpeedY = fromPrefs ? PlayerPrefs.GetFloat("lookSpeedY", 5f) : 5f;
+        grappleSpeed = fromPrefs ? PlayerPrefs.GetFloat("grappleSpeed", 50f) : 50f;
+        sphereRadius = fromPrefs ? PlayerPrefs.GetFloat("sphereRadius", 70f) : 70f;
+        movementSpeed = fromPrefs ? PlayerPrefs.GetFloat("movementSpeed", 1f) : 1f;
+        maxChargeTime = fromPrefs ? PlayerPrefs.GetFloat("maxChargeTime", 1f) : 1f;
+        explosionLift = fromPrefs ? PlayerPrefs.GetFloat("explosionLift", 1f) : 1f;
+        explosionForce = fromPrefs ? PlayerPrefs.GetFloat("explosionForce", 25f) : 25f;
+        weaponCooldown = fromPrefs ? PlayerPrefs.GetFloat("weaponCooldown", 0.5f) : 0.5f;
+        explosionRadius = fromPrefs ? PlayerPrefs.GetFloat("explosionRadius", 15f) : 15f;
+        messageBoxUpTime = fromPrefs ? PlayerPrefs.GetFloat("messageBoxUpTime", 5f) : 5f;
+        projectileImpulse = fromPrefs ? PlayerPrefs.GetFloat("projectileImpulse", 50f) : 50f;
+        gravityMultiplier = fromPrefs ? PlayerPrefs.GetFloat("gravityMultiplier", 1f) : 1f;
+        grappleRampupTime = fromPrefs ? PlayerPrefs.GetFloat("grappleRampupTime", 0.5f) : 0.5f;
+        maxGrappleDistanceRatio = fromPrefs ? PlayerPrefs.GetFloat("maxGrappleDistanceRatio", 1f) : 1f;
+        minProjectileCharge = fromPrefs ? PlayerPrefs.GetFloat("minProjectileCharge", 0.3f) : 0.3f;
+        projectileHitDamage = fromPrefs ? PlayerPrefs.GetFloat("projectileHitDamage", 15f) : 15f;
+        launchForceMultiplier = fromPrefs ? PlayerPrefs.GetFloat("launchForceMultiplier", 4f) : 4f;
+        chargeMode = fromPrefs ? PlayerPrefs.GetInt("chargeMode", 0) == 1 : false;
     }
 
     public static void SaveToPlayerPrefs()
@@ -78,5 +91,6 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("projectileHitDamage", projectileHitDamage);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
+        PlayerPrefs.SetInt("chargeMode", chargeMode ? 1 : 0);
     }
 }
