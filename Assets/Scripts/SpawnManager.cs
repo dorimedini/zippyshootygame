@@ -107,6 +107,10 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<CrosshairGUIController>().enabled = true;
         player.GetComponentInChildren<HeadTowardsOrigin>().enabled = true;
         player.transform.Find("UI").gameObject.SetActive(true);
+        // Remote players have isKinematic set to true by default. This prevents jitter, because player position/rotation is defined completely
+        // by the transform component.
+        // Local players must be kinematic because they apply forces to themselves (jump, explosion knockback, grapple...)
+        player.GetComponent<Rigidbody>().isKinematic = false;
         return player;
     }
 
