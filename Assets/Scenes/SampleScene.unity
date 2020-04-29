@@ -1102,8 +1102,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 1148042477976559911, guid: eccec8ba68a103340a70b8dea6ba78d3,
     type: 3}
+  geospherePrefab: {fileID: 2452639711383623897, guid: 0dba6bb3f498990499a22519804e33d5,
+    type: 3}
   standbyCamera: {fileID: 1334825165}
   explosionCtrl: {fileID: 1790121268}
+  pillarCtrl: {fileID: 1213035195}
+  spawner: {fileID: 1868763445}
   offlineMode: 0
 --- !u!114 &1868763445
 MonoBehaviour:
@@ -1118,7 +1122,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnCam: {fileID: 22186502}
-  gsg: {fileID: 0}
   ragdollCtrl: {fileID: 559608519}
   msgCtrl: {fileID: 1326363887}
   spawnHeight: 5
