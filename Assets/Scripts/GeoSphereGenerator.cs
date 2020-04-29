@@ -241,7 +241,6 @@ public class GeoSphereGenerator : MonoBehaviour
                     spherePoints.RemoveAt(j--);
                     ++duplicatesFound;
                 }
-        Debug.Log(string.Format("Found and removed {0} duplicate points", duplicatesFound));
         if (spherePoints.Count != expectedPillars)
             Debug.LogError(string.Format("Expected {0} pillars, spherePoints list contains {1} items", expectedPillars, spherePoints.Count));
     }
@@ -255,7 +254,6 @@ public class GeoSphereGenerator : MonoBehaviour
 
     private void subdivide(Vector3 v1, Vector3 v2, Vector3 v3, int depth) {
         if (depth == 0) {
-            //Debug.Log(string.Format("Adding points {0},{1},{2}", v1 * radius, v2 * radius, v3 * radius));
             spherePoints.Add(v1 * radius);
             spherePoints.Add(v2 * radius);
             spherePoints.Add(v3 * radius);
@@ -273,7 +271,6 @@ public class GeoSphereGenerator : MonoBehaviour
     private void initializeSpherePoints()
     {
         pentCenters = pentCentersNormalized;
-        Debug.Log("Got pentagon points: " + string.Join(",", pentCenters));
         List<int> tindices = new List<int> {
             0, 4,  1  ,  0, 9,  4  ,  9, 5,  4  ,   4, 5, 8  ,  4, 8,  1,
             8, 10, 1  ,  8, 3, 10  ,  5, 3,  8  ,   5, 2, 3  ,  2, 7,  3,
@@ -282,7 +279,6 @@ public class GeoSphereGenerator : MonoBehaviour
         };
         for (int i = 0; 3 * i < tindices.Count; ++i)
         {
-            //Debug.Log(string.Format("Calling subdivide on {0},{1},{2}", pentCenters[tindices[i * 3 + 0]], pentCenters[tindices[i * 3 + 1]], pentCenters[tindices[i * 3 + 2]]));
             subdivide(
                 pentCenters[tindices[i * 3 + 0]],
                 pentCenters[tindices[i * 3 + 1]],
@@ -431,7 +427,6 @@ public class GeoSphereGenerator : MonoBehaviour
                     continue;
                 if (areNeighbors(i, j))
                 {
-                    //Debug.Log(string.Format("Adding {0} as a neighbor for pillar {1}", j, i));
                     foundNeighbors.Add(j);
                 }
             }

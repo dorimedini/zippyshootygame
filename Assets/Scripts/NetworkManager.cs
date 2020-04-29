@@ -82,7 +82,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         RoomOptions options = new RoomOptions();
         options.PublishUserId = true;
-        Debug.Log("OnJoinRandomFailed, creating and joining room");
         if (!PhotonNetwork.CreateRoom(null, options))
             Debug.LogError("Failed to create a room!");
     }
@@ -94,7 +93,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("OnJoinedRoom");
         InitSpawner();
         SpawnMyPlayer();
     }
