@@ -43,14 +43,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bf4447678c4194a80d559238c6553e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexMaterials: []
-  pentMaterials: []
+  hexMaterials:
+  - {fileID: 2100000, guid: 69e0c58216f326e4dbd036111d06f6a5, type: 2}
+  - {fileID: 2100000, guid: c4ab36313bd1fc2439b37ac28c6301eb, type: 2}
+  - {fileID: 2100000, guid: ef8b15a90e92cb5479897c408a5cbff9, type: 2}
+  - {fileID: 2100000, guid: 3546d1f22d5b80b4b833df4d1da3fe8e, type: 2}
+  pentMaterials:
+  - {fileID: 2100000, guid: f2b161dfc78db0044b1dad75c80ff361, type: 2}
+  - {fileID: 2100000, guid: a363edf2c13d1c443a3bb6a0681859c0, type: 2}
+  - {fileID: 2100000, guid: a92bbd83872d060459f939c484ef1c16, type: 2}
+  - {fileID: 2100000, guid: 1c97bc8649fc31f48a8ab14929d68ea4, type: 2}
   expHexNumber: 3
   numLights: 4
   lightRadiusMultiplier: 1.2
   lightIntensity: 6
   initialHeight: 0.1
-  collisionExpansion: 0.15
+  collisionExpansion: 0
   baseEdgeMultiplier: 0.8
   edgeDegreeMultiplier: 0.02
   pentEdgeMultiplier: 1.1

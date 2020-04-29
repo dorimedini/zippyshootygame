@@ -7,11 +7,11 @@ using Photon.Pun;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject spawnCam;
-    public GeoSphereGenerator gsg;
     public RagdollController ragdollCtrl;
     public MessagesController msgCtrl;
 
     List<PillarBehaviour> pillars = null;
+    private GeoSphereGenerator gsg;
     private float respawnTime;
     private bool ragdollActive;
     private GameObject activeRagdoll;
@@ -19,13 +19,13 @@ public class SpawnManager : MonoBehaviour
     // How far above ground do players spawn (in addition to the offset caused by initialHeight)
     public float spawnHeight;
 
-    void Start()
-    {
-        InitLocalVariables();
-    }
+    private bool initalized;
+
+    void Awake() { initalized = false; }
 
     void Update()
     {
+        if (!initalized) return;
         respawnTime = Mathf.Max(0, respawnTime - Time.deltaTime);
         if (ragdollActive)
         {
@@ -40,9 +40,13 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    void InitLocalVariables()
+    // NetworkManager should create the GeoSphere and give a reference to the spawn manager
+    public void Init(GeoSphereGenerator arena = null)
     {
+        if (arena != null)
+            gsg = arena;
         pillars = gsg.GetPillars();
+        initalized = true;
     }
 
     public List<Tuple<Vector3, Quaternion>> PlayerSpawnPoints()
@@ -51,7 +55,7 @@ public class SpawnManager : MonoBehaviour
         // Need to spawn them high enough s.t. they don't fall through; say, initialHeight+something.
         // Also, after setting the 'up' direction as the center of the sphere, we need to give a random look direction.
         if (pillars == null)
-            InitLocalVariables();
+            Init();
         var spawns = new List<Tuple<Vector3, Quaternion>>();
         for (int i=0; i<12; ++i)
         {

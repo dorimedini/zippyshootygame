@@ -7,20 +7,26 @@ using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
+    public GameObject geospherePrefab;
     public GameObject standbyCamera;
     public ExplosionController explosionCtrl;
+    public PillarExtensionController pillarCtrl;
+    public SpawnManager spawner;
 
     public bool offlineMode;
 
     GameObject myPlayer;
-    SpawnManager spawner;
     UserSettingsManager settingsMngr;
+    GeoSphereGenerator arena;
 
     void Start()
     {
         UserDefinedConstants.LoadFromPlayerPrefs();
         settingsMngr = new UserSettingsManager();
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
+        InitArena();
+        pillarCtrl.Init(arena);
+        spawner.Init(arena);
     }
 
     void OnDestroy()
@@ -93,15 +99,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        InitSpawner();
         SpawnMyPlayer();
-    }
-
-    void InitSpawner()
-    {
-        spawner = GameObject.Find("_SCRIPTS").GetComponent<SpawnManager>();
-        if (spawner == null)
-            Debug.LogError("Got null SpawnManager");
     }
 
     void SpawnMyPlayer()
@@ -109,5 +107,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         myPlayer = spawner.SpawnMyself();
         standbyCamera.SetActive(false);
         explosionCtrl.localUserId = myPlayer.GetComponent<PhotonView>().Owner.UserId;
+    }
+
+    void InitArena()
+    {
+        GameObject gsg = Instantiate(geospherePrefab, Vector3.zero, Quaternion.identity);
+        arena = gsg.GetComponent<GeoSphereGenerator>();
     }
 }

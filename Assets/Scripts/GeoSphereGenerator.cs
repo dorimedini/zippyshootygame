@@ -20,9 +20,6 @@ public class GeoSphereGenerator : MonoBehaviour
     // 20*(2^EHN-1)(2^(EHN-1)-1) triangle hexes
     public int expHexNumber;
 
-    // Radius of the sphere - distance from the center to any center of any pillar.
-    private float radius = GeoPhysics.radius;
-
     // Number of lights, between 1 and 4
     public int numLights;
     public float lightRadiusMultiplier; // 0.8f?
@@ -100,10 +97,10 @@ public class GeoSphereGenerator : MonoBehaviour
         sortPillars();                // Pentagons, then hexagons on pentagon arcs, then by distance from arc hexagons
         computeNeighborLists();     // Each pillar should know which pillars are it's neighbors
         makeFaceOrigin();           // Rotate pillars to face the origin
+        addLights();                // Between 1 and 4 point lights in the arena
         spreadPillars();              // Correct slight misalignment by averaging each pillar's location by it's neighbors
         orientPillars();              // Rotate pillars so their edges align with their neighbors
         updateEdgeLengths();        // Enlarge some pillars to fill the gaps
-        addLights();                // Between 1 and 4 point lights in the arena
         updatePillarIds();
     }
 
@@ -126,7 +123,7 @@ public class GeoSphereGenerator : MonoBehaviour
     // Length of an edge of a pillar should be proportional to radius/2^EHN
     float baseEdgeLength()
     {
-        return baseEdgeMultiplier * radius / (float)Tools.IntPow(2, expHexNumber);
+        return baseEdgeMultiplier * UserDefinedConstants.sphereRadius / (float)Tools.IntPow(2, expHexNumber);
     }
 
     // Use powers of this constant to determine the effect of the degree of a pillar
@@ -249,14 +246,14 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         containingSphere = Instantiate(Resources.Load("Prefabs/InvertableSphere"), origin, Quaternion.identity) as GameObject;
         containingSphere.GetComponent<AddInvertedMeshCollider>().CreateInvertedMeshCollider();
-        containingSphere.transform.localScale *= radius;
+        containingSphere.transform.localScale *= UserDefinedConstants.sphereRadius;
     }
 
     private void subdivide(Vector3 v1, Vector3 v2, Vector3 v3, int depth) {
         if (depth == 0) {
-            spherePoints.Add(v1 * radius);
-            spherePoints.Add(v2 * radius);
-            spherePoints.Add(v3 * radius);
+            spherePoints.Add(v1 * UserDefinedConstants.sphereRadius);
+            spherePoints.Add(v2 * UserDefinedConstants.sphereRadius);
+            spherePoints.Add(v3 * UserDefinedConstants.sphereRadius);
             return;
         }
         Vector3 v12 = (v1 + v2).normalized;
@@ -289,7 +286,7 @@ public class GeoSphereGenerator : MonoBehaviour
         // Now lengthen the pentagon points to fit the radius as well (in the spherePoints
         // array this was taken care of).
         for (int i = 0; i < 12; i++)
-            pentCenters[i] *= radius;
+            pentCenters[i] *= UserDefinedConstants.sphereRadius;
     }
 
     private void addPillars()
@@ -298,11 +295,10 @@ public class GeoSphereGenerator : MonoBehaviour
         {
             bool isHex = !isPentPoint(point);
             PillarBehaviour pillar = PillarBehaviour.Create(
-                isHex, 
-                point, 
-                baseEdgeLength(), 
-                radius, 
-                initialHeight * radius, 
+                isHex,
+                point,
+                baseEdgeLength(),
+                initialHeight * UserDefinedConstants.sphereRadius,
                 collisionExpansion);
             setParent(pillar.gameObject);
             if (isHex)
@@ -328,7 +324,7 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         foreach (PillarBehaviour pillar in pillars)
         {
-            pillar.setHeight(UnityEngine.Random.Range(min, max) * radius);
+            pillar.setHeight(UnityEngine.Random.Range(min, max) * UserDefinedConstants.sphereRadius);
         }
     }
 
@@ -535,7 +531,7 @@ public class GeoSphereGenerator : MonoBehaviour
                 }
                 // Push location to the sphere. No need to actually average
                 // because we're normalizing anyway.
-                pillars[i].transform.position = avg.normalized * radius;
+                pillars[i].transform.position = avg.normalized * UserDefinedConstants.sphereRadius;
             }
         }
         // Pentagons
@@ -544,7 +540,7 @@ public class GeoSphereGenerator : MonoBehaviour
             Vector3 avg = origin;
             foreach (int j in neighbors[i])
                 avg += pillars[j].transform.position;
-            pillars[i].transform.position = avg.normalized * radius;
+            pillars[i].transform.position = avg.normalized * UserDefinedConstants.sphereRadius;
         }
     }
 
@@ -574,7 +570,7 @@ public class GeoSphereGenerator : MonoBehaviour
             lights.Add(new GameObject(string.Format("Pointlight{0}", i)));
             Light lightComp = lights[i].AddComponent<Light>();
             lightComp.color = lightColors[i % lightColors.Count];
-            lightComp.range = lightRadiusMultiplier * radius;
+            lightComp.range = lightRadiusMultiplier * UserDefinedConstants.sphereRadius;
             lightComp.intensity = lightIntensity;
         }
         // Place them
@@ -583,20 +579,20 @@ public class GeoSphereGenerator : MonoBehaviour
             // In case of 1 light source, we need to up the range/intensity to illuminate everything
             case 1:
                 lights[0].transform.position = origin;
-                lights[0].GetComponent<Light>().range = 2 * radius;
+                lights[0].GetComponent<Light>().range = 2 * UserDefinedConstants.sphereRadius;
                 break;
             // For 2 or 3 lights, keep them on the XZ plane
             case 2:
-                lights[0].transform.position = origin + new Vector3(0, 0, radius / 3);
-                lights[1].transform.position = origin + new Vector3(0, 0, -radius / 3);
+                lights[0].transform.position = origin + new Vector3(0, 0, UserDefinedConstants.sphereRadius / 3);
+                lights[1].transform.position = origin + new Vector3(0, 0, -UserDefinedConstants.sphereRadius / 3);
                 break;
             case 3:
                 float deg30 = Mathf.PI / 6f;
                 float cos30 = Mathf.Cos(deg30);
                 float sin30 = Mathf.Sin(deg30);
-                lights[0].transform.position = origin + new Vector3(0, 0, radius / 2);
-                lights[1].transform.position = origin + new Vector3(-(radius / 2) * cos30, 0, -(radius / 2) * sin30);
-                lights[2].transform.position = origin + new Vector3(radius / 2 * cos30, 0, -(radius / 2) * sin30);
+                lights[0].transform.position = origin + new Vector3(0, 0, UserDefinedConstants.sphereRadius / 2);
+                lights[1].transform.position = origin + new Vector3(-(UserDefinedConstants.sphereRadius / 2) * cos30, 0, -(UserDefinedConstants.sphereRadius / 2) * sin30);
+                lights[2].transform.position = origin + new Vector3(UserDefinedConstants.sphereRadius / 2 * cos30, 0, -(UserDefinedConstants.sphereRadius / 2) * sin30);
                 break;
             // If we have 4 lights it's a bit more complicated - we want to form a 3D pyramid from the lights.
             // From https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron, we can adapt
@@ -605,10 +601,10 @@ public class GeoSphereGenerator : MonoBehaviour
             case 4:
                 float sqrt2 = Mathf.Sqrt(2);
                 float sqrt3 = Mathf.Sqrt(3);
-                lights[0].transform.position = origin + (radius / 2f) * (new Vector3(2f / 3f * sqrt2, 0, -1f / 3f));
-                lights[1].transform.position = origin + (radius / 2f) * (new Vector3(-sqrt2 / 3f, sqrt2 / sqrt3, -1f / 3f));
-                lights[2].transform.position = origin + (radius / 2f) * (new Vector3(-sqrt2 / 3f, -sqrt2 / sqrt3, -1f / 3f));
-                lights[3].transform.position = origin + (radius / 2f) * (new Vector3(0, 0, 1));
+                lights[0].transform.position = origin + (UserDefinedConstants.sphereRadius / 2f) * (new Vector3(2f / 3f * sqrt2, 0, -1f / 3f));
+                lights[1].transform.position = origin + (UserDefinedConstants.sphereRadius / 2f) * (new Vector3(-sqrt2 / 3f, sqrt2 / sqrt3, -1f / 3f));
+                lights[2].transform.position = origin + (UserDefinedConstants.sphereRadius / 2f) * (new Vector3(-sqrt2 / 3f, -sqrt2 / sqrt3, -1f / 3f));
+                lights[3].transform.position = origin + (UserDefinedConstants.sphereRadius / 2f) * (new Vector3(0, 0, 1));
                 break;
             default:
                 Debug.LogError(string.Format("Got numLights={0}, valid values are 1~4", numLights));
@@ -646,7 +642,7 @@ public class GeoSphereGenerator : MonoBehaviour
     private float distanceToPlane(int pillarIdx)
     {
         Vector3 point = pillars[pillarIdx].transform.position;
-        float minDist = radius; // INF, in practice, for any point on the sphere
+        float minDist = UserDefinedConstants.sphereRadius; // INF, in practice, for any point on the sphere
         float pentDistance = distanceBetweenPents();
         foreach (KeyValuePair<(int,int), Plane> entry in planes)
         {
@@ -708,7 +704,7 @@ public class GeoSphereGenerator : MonoBehaviour
         Vector3 vAxB = Vector3.Cross(vA, vB);
         float targetDeg = 0.0f;
         float rotation = 180f - Vector3.SignedAngle(vAxB, BX, BY);
-        rotation = Tools.NearlyEqual(rotation, targetDeg, epsilon) ? 0.0f : rotation;
+        rotation = Tools.NearlyEqual(rotation, targetDeg, 0.01f) ? 0.0f : rotation;
         B.transform.RotateAround(vB, BY, rotation);
     }
 

@@ -8,9 +8,10 @@ public class PillarExtensionController : MonoBehaviourPun
     GeoSphereGenerator gsg = null;
     List<PillarBehaviour> pillars = null;
 
-    void Start()
+    public void Init(GeoSphereGenerator arena)
     {
-        gsg = GameObject.Find("GeoSphere").GetComponent<GeoSphereGenerator>();
+        if (arena != null)
+            gsg = arena;
         if (gsg == null)
             Debug.LogError("Got null GeoSphereGenerator");
         pillars = gsg.GetPillars();

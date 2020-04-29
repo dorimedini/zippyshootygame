@@ -5,7 +5,6 @@ using UnityEngine;
 public static class GeoPhysics
 {
     public static float gravity = 9.8f;
-    public static float radius = 70;
 
     public static void ApplyGravity(Rigidbody rb)
     {
@@ -34,7 +33,11 @@ public static class GeoPhysics
         // Find the highest pillar cllider under the player and return the distance from it
         hitPillar = null;
         float highestHit = -1;
-        var hits = Physics.RaycastAll(player.transform.position + player.transform.up, -player.transform.up, 2 * radius, 1 << LayerMask.NameToLayer("Environment"));
+        var hits = Physics.RaycastAll(
+            player.transform.position + player.transform.up,
+            -player.transform.up,
+            2 * UserDefinedConstants.sphereRadius,
+            1 << LayerMask.NameToLayer("Environment"));
         if (hits.Length == 0)
         {
             Debug.LogError("Nothing under player!");
@@ -54,11 +57,11 @@ public static class GeoPhysics
             // We may have hit the bounding sphere between the pillars with this raycast. If so, ground is radius away from origin.
             // If hits[] has no elements we've already returned
             if (hits[0].collider.gameObject.name == "InvertableSphere(Clone)")
-                return radius - player.position.magnitude;
+                return UserDefinedConstants.sphereRadius - player.position.magnitude;
             Debug.LogError(string.Format("Raycast didn't get a pillar / bounding-sphere hit! Hit {0} instead", hits[0].collider.gameObject.name));
             return -1;
         }
-        float dist = (radius - hitPillar.currentHeight) - player.position.magnitude; // Dist of pillar surface from origin minus dist of player from origin
+        float dist = (UserDefinedConstants.sphereRadius - hitPillar.currentHeight) - player.position.magnitude; // Dist of pillar surface from origin minus dist of player from origin
         return dist;
     }
 }

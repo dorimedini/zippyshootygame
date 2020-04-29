@@ -22,7 +22,6 @@ public class PillarBehaviour : MonoBehaviour
     private GameObject player = null;    // So the pillar can launch the player if need be
 
     public float edge;
-    public float radius;
     public float collisionExpansion;  // How much wider the collider is (percentage)
 
     public int id;           // Set by Geosphere generator
@@ -45,7 +44,6 @@ public class PillarBehaviour : MonoBehaviour
         bool isHexagon,
         Vector3 location,
         float edgeLength,
-        float r,
         float h,
         float collExpansion,
         int pillarId = -1)
@@ -55,11 +53,10 @@ public class PillarBehaviour : MonoBehaviour
         PillarBehaviour pillar = pillarObj.GetComponent<PillarBehaviour>();
         pillar.isHex = isHexagon;
         pillar.edge = edgeLength;
-        pillar.radius = r;
         pillar.targetHeight = h;
         pillar.currentHeight = h;
-        pillar.maxHeight = maxHeightPercentage * r;
-        pillar.extensionDelta = extensionDeltaPercentage * r;
+        pillar.maxHeight = maxHeightPercentage * UserDefinedConstants.sphereRadius;
+        pillar.extensionDelta = extensionDeltaPercentage * UserDefinedConstants.sphereRadius;
         pillar.timeToTarget = 0f;
         pillar.collisionExpansion = collExpansion;
         pillar.extending = false;
@@ -82,8 +79,8 @@ public class PillarBehaviour : MonoBehaviour
         extending = false;
         primedToLaunch = false;
         heightLocked = false;
-        maxHeight = maxHeightPercentage * radius;
-        extensionDelta = extensionDeltaPercentage * radius;
+        maxHeight = maxHeightPercentage * UserDefinedConstants.sphereRadius;
+        extensionDelta = extensionDeltaPercentage * UserDefinedConstants.sphereRadius;
     }
 
     void Start()
@@ -178,7 +175,7 @@ public class PillarBehaviour : MonoBehaviour
             distinctVerts[i] *= (edge / currentEdge);
         // Now, set each top vector to the correct height and on the radial direction from
         // it's bottom-base counterpart
-        Vector3 origin = new Vector3(0, radius, 0);
+        Vector3 origin = new Vector3(0, UserDefinedConstants.sphereRadius, 0);
         for (int i = nEdges; i < 2 * nEdges; ++i)
         {
             Vector3 radialDirection = (origin - distinctVerts[i - nEdges]).normalized;
@@ -237,7 +234,6 @@ public class PillarBehaviour : MonoBehaviour
 
     // Allow parent object to control edge width
     public void setEdge(float e) { edge = e; needRedraw = true; }
-    public void setRadius(float r) { radius = r; needRedraw = true; }
     public void setHeight(float h) {
         currentHeight = targetHeight = h;
         timeToTarget = 0f;

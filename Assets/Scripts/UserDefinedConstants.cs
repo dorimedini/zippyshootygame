@@ -12,6 +12,7 @@ public static class UserDefinedConstants
     public static float lookSpeedX;
     public static float lookSpeedY;
     public static float grappleSpeed;
+    public static float sphereRadius;
     public static float movementSpeed;
     public static float maxChargeTime;
     public static float explosionLift;
@@ -36,6 +37,7 @@ public static class UserDefinedConstants
         lookSpeedX = PlayerPrefs.GetFloat("lookSpeedX", 10f);
         lookSpeedY = PlayerPrefs.GetFloat("lookSpeedY", 5f);
         grappleSpeed = PlayerPrefs.GetFloat("grappleSpeed", 50f);
+        sphereRadius = PlayerPrefs.GetFloat("sphereRadius", 70f);
         movementSpeed = PlayerPrefs.GetFloat("movementSpeed", 1f);
         maxChargeTime = PlayerPrefs.GetFloat("maxChargeTime", 1f);
         explosionLift = PlayerPrefs.GetFloat("explosionLift", 1f);
@@ -61,6 +63,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("lookSpeedX", lookSpeedX);
         PlayerPrefs.SetFloat("lookSpeedY", lookSpeedY);
         PlayerPrefs.SetFloat("grappleSpeed", grappleSpeed);
+        PlayerPrefs.SetFloat("sphereRadius", sphereRadius);
         PlayerPrefs.SetFloat("movementSpeed", movementSpeed);
         PlayerPrefs.SetFloat("maxChargeTime", maxChargeTime);
         PlayerPrefs.SetFloat("explosionLift", explosionLift);
