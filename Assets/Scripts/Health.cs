@@ -40,8 +40,11 @@ public class Health : MonoBehaviourPun
     public void InflictDamage(float damage)
     {
         currentHealth -= damage;
-        bar.TakeDamage(damage);
-        redOverlay.color = new Color(redOverlay.color.r, redOverlay.color.g, redOverlay.color.b, 0.5f);
+        // UI element effects should only be done if the local player is the player hit
+        if (photonView.IsMine)
+        {
+            InflictDamageUI(damage);
+        }
         // All clients need to update health, but only the player owner should initiate death sequence
         if (currentHealth <= 0 && photonView.IsMine)
             DieAndRespawn();
@@ -50,5 +53,11 @@ public class Health : MonoBehaviourPun
     void DieAndRespawn()
     {
         spawnMngr.KillAndRespawn(gameObject);
+    }
+
+    void InflictDamageUI(float damage)
+    {
+        bar.TakeDamage(damage);
+        redOverlay.color = new Color(redOverlay.color.r, redOverlay.color.g, redOverlay.color.b, 0.5f);
     }
 }
