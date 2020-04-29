@@ -9,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject spawnCam;
     public GeoSphereGenerator gsg;
     public RagdollController ragdollCtrl;
+    public MessagesController msgCtrl;
 
     List<PillarBehaviour> pillars = null;
     private float respawnTime;
@@ -28,6 +29,7 @@ public class SpawnManager : MonoBehaviour
         respawnTime = Mathf.Max(0, respawnTime - Time.deltaTime);
         if (ragdollActive)
         {
+            msgCtrl.ReplaceLine(string.Format("Respawn in {0:f2}", respawnTime));
             spawnCam.transform.LookAt(activeRagdoll.transform.position);
             if (Tools.NearlyEqual(respawnTime, 0, 0.01f))
             {
@@ -79,6 +81,8 @@ public class SpawnManager : MonoBehaviour
             Destroy(activeRagdoll, UserDefinedConstants.spawnTime + 0.2f); // Give some legroom so the spawn camera can access position of ragdoll while waiting to spawn
             ragdollActive = true;
             respawnTime = UserDefinedConstants.spawnTime;
+            msgCtrl.AppendMessage("U DED");
+            msgCtrl.AppendMessage(string.Format("Respawn in {0:f2}", UserDefinedConstants.spawnTime));
             ActivateSpawnCam(activeRagdoll);
             PhotonNetwork.Destroy(player);
         }
@@ -86,6 +90,7 @@ public class SpawnManager : MonoBehaviour
 
     public GameObject SpawnMyself()
     {
+        msgCtrl.AppendMessage("Respawning...");
         var spawnPoints = PlayerSpawnPoints();
         var spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
         Vector3 spawnLoc = spawnPoint.Item1;

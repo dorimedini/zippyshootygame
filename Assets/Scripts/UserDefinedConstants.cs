@@ -18,6 +18,7 @@ public static class UserDefinedConstants
     public static float explosionForce;
     public static float weaponCooldown;
     public static float explosionRadius;
+    public static float messageBoxUpTime;
     public static float projectileImpulse;
     public static float gravityMultiplier;
     public static float grappleRampupTime;
@@ -41,6 +42,7 @@ public static class UserDefinedConstants
         explosionForce = PlayerPrefs.GetFloat("explosionForce", 25f);
         weaponCooldown = PlayerPrefs.GetFloat("weaponCooldown", 1f);
         explosionRadius = PlayerPrefs.GetFloat("explosionRadius", 15f);
+        messageBoxUpTime = PlayerPrefs.GetFloat("messageBoxUpTime", 5f);
         projectileImpulse = PlayerPrefs.GetFloat("projectileImpulse", 50f);
         gravityMultiplier = PlayerPrefs.GetFloat("gravityMultiplier", 1f);
         grappleRampupTime = PlayerPrefs.GetFloat("grappleRampupTime", 0.5f);
@@ -65,6 +67,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("explosionForce", explosionForce);
         PlayerPrefs.SetFloat("weaponCooldown", weaponCooldown);
         PlayerPrefs.SetFloat("explosionRadius", explosionRadius);
+        PlayerPrefs.SetFloat("messageBoxUpTime", messageBoxUpTime);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);
         PlayerPrefs.SetFloat("grappleRampupTime", grappleRampupTime);
