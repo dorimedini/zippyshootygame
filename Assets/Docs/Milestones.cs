@@ -36,7 +36,7 @@
  * < V > Scrollable settings
  * < V > Message box (for game alerts, and later for chat)
  * < V > Show respawn timer while waiting
- * <   > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
+ * < V > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * <   > Make weapon-charge an optional mechanic
  * <   > Sounds: walk, fire, hit, launch (only self hears)
  * <   > Visible delay in player knockback on explosion. Is there something that can be done?

@@ -10,7 +10,7 @@ public class ShootingCharacter : MonoBehaviourPun
     public CrosshairGUIController crosshairCtrl;
     public Camera cam;
 
-    private bool initiateCharge, releaseCharge, charging;
+    private bool buttonDown, buttonUp, charging;
     private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
 
@@ -26,14 +26,14 @@ public class ShootingCharacter : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        initiateCharge = Input.GetButtonDown("Fire1");
-        releaseCharge = Input.GetButtonUp("Fire1");
+        buttonDown = Input.GetButtonDown("Fire1");
+        buttonUp = Input.GetButtonUp("Fire1");
         weaponCooldownCounter -= Time.deltaTime;
 
         // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
-        if (weaponCooldownCounter <= 0 && initiateCharge && !charging)
+        if (weaponCooldownCounter <= 0 && buttonDown && !charging)
         {
-            initiateCharge = false;
+            buttonDown = false;
             charging = true;
             weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
             chargeTime = UserDefinedConstants.minProjectileCharge;
@@ -47,9 +47,9 @@ public class ShootingCharacter : MonoBehaviourPun
         }
 
         // Fire (when player releases button or max charge is reached)
-        if (charging && (releaseCharge || chargeTime >= UserDefinedConstants.maxChargeTime))
+        if (charging && (buttonUp || chargeTime >= UserDefinedConstants.maxChargeTime))
         {
-            releaseCharge = false;
+            buttonUp = false;
             charging = false;
             Vector3 force = chargeTime * cam.transform.forward * UserDefinedConstants.projectileImpulse;
             Vector3 source = cam.transform.position + cam.transform.forward;
