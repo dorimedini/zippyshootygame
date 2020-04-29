@@ -28,35 +28,52 @@ public class ShootingCharacter : MonoBehaviourPun
     {
         buttonDown = Input.GetButtonDown("Fire1");
         buttonUp = Input.GetButtonUp("Fire1");
-        weaponCooldownCounter -= Time.deltaTime;
+        weaponCooldownCounter = Mathf.Max(weaponCooldownCounter - Time.deltaTime, 0);
 
-        // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
-        if (weaponCooldownCounter <= 0 && buttonDown && !charging)
+        // Different behaviour depending on weapon mode
+        if (UserDefinedConstants.chargeMode)
         {
-            buttonDown = false;
-            charging = true;
-            weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
-            chargeTime = UserDefinedConstants.minProjectileCharge;
-        }
+            // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
+            if (Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f) && buttonDown && !charging)
+            {
+                buttonDown = false;
+                charging = true;
+                weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
+                chargeTime = UserDefinedConstants.minProjectileCharge;
+            }
 
-        // Update weapon charge (if charging) and GUI
-        if (charging)
+            // Update weapon charge (if charging) and GUI
+            if (charging)
+            {
+                chargeTime += Time.deltaTime;
+                crosshairCtrl.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
+            }
+
+            // Fire (when player releases button or max charge is reached)
+            if (charging && (buttonUp || chargeTime >= UserDefinedConstants.maxChargeTime))
+            {
+                buttonUp = false;
+                charging = false;
+                FireProjectile(chargeTime);
+                crosshairCtrl.updateChargeState(0, UserDefinedConstants.maxChargeTime);
+            }
+
+        }
+        else // !chargeMode
         {
-            chargeTime += Time.deltaTime;
-            crosshairCtrl.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
+            // Fire immediately (at "max charge"), if cooldown allows
+            if (buttonDown && Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f))
+            {
+                weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
+                FireProjectile(1);
+            }
         }
+    }
 
-        // Fire (when player releases button or max charge is reached)
-        if (charging && (buttonUp || chargeTime >= UserDefinedConstants.maxChargeTime))
-        {
-            buttonUp = false;
-            charging = false;
-            Vector3 force = chargeTime * cam.transform.forward * UserDefinedConstants.projectileImpulse;
-            Vector3 source = cam.transform.position + cam.transform.forward;
-            projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
-            crosshairCtrl.updateChargeState(0, UserDefinedConstants.maxChargeTime);
-        }
-
-        weaponCooldownCounter = Mathf.Max(weaponCooldownCounter, 0);
+    void FireProjectile(float charge)
+    {
+        Vector3 force = charge * cam.transform.forward * UserDefinedConstants.projectileImpulse;
+        Vector3 source = cam.transform.position + cam.transform.forward;
+        projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
     }
 }
