@@ -22,7 +22,6 @@ public class Projectile : MonoBehaviour
     Mesh mesh;
     MeshRenderer rend;
     PillarExtensionController pillarCtrl;
-    DamageController dmgCtrl;
     ProjectileController projectileCtrl;
     ExplosionController explosionCtrl;
 
@@ -73,9 +72,6 @@ public class Projectile : MonoBehaviour
         pillarCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<PillarExtensionController>();
         if (pillarCtrl == null)
             Debug.LogError("Got null PillarExtensionController");
-        dmgCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<DamageController>();
-        if (dmgCtrl == null)
-            Debug.LogError("Got null DamageController");
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
@@ -100,11 +96,6 @@ public class Projectile : MonoBehaviour
             // Is this the shooter?
             if (obj.GetComponent<PhotonView>().Owner.UserId == shooterId)
                 return;
-            // TODO: One day I'll find out why objects are suddenly null...
-            if (dmgCtrl == null)
-                InitControllers();
-            dmgCtrl.BroadcastInflictDamage(shooterId, UserDefinedConstants.projectileHitDamage, obj.GetComponent<PhotonView>().Owner.UserId);
-            explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         }
 
         // Did we hit a pillar or a player?
@@ -116,10 +107,10 @@ public class Projectile : MonoBehaviour
             if (pillarCtrl == null)
                 InitControllers();
             pillarCtrl.BroadcastHitPillar(pillar.id);
-            explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         }
 
         // In any case, all collisions destroy the projectile
+        explosionCtrl.BroadcastExplosion(transform.position, shooterId);
         projectileCtrl.BroadcastDestroyProjectile(projectileId);
         destroyed = true;
     }

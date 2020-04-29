@@ -8,6 +8,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
     public GameObject standbyCamera;
+    public ExplosionController explosionCtrl;
 
     public bool offlineMode;
 
@@ -109,5 +110,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         myPlayer = spawner.SpawnMyself();
         standbyCamera.SetActive(false);
+        explosionCtrl.localUserId = myPlayer.GetComponent<PhotonView>().Owner.UserId;
     }
 }
