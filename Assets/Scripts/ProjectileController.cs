@@ -58,7 +58,10 @@ public class ProjectileController : MonoBehaviourPun
     {
         // TODO: Once again, find why these are sometimes null..
         if (activeProjectiles == null)
+        {
+            Debug.LogWarning("activeProjectiles is null!");
             InitActiveProjectileDict();
+        }
         GameObject projectile = Instantiate(projectilePrefab, source, Quaternion.identity);
         activeProjectiles[projectileId] = projectile;
         projectile.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
