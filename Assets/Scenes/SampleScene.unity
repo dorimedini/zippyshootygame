@@ -1035,6 +1035,13 @@ MonoBehaviour:
   explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
   explosionSound: {fileID: 8300000, guid: 3b15d24133ec0de438a3e3b65c6938c7, type: 3}
+  fireSounds:
+  - {fileID: 8300000, guid: 92043e3148e0e294687789b9f97d5175, type: 3}
+  - {fileID: 8300000, guid: 097f84d904ca68440aab55c9240b5606, type: 3}
+  - {fileID: 8300000, guid: 8ebb5a3150de8224a904be256f72f666, type: 3}
+  - {fileID: 8300000, guid: 034405e78241f5948a32523dc8777795, type: 3}
+  - {fileID: 8300000, guid: c80952504d12147409861be1c87678aa, type: 3}
+  - {fileID: 8300000, guid: 554405ad368c2ff4cb48f9b90ee8bbc9, type: 3}
 --- !u!114 &1863656696
 MonoBehaviour:
   m_ObjectHideFlags: 0

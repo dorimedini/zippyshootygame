@@ -10,6 +10,7 @@ public class ProjectileController : MonoBehaviourPun
     public GameObject projectilePrefab;
     public GameObject explosionPrefab;
     public AudioClip explosionSound;
+    public AudioClip[] fireSounds;
 
     private Dictionary<string, GameObject> activeProjectiles;
 
@@ -69,6 +70,12 @@ public class ProjectileController : MonoBehaviourPun
         projectile.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
         projectile.GetComponent<Projectile>().shooterId = shooterId;
         projectile.GetComponent<Projectile>().projectileId = projectileId;
+        PlayShotSound(source);
         return projectile;
+    }
+
+    void PlayShotSound(Vector3 source)
+    {
+        AudioSource.PlayClipAtPoint(fireSounds[Mathf.FloorToInt(Random.Range(0, fireSounds.Length - 0.01f))], source, UserDefinedConstants.shotSoundVolume);
     }
 }

@@ -19,6 +19,7 @@ public static class UserDefinedConstants
     public static float explosionForce;
     public static float weaponCooldown;
     public static float explosionRadius;
+    public static float shotSoundVolume;
     public static float messageBoxUpTime;
     public static float projectileImpulse;
     public static float gravityMultiplier;
@@ -56,6 +57,7 @@ public static class UserDefinedConstants
         explosionForce = fromPrefs ? PlayerPrefs.GetFloat("explosionForce", 25f) : 25f;
         weaponCooldown = fromPrefs ? PlayerPrefs.GetFloat("weaponCooldown", 0.5f) : 0.5f;
         explosionRadius = fromPrefs ? PlayerPrefs.GetFloat("explosionRadius", 15f) : 15f;
+        shotSoundVolume = fromPrefs ? PlayerPrefs.GetFloat("shotSoundVolume", 0.15f) : 0.15f;
         messageBoxUpTime = fromPrefs ? PlayerPrefs.GetFloat("messageBoxUpTime", 5f) : 5f;
         projectileImpulse = fromPrefs ? PlayerPrefs.GetFloat("projectileImpulse", 50f) : 50f;
         gravityMultiplier = fromPrefs ? PlayerPrefs.GetFloat("gravityMultiplier", 1f) : 1f;
@@ -83,6 +85,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("explosionForce", explosionForce);
         PlayerPrefs.SetFloat("weaponCooldown", weaponCooldown);
         PlayerPrefs.SetFloat("explosionRadius", explosionRadius);
+        PlayerPrefs.SetFloat("shotSoundVolume", shotSoundVolume);
         PlayerPrefs.SetFloat("messageBoxUpTime", messageBoxUpTime);
         PlayerPrefs.SetFloat("projectileImpulse", projectileImpulse);
         PlayerPrefs.SetFloat("gravityMultiplier", gravityMultiplier);

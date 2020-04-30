@@ -43,6 +43,7 @@ public class UserSettingsManager
         UserDefinedConstants.explosionForce = GetSetting("Explosion force: ", UserDefinedConstants.explosionForce);
         UserDefinedConstants.weaponCooldown = GetSetting("Weapon cooldown: ", UserDefinedConstants.weaponCooldown);
         UserDefinedConstants.explosionRadius = GetSetting("Explosion radius: ", UserDefinedConstants.explosionRadius);
+        UserDefinedConstants.shotSoundVolume = GetSetting("Shoot sound volume: ", UserDefinedConstants.shotSoundVolume);
         UserDefinedConstants.messageBoxUpTime = GetSetting("Messagebox uptime: ", UserDefinedConstants.messageBoxUpTime);
         UserDefinedConstants.projectileImpulse = GetSetting("Max projectile speed: ", UserDefinedConstants.projectileImpulse);
         UserDefinedConstants.gravityMultiplier = GetSetting("Gravity multiplier: ", UserDefinedConstants.gravityMultiplier);
