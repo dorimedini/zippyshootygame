@@ -4,7 +4,6 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(CrosshairGUIController))]
-[RequireComponent(typeof(Camera))]
 public class ShootingCharacter : MonoBehaviourPun
 {
     public CrosshairGUIController crosshairCtrl;

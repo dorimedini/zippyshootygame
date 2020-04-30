@@ -105,6 +105,7 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<AudioListener>().enabled = true;
         player.GetComponentInChildren<MouseLookController>().enabled = true;
         player.GetComponentInChildren<PlayerMovementController>().enabled = true;
+        player.GetComponentInChildren<GrapplingCharacter>().enabled = true;
         player.GetComponentInChildren<GravityAffected>().enabled = true;
         player.GetComponentInChildren<ShootingCharacter>().enabled = true;
         player.GetComponentInChildren<CrosshairGUIController>().enabled = true;

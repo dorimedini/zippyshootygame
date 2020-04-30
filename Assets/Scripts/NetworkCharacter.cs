@@ -12,6 +12,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public Transform grappleHand;
     public Material localPlayerMaterial;
     public PlayerMovementController playerMovement;
+    public GrapplingCharacter grappleChar;
 
     GameObject activeRope;
     Vector3 realPosition, grappleTarget, prevGrappleTarget;
@@ -70,7 +71,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             stream.SendNext(anim.GetBool("InAir"));
             stream.SendNext(anim.GetFloat("DistFromGround"));
             stream.SendNext(anim.GetBool("Grappling"));
-            stream.SendNext(playerMovement.GetGrappleTarget());
+            stream.SendNext(grappleChar.GetGrappleTarget());
             stream.SendNext(anim.GetLayerWeight(baseLayerIdx));
             stream.SendNext(anim.GetLayerWeight(flyGrappleArmLayerIdx));
         }
@@ -122,7 +123,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     }
     Vector3 GetThisGrappleTarget()
     {
-        return photonView.IsMine ? playerMovement.GetGrappleTarget() : grappleTarget;
+        return photonView.IsMine ? grappleChar.GetGrappleTarget() : grappleTarget;
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
