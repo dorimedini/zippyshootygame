@@ -9,6 +9,7 @@ public class ProjectileController : MonoBehaviourPun
 
     public GameObject projectilePrefab;
     public GameObject explosionPrefab;
+    public AudioClip explosionSound;
 
     private Dictionary<string, GameObject> activeProjectiles;
 
@@ -49,6 +50,7 @@ public class ProjectileController : MonoBehaviourPun
     void DestroyProjectile(string projectileId)
     {
         var explosion = Instantiate(explosionPrefab, activeProjectiles[projectileId].transform.position, activeProjectiles[projectileId].transform.rotation);
+        AudioSource.PlayClipAtPoint(explosionSound, activeProjectiles[projectileId].transform.position);
         Destroy(activeProjectiles[projectileId]);
         activeProjectiles.Remove(projectileId);
         Destroy(explosion, 3f);
