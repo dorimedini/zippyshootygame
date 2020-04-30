@@ -47,6 +47,7 @@
  * <   > Grapple superman animation should be fixed-oriented towards target point.
  *       Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
+ * <   > Landing feels soft... maybe a little camera bounce?
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Sun should damage on proximity?
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
