@@ -11,6 +11,7 @@ public class ProjectileController : MonoBehaviourPun
     public GameObject explosionPrefab;
     public AudioClip explosionSound;
     public AudioClip[] fireSounds;
+    public AudioSource localFireSoundSource;
 
     private Dictionary<string, GameObject> activeProjectiles;
 
@@ -32,6 +33,11 @@ public class ProjectileController : MonoBehaviourPun
         photonView.RPC("FireProjectile", RpcTarget.Others, source, force, shooterId, projectileId);
         GameObject projectile = InstantiateProjectileWithoutCollider(source, force, shooterId, projectileId);
         projectile.GetComponent<MeshCollider>().enabled = true;
+        // Local player needs to hear his own shot anyway, but sometimes when player is traveling fast it fades fast.
+        // To solve this, the remote players will call PlayClipAtPoint, while the local player uses the local audiosource.
+        localFireSoundSource.volume = UserDefinedConstants.shotSoundVolume;
+        localFireSoundSource.clip = RandomShotSound();
+        localFireSoundSource.Play();
     }
 
     /** We don't want to send each projectile's location updates on the network, so let's hope initial spawn location 
@@ -40,6 +46,7 @@ public class ProjectileController : MonoBehaviourPun
     void FireProjectile(Vector3 source, Vector3 force, string shooterId, string projectileId)
     {
         InstantiateProjectileWithoutCollider(source, force, shooterId, projectileId);
+        AudioSource.PlayClipAtPoint(RandomShotSound(), source, UserDefinedConstants.shotSoundVolume);
     }
 
     public void BroadcastDestroyProjectile(string projectileId)
@@ -70,12 +77,8 @@ public class ProjectileController : MonoBehaviourPun
         projectile.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
         projectile.GetComponent<Projectile>().shooterId = shooterId;
         projectile.GetComponent<Projectile>().projectileId = projectileId;
-        PlayShotSound(source);
         return projectile;
     }
 
-    void PlayShotSound(Vector3 source)
-    {
-        AudioSource.PlayClipAtPoint(fireSounds[Mathf.FloorToInt(Random.Range(0, fireSounds.Length - 0.01f))], source, UserDefinedConstants.shotSoundVolume);
-    }
+    AudioClip RandomShotSound() { return fireSounds[Mathf.FloorToInt(Random.Range(0, fireSounds.Length - 0.01f))]; }
 }
