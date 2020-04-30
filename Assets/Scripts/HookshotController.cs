@@ -5,6 +5,7 @@ using UnityEngine;
 public class HookshotController : MonoBehaviour
 {
     public GameObject segmentPrefab;
+    public AudioSource fireHookshotSound, grapplingSound;
 
     List<HookshotSegment> segments;
     Transform grappleSourceTransform;
@@ -15,10 +16,17 @@ public class HookshotController : MonoBehaviour
         segments = new List<HookshotSegment>();
         grappleSourceTransform = source;
         ropeTarget = target;
+        StartPlayingSounds();
     }
 
     // When the hookshot is fired the hook location will move from firer's hand to the final target.
-    public void UpdateTarget(Vector3 newTarget) { ropeTarget = newTarget; }
+    public void UpdateTarget(Vector3 newTarget) {
+        if (ropeTarget != newTarget)
+        {
+            StartPlayingSounds();
+        }
+        ropeTarget = newTarget;
+    }
 
     void Update()
     {
@@ -51,6 +59,15 @@ public class HookshotController : MonoBehaviour
             segments[0].SetNumOfActiveLinks(linksInFirstSegment);
             segments[segments.Count - 1].SetIntermediateSegment(false);
         }
+    }
+
+    void StartPlayingSounds()
+    {
+        // We want to play the crossbow-fire and the whoosh sounds simultaniously, then soon after the crossbow hit.
+        if (grapplingSound.isPlaying)
+            grapplingSound.Stop();
+        fireHookshotSound.Play();
+        grapplingSound.PlayDelayed(UserDefinedConstants.grappleRampupTime / 2 - 0.01f);
     }
 
     public static GameObject DrawHookshot(GameObject hookshotPrefab, Transform grappleHand, Vector3 to)
