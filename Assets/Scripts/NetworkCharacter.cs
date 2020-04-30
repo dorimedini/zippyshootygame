@@ -11,11 +11,11 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public Material localPlayerMaterial;
     public PlayerMovementController playerMovement;
     public GrapplingCharacter grappleChar;
-    public GameObject ropePrefab;
+    public GameObject hookshotPrefab;
     public Transform grappleHand;
 
-    GameObject activeRope;
-    Vector3 realPosition, grappleTarget, prevGrappleTarget;
+    GameObject activeHookshot;
+    Vector3 realPosition, grappleTarget;
     Quaternion realRotation;
     float realFwdBack, realLeftRight, realDistFromGround;
     bool isInAir, grappling;
@@ -25,8 +25,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
 
     void Start()
     {
-        activeRope = null;
-        prevGrappleTarget = Vector3.zero;
+        activeHookshot = null;
         baseLayerIdx = anim.GetLayerIndex("Base Layer");
         flyGrappleArmLayerIdx = anim.GetLayerIndex("FlyGrappleArm");
         flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
@@ -84,13 +83,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             isInAir = (bool)stream.ReceiveNext();
             realDistFromGround = (float)stream.ReceiveNext();
             grappling = (bool)stream.ReceiveNext();
-            // If the player changed grapple direction mid-grapple catch it here. We won't get a false boolean for "Grappling"
-            Vector3 newGrappleTarget = (Vector3)stream.ReceiveNext();
-            if (newGrappleTarget != grappleTarget)
-            {
-                prevGrappleTarget = grappleTarget;
-                grappleTarget = newGrappleTarget;
-            }
+            grappleTarget = (Vector3)stream.ReceiveNext();
             baseLayerWeight = (float)stream.ReceiveNext();
             grappleLayersWeight = (float)stream.ReceiveNext();
         }
@@ -98,18 +91,30 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
 
     void DrawRope()
     {
-        // If we're not grappling, destroy the rope and do nothing else.
-        // Also, if the rope target changed, we may not get a 'false' value in the Grappling boolean but we still need to destroy the old rope.
-        Vector3 currentGrappleTarget = GetThisGrappleTarget();
-        if (activeRope != null && (!IsGrappling() || prevGrappleTarget != currentGrappleTarget))
+        if (!IsGrappling())
         {
-            Destroy(activeRope);
-            activeRope = null;
-            prevGrappleTarget = currentGrappleTarget;
+            if (activeHookshot != null)
+            {
+                Destroy(activeHookshot);
+                activeHookshot = null;
+            }
+            return;
         }
-        if (activeRope == null && IsGrappling())
+        // If the rope already exists, we only ever need to update the target; the hand transform is always the same (player's hand).
+        if (activeHookshot != null)
         {
-            activeRope = GrapplingCharacter.DrawRope(ropePrefab, grappleHand, currentGrappleTarget);
+            HookshotController hc = activeHookshot.GetComponent<HookshotController>();
+            if (hc == null)
+            {
+                Debug.LogError("No hookshot controller on hookshot prefab!");
+                return;
+            }
+            hc.UpdateTarget(GetThisGrappleTarget());
+            return;
+        }
+        else
+        {
+            activeHookshot = HookshotController.DrawHookshot(hookshotPrefab, grappleHand, GetThisGrappleTarget());
         }
     }
 
