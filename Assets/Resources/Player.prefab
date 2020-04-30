@@ -276,13 +276,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa5533a5c17742e429d5afa29de459b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ropePrefab: {fileID: 276220664738081697, guid: e6593cd2dc6b81746b155c8f31d66e83,
-    type: 3}
   anim: {fileID: 6287008124743745102}
-  grappleHand: {fileID: 6939456590825648860}
   localPlayerMaterial: {fileID: 2100000, guid: 12eb21ce665eea44092f794048a94558, type: 2}
   playerMovement: {fileID: 642572647237074428}
   grappleChar: {fileID: 3049088878652703782}
+  ropePrefab: {fileID: 276220664738081697, guid: e6593cd2dc6b81746b155c8f31d66e83,
+    type: 3}
+  grappleHand: {fileID: 6939456590825648860}
 --- !u!114 &2526693595332246113
 MonoBehaviour:
   m_ObjectHideFlags: 0

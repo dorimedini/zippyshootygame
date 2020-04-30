@@ -398,7 +398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b8c50b8e77760846be97c736cc713c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSound: {fileID: 8300000, guid: 204b0aef5c50cbe4eb98da80f35658c0, type: 3}
 --- !u!1101 &3690376091451218733
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

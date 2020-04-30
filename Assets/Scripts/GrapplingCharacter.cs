@@ -206,4 +206,14 @@ public class GrapplingCharacter : MonoBehaviour
         anim.SetLayerWeight(flyGrappleArmLayerIdx, Mathf.Lerp(anim.GetLayerWeight(flyGrappleArmLayerIdx), 1 - baseLayerTarget, 0.1f));
         anim.SetLayerWeight(flyRestOfBodyLayerIdx, Mathf.Lerp(anim.GetLayerWeight(flyRestOfBodyLayerIdx), 1 - baseLayerTarget, 0.1f));
     }
+
+    public static GameObject DrawRope(GameObject ropePrefab, Transform grappleHand, Vector3 to)
+    {
+        var rope = Instantiate(ropePrefab, grappleHand.position, Quaternion.identity);
+        RopeController rc = rope.GetComponent<RopeController>();
+        if (rc == null)
+            Debug.LogError("No ropecontroller on rope prefab!");
+        rc.Init(grappleHand, to);
+        return rope;
+    }
 }

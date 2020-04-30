@@ -7,12 +7,12 @@ using Photon.Pun;
 [RequireComponent(typeof(PlayerMovementController))]
 public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiateMagicCallback
 {
-    public GameObject ropePrefab;
     public Animator anim;
-    public Transform grappleHand;
     public Material localPlayerMaterial;
     public PlayerMovementController playerMovement;
     public GrapplingCharacter grappleChar;
+    public GameObject ropePrefab;
+    public Transform grappleHand;
 
     GameObject activeRope;
     Vector3 realPosition, grappleTarget, prevGrappleTarget;
@@ -109,11 +109,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         }
         if (activeRope == null && IsGrappling())
         {
-            activeRope = Instantiate(ropePrefab, transform.position, Quaternion.identity);
-            RopeController rc = activeRope.GetComponent<RopeController>();
-            if (rc == null)
-                Debug.LogError("No ropecontroller on rope prefab!");
-            rc.Init(grappleHand, GetThisGrappleTarget());
+            activeRope = GrapplingCharacter.DrawRope(ropePrefab, grappleHand, currentGrappleTarget);
         }
     }
 
