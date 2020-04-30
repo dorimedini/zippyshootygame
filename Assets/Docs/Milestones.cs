@@ -39,21 +39,20 @@
  * < V > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * < V > Make weapon-charge an optional mechanic
  * <   > Sounds: walk, fire, hit, launch (only self hears)
+ * <   > Take camera back a bit so we don't see through walls
  * <   > Visible delay in player knockback on explosion. Is there something that can be done?
  * <   > Grappling twice in a row jerks the camera; lerp it
  * <   > Ragdoll doesn't get the explosion knockback if the hit kills a player. Fix it
- * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * <   > Grapple superman animation should be fixed-oriented towards target point.
  *       Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
- * <   > Add option for 3rd-person camera / shoulder cam? Lots of angle issues, should probably follow a tut
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
+ * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * <   > Sun should damage on proximity?
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * -------   > Maybe don't launch projectile from directly in front of face
  * <   > Pillar hit effect
- * <   > Player hit effect (GUI included)
  * <   > IMPORTANT: Make the grapple feel really good! It's faster than walking so it's probably going to be the main movement mechanic
  * <   > Better projectile animation (how to launch with precision without shooting from the camera?)
  *?<   > Better projectile model...?
