@@ -7,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class PillarBehaviour : MonoBehaviour
 {
+    public GameObject steamPrefab;
+
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
     public static float timeToHeightDelta = 2f;
@@ -18,6 +20,8 @@ public class PillarBehaviour : MonoBehaviour
     private bool extending;
     private bool primedToLaunch;
     private float extensionDelta;
+
+    private List<PillarBehaviour> neighbors;
 
     private GameObject player = null;    // So the pillar can launch the player if need be
 
@@ -240,6 +244,7 @@ public class PillarBehaviour : MonoBehaviour
         extending = false;
         needRedraw = true;
     }
+    public void setNeighbors(List<PillarBehaviour> neighbors) { this.neighbors = neighbors; }
 
     // Call this from PillarExtensionController
     public void projectileHit()
@@ -259,6 +264,10 @@ public class PillarBehaviour : MonoBehaviour
         float actualTarget = desiredTarget > maxHeight ? maxHeight : desiredTarget;
         float timeMultiplier = (desiredTarget <= maxHeight ? 1 : (actualTarget - currentHeight) / extensionDelta);
         extendTo(actualTarget, timeToHeightDelta * timeMultiplier);
+        if (actualTarget > currentHeight + 0.01f)
+        {
+            extensionFX();
+        }
     }
     private void onFullExtend()
     {
@@ -306,6 +315,39 @@ public class PillarBehaviour : MonoBehaviour
 
         // Set redraw
         needRedraw = true;
+    }
+    private void extensionFX()
+    {
+        // We want to blow steam out from each exposed base side of the extending pillar.
+        // To do so, we need the neighbor set of the pillar S, and for every neighbor pillar P in S we check if our current height
+        // is greater than P's current height. If so, we blow steam off the top-base edge of P touching us.
+        PillarBehaviour lowestNeighbor = null;
+        foreach (PillarBehaviour neighbor in neighbors)
+        {
+            if (neighbor.currentHeight > currentHeight + 1)
+                continue;
+            // We'll play a sound from the height of the lowest-height neighbor (if we're not surrounded by higher neighbors).
+            if (lowestNeighbor == null || lowestNeighbor.currentHeight > neighbor.currentHeight)
+            {
+                lowestNeighbor = neighbor;
+            }
+            addSteamNextToNeighbor(neighbor);
+        }
+        // TODO: we also want to play SFX, say from the lowest-height neighbor area
+    }
+    private void addSteamNextToNeighbor(PillarBehaviour neighbor)
+    {
+        // To compute the steam location for neighbor P, let H be the current height of P and let v1,v2 the points at distance radius-H
+        // over P and over this pillar, respectively. Then, the steam origin should be at around (v1+v2)/2 (maybe with slight offset) and
+        // should face in direction (-v1.normalized + (v1-v2).normalized).
+        Vector3 v1 = neighbor.transform.position - (neighbor.currentHeight * neighbor.transform.position.normalized);
+        Vector3 v2 = transform.position - (neighbor.currentHeight * transform.position.normalized);
+        float neighborPreferenceOffset = 0.7f;
+        Vector3 startPos = neighborPreferenceOffset * v1 + (1- neighborPreferenceOffset) * v2;
+        Vector3 lookDir = startPos - v1.normalized + (v1 - v2).normalized;
+        var steam = Instantiate(steamPrefab, startPos, Quaternion.identity);
+        steam.transform.LookAt(lookDir);
+        Destroy(steam, steam.GetComponent<ParticleSystem>().main.duration * 5);
     }
 
     // Assumes rigidbody is collided with pillar, and is just as close to the origin as the pillar.

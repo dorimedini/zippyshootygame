@@ -107,9 +107,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f76a0933ecb4ce4c89f897c60034496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  steamPrefab: {fileID: 669308553121345965, guid: 5e0b9060a3889ff459c8b6c4f5ed8123,
+    type: 3}
   currentHeight: 5
   edge: 10
-  radius: 100
   collisionExpansion: 0
   id: 0
   mesh: {fileID: 0}

@@ -434,6 +434,7 @@ public class GeoSphereGenerator : MonoBehaviour
             }
             if (foundNeighbors.Count < expectedNeighbors)
                 Debug.LogError(string.Format("Only {0} neighbors found for pillar {1}", foundNeighbors.Count, i));
+            pillars[i].setNeighbors(foundNeighbors.Select(j => pillars[j]).ToList());
             neighbors.Add(foundNeighbors);
         }
     }
