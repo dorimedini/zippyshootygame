@@ -8,6 +8,8 @@ using UnityEngine;
 public class PillarBehaviour : MonoBehaviour
 {
     public GameObject steamPrefab;
+    public AudioClip extensionSoundSteam;
+    public AudioClip[] extensionSoundScreech;
 
     public static float maxHeightPercentage = 0.9f;
     public static float extensionDeltaPercentage = 0.1f;
@@ -333,7 +335,10 @@ public class PillarBehaviour : MonoBehaviour
             }
             addSteamNextToNeighbor(neighbor);
         }
-        // TODO: we also want to play SFX, say from the lowest-height neighbor area
+        // Now for sounds. Set the sound origin to be at the lowest height of a neighbor, or our height if no neighbors are lower.
+        float soundHeight = lowestNeighbor == null ? currentHeight : lowestNeighbor.currentHeight;
+        AudioSource.PlayClipAtPoint(extensionSoundSteam, at);
+        AudioSource.PlayClipAtPoint(extensionSoundScreech[Mathf.FloorToInt(Random.Range(0, extensionSoundScreech.Length - 0.01f))], at);
     }
     private void addSteamNextToNeighbor(PillarBehaviour neighbor)
     {

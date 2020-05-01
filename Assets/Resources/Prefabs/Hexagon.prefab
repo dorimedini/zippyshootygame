@@ -109,6 +109,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   steamPrefab: {fileID: 669308553121345965, guid: 5e0b9060a3889ff459c8b6c4f5ed8123,
     type: 3}
+  extensionSoundSteam: {fileID: 8300000, guid: c44d2fdce3048ff4a9fe4eb85e0de23e, type: 3}
+  extensionSoundScreech:
+  - {fileID: 8300000, guid: 2df3e8cc26c70ff44b0f136f0c02c194, type: 3}
+  - {fileID: 8300000, guid: f6d3fa1976e70a34ab1fdc212a01ab7d, type: 3}
+  - {fileID: 8300000, guid: 8b449d598faf3c04c93fa47980540a35, type: 3}
   currentHeight: 5
   edge: 10
   collisionExpansion: 0
