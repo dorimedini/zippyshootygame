@@ -40,7 +40,7 @@
  * < V > Make weapon-charge an optional mechanic
  * < V > Sounds: walk, fire, hit, launch (only self hears)
  * < V > Pillar hit effect
- * <   > Take camera back a bit so we don't see through walls
+ * < V > Take camera back a bit so we don't see through walls
  * <   > Visible delay in player knockback on explosion. Is there something that can be done?
  * <   > Grappling twice in a row jerks the camera; lerp it (it looks like FOV isn't lerping)
  * <   > Ragdoll doesn't get the explosion knockback if the hit kills a player. Fix it
