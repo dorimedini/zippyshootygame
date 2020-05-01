@@ -70,6 +70,7 @@ public class HookshotController : MonoBehaviour
             grapplingSound.Stop();
         fireHookshotSound.Play();
         grapplingSound.PlayDelayed(UserDefinedConstants.grappleRampupTime / 2 - 0.01f);
+        AudioSource.PlayClipAtPoint(fireHookshotSound.clip, ropeTarget);    // Play a hit noise at the target as well
     }
 
     public static GameObject DrawHookshot(GameObject hookshotPrefab, Transform grappleHand, Vector3 to)
