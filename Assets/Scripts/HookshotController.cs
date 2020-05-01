@@ -11,12 +11,17 @@ public class HookshotController : MonoBehaviour
     List<HookshotSegment> segments;
     Transform grappleSourceTransform;
     Vector3 hookTarget;
+    float timeToTarget, currentTimeToTarget;
+    bool hookHitTarget;
 
     public void Init(Transform source, Vector3 target)
     {
         segments = new List<HookshotSegment>();
         grappleSourceTransform = source;
         hookTarget = target;
+        timeToTarget = UserDefinedConstants.grappleRampupTime / 2;
+        currentTimeToTarget = timeToTarget;
+        hookHitTarget = false;
         StartPlayingSounds();
     }
 
@@ -24,6 +29,8 @@ public class HookshotController : MonoBehaviour
     public void UpdateTarget(Vector3 newTarget) {
         if (hookTarget != newTarget)
         {
+            currentTimeToTarget = timeToTarget;
+            hookHitTarget = false;
             StartPlayingSounds();
         }
         hookTarget = newTarget;
@@ -33,11 +40,17 @@ public class HookshotController : MonoBehaviour
     {
         // Without scaling, each additional chain link segment adds roughly 1/12 units of length, in the (local) positive Y direction. Total segment chain length ~2.5 units.
         // To avoid redundant re-instantiation of many segments we only add/remove a segment when the chain is long/short enough.
-        transform.position = hookTarget;
+        // The actual shot length may be less than the distance if the hook is still travelling towards target, so lerp them.
+        // timeToTargetRatio starts at 1, so we're lerping from end to start
+        currentTimeToTarget = Mathf.Max(0, currentTimeToTarget - Time.deltaTime);
+        float timeToTargetRatio = currentTimeToTarget / timeToTarget;
+        transform.position = Vector3.Lerp(hookTarget, grappleSourceTransform.position, timeToTargetRatio);
         transform.LookAt(grappleSourceTransform.position);
         audioSourceObject.transform.position = grappleSourceTransform.position;
-        float distToTarget = (hookTarget - grappleSourceTransform.position).magnitude - 0.25f; // Offset slightely so the links align nicely
-        int totalLinks = (int)(12f * distToTarget);
+        float distToTarget = (hookTarget - grappleSourceTransform.position).magnitude;
+        float distToCurrentTarget = Mathf.Lerp(distToTarget, 0.5f, timeToTargetRatio);
+        Debug.Log(string.Format("Current target distance is {0}, derived from {1} (at {2} distance ratio)", distToCurrentTarget, distToTarget, timeToTargetRatio));
+        int totalLinks = (int)(12f * distToCurrentTarget);
         int totalSegments = (int)Mathf.Ceil(totalLinks / HookshotSegment.TotalLinks()) + 1;
         int linksInFirstSegment = totalLinks % HookshotSegment.TotalLinks();
         // Add / remove segments if need be
@@ -61,6 +74,13 @@ public class HookshotController : MonoBehaviour
             segments[0].SetNumOfActiveLinks(linksInFirstSegment);
             segments[segments.Count - 1].SetIntermediateSegment(false);
         }
+
+        // If we just hit the target play hit sound
+        if (!hookHitTarget && Tools.NearlyEqual(currentTimeToTarget, 0, 0.01f))
+        {
+            hookHitTarget = true;
+            PlayHookHitSound();
+        }
     }
 
     void StartPlayingSounds()
@@ -69,8 +89,12 @@ public class HookshotController : MonoBehaviour
         if (grapplingSound.isPlaying)
             grapplingSound.Stop();
         fireHookshotSound.Play();
-        grapplingSound.PlayDelayed(UserDefinedConstants.grappleRampupTime / 2 - 0.01f);
-        AudioSource.PlayClipAtPoint(fireHookshotSound.clip, hookTarget);    // Play a hit noise at the target as well
+        grapplingSound.PlayDelayed(timeToTarget - 0.01f);
+    }
+
+    void PlayHookHitSound()
+    {
+        AudioSource.PlayClipAtPoint(fireHookshotSound.clip, hookTarget);
     }
 
     public static GameObject DrawHookshot(GameObject hookshotPrefab, Transform grappleHand, Vector3 to)
