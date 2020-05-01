@@ -10,33 +10,33 @@ public class HookshotController : MonoBehaviour
 
     List<HookshotSegment> segments;
     Transform grappleSourceTransform;
-    Vector3 ropeTarget;
+    Vector3 hookTarget;
 
     public void Init(Transform source, Vector3 target)
     {
         segments = new List<HookshotSegment>();
         grappleSourceTransform = source;
-        ropeTarget = target;
+        hookTarget = target;
         StartPlayingSounds();
     }
 
     // When the hookshot is fired the hook location will move from firer's hand to the final target.
     public void UpdateTarget(Vector3 newTarget) {
-        if (ropeTarget != newTarget)
+        if (hookTarget != newTarget)
         {
             StartPlayingSounds();
         }
-        ropeTarget = newTarget;
+        hookTarget = newTarget;
     }
 
     void Update()
     {
         // Without scaling, each additional chain link segment adds roughly 1/12 units of length, in the (local) positive Y direction. Total segment chain length ~2.5 units.
         // To avoid redundant re-instantiation of many segments we only add/remove a segment when the chain is long/short enough.
-        transform.position = ropeTarget;
+        transform.position = hookTarget;
         transform.LookAt(grappleSourceTransform.position);
         audioSourceObject.transform.position = grappleSourceTransform.position;
-        float distToTarget = (ropeTarget - grappleSourceTransform.position).magnitude - 0.25f; // Offset slightely so the links align nicely
+        float distToTarget = (hookTarget - grappleSourceTransform.position).magnitude - 0.25f; // Offset slightely so the links align nicely
         int totalLinks = (int)(12f * distToTarget);
         int totalSegments = (int)Mathf.Ceil(totalLinks / HookshotSegment.TotalLinks()) + 1;
         int linksInFirstSegment = totalLinks % HookshotSegment.TotalLinks();
@@ -70,7 +70,7 @@ public class HookshotController : MonoBehaviour
             grapplingSound.Stop();
         fireHookshotSound.Play();
         grapplingSound.PlayDelayed(UserDefinedConstants.grappleRampupTime / 2 - 0.01f);
-        AudioSource.PlayClipAtPoint(fireHookshotSound.clip, ropeTarget);    // Play a hit noise at the target as well
+        AudioSource.PlayClipAtPoint(fireHookshotSound.clip, hookTarget);    // Play a hit noise at the target as well
     }
 
     public static GameObject DrawHookshot(GameObject hookshotPrefab, Transform grappleHand, Vector3 to)
