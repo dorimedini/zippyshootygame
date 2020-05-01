@@ -320,9 +320,7 @@ public class PillarBehaviour : MonoBehaviour
     }
     private void extensionFX()
     {
-        // We want to blow steam out from each exposed base side of the extending pillar.
-        // To do so, we need the neighbor set of the pillar S, and for every neighbor pillar P in S we check if our current height
-        // is greater than P's current height. If so, we blow steam off the top-base edge of P touching us.
+        // We want to play a sound from the height of the lowest neighbor (lower than us)
         PillarBehaviour lowestNeighbor = null;
         foreach (PillarBehaviour neighbor in neighbors)
         {
@@ -333,25 +331,16 @@ public class PillarBehaviour : MonoBehaviour
             {
                 lowestNeighbor = neighbor;
             }
-            addSteamNextToNeighbor(neighbor);
         }
-        // Now for sounds. Set the sound origin to be at the lowest height of a neighbor, or our height if no neighbors are lower.
         float soundHeight = lowestNeighbor == null ? currentHeight : lowestNeighbor.currentHeight;
-        AudioSource.PlayClipAtPoint(extensionSoundSteam, at);
-        AudioSource.PlayClipAtPoint(extensionSoundScreech[Mathf.FloorToInt(Random.Range(0, extensionSoundScreech.Length - 0.01f))], at);
-    }
-    private void addSteamNextToNeighbor(PillarBehaviour neighbor)
-    {
-        // To compute the steam location for neighbor P, let H be the current height of P and let v1,v2 the points at distance radius-H
-        // over P and over this pillar, respectively. Then, the steam origin should be at around (v1+v2)/2 (maybe with slight offset) and
-        // should face in direction (-v1.normalized + (v1-v2).normalized).
-        Vector3 v1 = neighbor.transform.position - (neighbor.currentHeight * neighbor.transform.position.normalized);
-        Vector3 v2 = transform.position - (neighbor.currentHeight * transform.position.normalized);
-        float neighborPreferenceOffset = 0.7f;
-        Vector3 startPos = neighborPreferenceOffset * v1 + (1- neighborPreferenceOffset) * v2;
-        Vector3 lookDir = startPos - v1.normalized + (v1 - v2).normalized;
-        var steam = Instantiate(steamPrefab, startPos, Quaternion.identity);
-        steam.transform.LookAt(lookDir);
+        Vector3 soundLocation = transform.position - (soundHeight * transform.position.normalized);
+        AudioSource.PlayClipAtPoint(extensionSoundSteam, soundLocation);
+        AudioSource.PlayClipAtPoint(extensionSoundScreech[Mathf.FloorToInt(Random.Range(0, extensionSoundScreech.Length - 0.01f))], soundLocation);
+
+        // We show steam coming out from the center of the pillar
+        Vector3 steamLocation = soundLocation + 15 * transform.position.normalized; // A little lower
+        var steam = Instantiate(steamPrefab, steamLocation, Quaternion.identity);
+        steam.transform.LookAt(Vector3.zero);
         Destroy(steam, steam.GetComponent<ParticleSystem>().main.duration * 5);
     }
 
