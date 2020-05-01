@@ -79,24 +79,27 @@ public class GrapplingCharacter : MonoBehaviour
             {
                 // In the first half of the rampup, pull the camera back a bit
                 float pullbackPercentage = 2 * (1 - (grappleRampupCountdown / UserDefinedConstants.grappleRampupTime));
-                cam.transform.localPosition = Vector3.Lerp(originalCamLocalPos, grappleCameraPullback, pullbackPercentage);
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, grappleCameraPullback, pullbackPercentage);
             }
             else
             {
                 // In the second half of the rampup, push the camera back towards the original location.
                 // Also, widen the FOV
                 float pushForwardPercentage = 1 - (2 * grappleRampupCountdown / UserDefinedConstants.grappleRampupTime);
-                cam.transform.localPosition = Vector3.Lerp(grappleCameraPullback, originalCamLocalPos, pushForwardPercentage);
-                cam.fieldOfView = Mathf.Lerp(cameraOriginalFOV, cameraGrappleFOV, pushForwardPercentage);
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, originalCamLocalPos, pushForwardPercentage);
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, cameraGrappleFOV, pushForwardPercentage);
             }
             // Should we stop rampup phase?
             if (Tools.NearlyEqual(grappleRampupCountdown, 0, 0.01f))
             {
-                // At this point, just set the camera location back to normal
-                cam.transform.localPosition = originalCamLocalPos;
                 grappleRampup = false;
                 grappling = true;
             }
+        }
+        else
+        {
+            // When not grappling, lerp the camera back
+            cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, originalCamLocalPos, 0.1f);
         }
     }
     void UpdateCameraFOV()
