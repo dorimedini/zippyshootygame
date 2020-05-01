@@ -38,7 +38,8 @@
  * < V > Show respawn timer while waiting
  * < V > Maybe make sphere radius a user-parameter? Then we could make grapple distance dependent on radius
  * < V > Make weapon-charge an optional mechanic
- * <   > Sounds: walk, fire, hit, launch (only self hears)
+ * < V > Sounds: walk, fire, hit, launch (only self hears)
+ * < V > Pillar hit effect
  * <   > Take camera back a bit so we don't see through walls
  * <   > Visible delay in player knockback on explosion. Is there something that can be done?
  * <   > Grappling twice in a row jerks the camera; lerp it (it looks like FOV isn't lerping)
@@ -53,12 +54,10 @@
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * -------   > Maybe don't launch projectile from directly in front of face
- * <   > Pillar hit effect
  * <   > IMPORTANT: Make the grapple feel really good! It's faster than walking so it's probably going to be the main movement mechanic
  * <   > Better projectile animation (how to launch with precision without shooting from the camera?)
  *?<   > Better projectile model...?
  * <   > Texture the projectile
- * <   > Particle effects for projectile in air and on hit
  * <   > Get non-temporary player models / animations
  * -------   > Add roll on land?
  * <   > Non-temporary weapon models
