@@ -6,6 +6,7 @@ public class HookshotController : MonoBehaviour
 {
     public GameObject segmentPrefab;
     public AudioSource fireHookshotSound, grapplingSound;
+    public GameObject audioSourceObject;    // For positioning
 
     List<HookshotSegment> segments;
     Transform grappleSourceTransform;
@@ -34,6 +35,7 @@ public class HookshotController : MonoBehaviour
         // To avoid redundant re-instantiation of many segments we only add/remove a segment when the chain is long/short enough.
         transform.position = ropeTarget;
         transform.LookAt(grappleSourceTransform.position);
+        audioSourceObject.transform.position = grappleSourceTransform.position;
         float distToTarget = (ropeTarget - grappleSourceTransform.position).magnitude - 0.25f; // Offset slightely so the links align nicely
         int totalLinks = (int)(12f * distToTarget);
         int totalSegments = (int)Mathf.Ceil(totalLinks / HookshotSegment.TotalLinks()) + 1;
