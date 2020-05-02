@@ -8,6 +8,7 @@ public class SunController : MonoBehaviourPun
     public int chargeStages;
     public Material mat;
     public Color originalColor;
+    public GameObject shockwavePrefab;
 
     private int chargeStage;
 
@@ -39,6 +40,7 @@ public class SunController : MonoBehaviourPun
         chargeStage = 0;
         mat.color = originalColor;
         Debug.Log("Overcharge");
+        Destroy(Instantiate(shockwavePrefab, Vector3.zero, Quaternion.identity), 5f);
         // TODO: Every player will call this, so display graphics and damage/knock back the LOCAL player.
     }
 }
