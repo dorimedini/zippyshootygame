@@ -46,8 +46,8 @@
  * < V > Ragdoll doesn't get the explosion knockback if the hit kills a player. Fix it
  * < V > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * < V > Projectile should take the current player speed into account when computing initial speed
- * <   > Grapple superman animation should be fixed-oriented towards target point.
- *       Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
+ * < V > Grapple superman animation should be fixed-oriented towards target point.
+ * <   > Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Really need ambient music...
  * <   > Still a bit jerky when exploding a remote player and the remote starts sending the updates. Maybe use an even system, on ACK from remote player re-activate motion sync?
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
