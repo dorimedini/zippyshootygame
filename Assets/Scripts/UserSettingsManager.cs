@@ -31,6 +31,7 @@ public class UserSettingsManager
             UserDefinedConstants.maxChargeTime = GetSetting("Max weapon charge time: ", UserDefinedConstants.maxChargeTime);
         }
 
+        UserDefinedConstants.sunDamage = GetSetting("Sun discharge damage: ", UserDefinedConstants.sunDamage);
         UserDefinedConstants.spawnTime = GetSetting("Respawn time: ", UserDefinedConstants.spawnTime);
         UserDefinedConstants.maxHealth = GetSetting("Max health: ", UserDefinedConstants.maxHealth);
         UserDefinedConstants.jumpSpeed = GetSetting("Jump speed: ", UserDefinedConstants.jumpSpeed);

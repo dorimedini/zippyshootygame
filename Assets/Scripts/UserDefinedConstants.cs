@@ -6,6 +6,7 @@ public static class UserDefinedConstants
 {
     public static string nickname;
 
+    public static float sunDamage;
     public static float spawnTime;
     public static float maxHealth;
     public static float jumpSpeed;
@@ -50,6 +51,7 @@ public static class UserDefinedConstants
     static void LoadAux(bool fromPrefs)
     {
         nickname = fromPrefs ? PlayerPrefs.GetString("nickname", "NOOBNOOB") : "NOOBNOOB";
+        sunDamage = fromPrefs ? PlayerPrefs.GetFloat("sunDamage", 50f) : 50f;
         spawnTime = fromPrefs ? PlayerPrefs.GetFloat("spawnTime", 5f) : 5f;
         maxHealth = fromPrefs ? PlayerPrefs.GetFloat("maxHealth", 100f) : 100f;
         jumpSpeed = fromPrefs ? PlayerPrefs.GetFloat("jumpSpeed", 8f) : 8f;
@@ -81,6 +83,7 @@ public static class UserDefinedConstants
     public static void SaveToPlayerPrefs()
     {
         PlayerPrefs.SetString("nickname", nickname);
+        PlayerPrefs.SetFloat("sunDamage", sunDamage);
         PlayerPrefs.SetFloat("spawnTime", spawnTime);
         PlayerPrefs.SetFloat("maxHealth", maxHealth);
         PlayerPrefs.SetFloat("jumpSpeed", jumpSpeed);
