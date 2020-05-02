@@ -20,16 +20,15 @@ public class ExplosionController : MonoBehaviourPun
         foreach (var col in OtherPlayersInExplosion(position, shooterId, true))
         {
             Rigidbody rb = col.GetComponent<Rigidbody>();
-            float dist = (rb.ClosestPointOnBounds(position) - position).magnitude;
+            Vector3 hitPosition = rb.ClosestPointOnBounds(position);
+            float dist = (hitPosition - position).magnitude;
             if (dist <= UserDefinedConstants.explosionRadius)
             {
                 // When player is off the ground, root motion isn't applied. In case player is grounded when explosion hit,
                 // momentarily turn off root motion until player is lifted off the ground.
                 col.GetComponent<PlayerMovementController>().DisableRootMotionFor(0.1f);
                 // Some force from the explosion source, and some "upward" (inward-radial) force. Must be proportional to distance
-                Vector3 explosionForce = (UserDefinedConstants.explosionForce * (rb.position - position).normalized +
-                                            UserDefinedConstants.explosionLift * (-rb.position)
-                                            ) / (dist + 1); // In case dist is close to zero
+                Vector3 explosionForce = ExplosionForce(hitPosition, position, dist); // In case dist is close to zero
                 rb.AddForce(explosionForce, ForceMode.Impulse);
                 // Do damage (AFTER adding force, so if the ragdoll replaces it it'll fly off).
                 // I don't know what ClosestPointOnBounds returns if the point is in the collider so clamp the dist/radius ratio to [0,1]
@@ -52,5 +51,13 @@ public class ExplosionController : MonoBehaviourPun
                 playerCols.Add(col);
         }
         return playerCols;
+    }
+
+    /** Returns true iff rigidbody is in radius. Out parameter: the force to apply */
+    Vector3 ExplosionForce(Vector3 hitPosition, Vector3 explosionPosition, float dist)
+    {
+        // Most force in the explosion-->hitPosition direction, and a bit of lift in the radial (-hitPosition) direction.
+        // Divide by dist+1, because dist can be zero.
+        return (UserDefinedConstants.explosionForce * (hitPosition - explosionPosition).normalized + UserDefinedConstants.explosionLift * (-hitPosition)) / (dist + 1);
     }
 }
