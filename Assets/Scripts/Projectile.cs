@@ -98,7 +98,7 @@ public class Projectile : MonoBehaviour
                 return;
         }
 
-        // Did we hit a pillar or a player?
+        // Did we hit a pillar?
         PillarBehaviour pillar = obj.GetComponent<PillarBehaviour>();
         bool hitPillar = (pillar != null);
         if (hitPillar)
@@ -108,6 +108,11 @@ public class Projectile : MonoBehaviour
                 InitControllers();
             pillarCtrl.BroadcastHitPillar(pillar.id);
         }
+
+        // Did we hit the sun?
+        SunController sun = obj.GetComponent<SunController>();
+        if (sun != null)
+            sun.Hit(shooterId);
 
         // In any case, all collisions destroy the projectile
         explosionCtrl.BroadcastExplosion(transform.position, shooterId);
