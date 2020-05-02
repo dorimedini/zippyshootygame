@@ -24,4 +24,9 @@ public class RagdollController : MonoBehaviourPun
         activeRagdoll.GetComponent<Rigidbody>().velocity = velocity;
         Destroy(activeRagdoll, timeout);
     }
+
+    public static Transform GetFollowTransform(GameObject ragdoll)
+    {
+        return ragdoll.transform.Find("Root").transform.Find("Hip").transform;
+    }
 }

@@ -15,6 +15,7 @@ public class SpawnManager : MonoBehaviour
     private float respawnTime;
     private bool ragdollActive;
     private GameObject activeRagdoll;
+    private Transform hipsOfRagdoll;
 
     // How far above ground do players spawn (in addition to the offset caused by initialHeight)
     public float spawnHeight;
@@ -30,7 +31,7 @@ public class SpawnManager : MonoBehaviour
         if (ragdollActive)
         {
             msgCtrl.ReplaceLine(string.Format("Respawn in {0:f2}", respawnTime));
-            spawnCam.transform.LookAt(activeRagdoll.transform.position);
+            spawnCam.transform.LookAt(hipsOfRagdoll.position);
             if (Tools.NearlyEqual(respawnTime, 0, 0.01f))
             {
                 ragdollActive = false;
@@ -87,9 +88,10 @@ public class SpawnManager : MonoBehaviour
             ragdollActive = true;
             activeRagdoll.GetComponent<Rigidbody>().velocity = currentPlayerVelocity;
             respawnTime = UserDefinedConstants.spawnTime;
+            hipsOfRagdoll = RagdollController.GetFollowTransform(activeRagdoll);
             msgCtrl.AppendMessage("U DED");
             msgCtrl.AppendMessage(string.Format("Respawn in {0:f2}", UserDefinedConstants.spawnTime));
-            ActivateSpawnCam(activeRagdoll);
+            ActivateSpawnCam();
             PhotonNetwork.Destroy(player);
         }
     }
@@ -120,10 +122,10 @@ public class SpawnManager : MonoBehaviour
         return player;
     }
 
-    private void ActivateSpawnCam(GameObject follow)
+    private void ActivateSpawnCam()
     {
         spawnCam.SetActive(true);
-        spawnCam.transform.LookAt(follow.transform.position);
+        spawnCam.transform.LookAt(hipsOfRagdoll.position);
     }
 
     private void DisableSpawnCamera() { spawnCam.SetActive(false); }
