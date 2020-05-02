@@ -27,6 +27,6 @@ public class RagdollController : MonoBehaviourPun
 
     public static Transform GetFollowTransform(GameObject ragdoll)
     {
-        return ragdoll.transform.Find("GraphicsRoot").transform.Find("Root").transform.Find("Hip").transform;
+        return ragdoll.transform.Find("Root").transform.Find("Hip").transform;
     }
 }
