@@ -29,6 +29,11 @@ public static class UserDefinedConstants
     public static float projectileHitDamage;
     public static float launchForceMultiplier;
 
+    // Explosions override location updates from remote players. movementOverrideWindow controls for how long, and localForceDampen controls
+    // which percentage of the "real" force (applied remotely, updated later) should be applied locally.
+    public static float localMovementOverrideWindow;
+    public static float localForceDampen;
+
     public static bool chargeMode;
 
     public static void LoadFromPlayerPrefs()
@@ -66,6 +71,8 @@ public static class UserDefinedConstants
         minProjectileCharge = fromPrefs ? PlayerPrefs.GetFloat("minProjectileCharge", 0.3f) : 0.3f;
         projectileHitDamage = fromPrefs ? PlayerPrefs.GetFloat("projectileHitDamage", 15f) : 15f;
         launchForceMultiplier = fromPrefs ? PlayerPrefs.GetFloat("launchForceMultiplier", 4f) : 4f;
+        localMovementOverrideWindow = fromPrefs ? PlayerPrefs.GetFloat("localMovementOverrideWindow", 0.2f) : 0.2f;
+        localForceDampen = fromPrefs ? PlayerPrefs.GetFloat("localForceDampen", 0.8f) : 0.8f;
         chargeMode = fromPrefs ? PlayerPrefs.GetInt("chargeMode", 0) == 1 : false;
     }
 
@@ -94,6 +101,8 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("projectileHitDamage", projectileHitDamage);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
+        PlayerPrefs.SetFloat("localMovementOverrideWindow", localMovementOverrideWindow);
+        PlayerPrefs.SetFloat("localForceDampen", localForceDampen);
         PlayerPrefs.SetInt("chargeMode", chargeMode ? 1 : 0);
     }
 }

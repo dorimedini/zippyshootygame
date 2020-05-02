@@ -11,6 +11,18 @@ public class ExplosionController : MonoBehaviourPun
     public void BroadcastExplosion(Vector3 position, string shooterId)
     {
         photonView.RPC("RemoteExplosion", RpcTarget.All, position, shooterId);
+        // Disable updates from network characters for a moment, and apply local explosion force to give local player immediate feedback.
+        // Dampen the effect a bit, so when we start syncing again it'll be a bit smoother
+        foreach (Collider remotePlayerCol in OtherPlayersInExplosion(position, shooterId, false))
+        {
+            Rigidbody rb = remotePlayerCol.GetComponent<Rigidbody>();
+            Vector3 hitPosition = rb.ClosestPointOnBounds(position);
+            float dist = (hitPosition - position).magnitude;
+            if (dist <= UserDefinedConstants.explosionRadius)
+            {
+                remotePlayerCol.GetComponent<NetworkCharacter>().ApplyLocalForce(ExplosionForce(hitPosition, position, dist), ForceMode.Impulse);
+            }
+        }
     }
 
     [PunRPC]
@@ -26,9 +38,8 @@ public class ExplosionController : MonoBehaviourPun
             {
                 // When player is off the ground, root motion isn't applied. In case player is grounded when explosion hit,
                 // momentarily turn off root motion until player is lifted off the ground.
-                col.GetComponent<PlayerMovementController>().DisableRootMotionFor(0.1f);
-                // Some force from the explosion source, and some "upward" (inward-radial) force. Must be proportional to distance
-                Vector3 explosionForce = ExplosionForce(hitPosition, position, dist); // In case dist is close to zero
+                col.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.localMovementOverrideWindow / 2);
+                Vector3 explosionForce = ExplosionForce(hitPosition, position, dist);
                 rb.AddForce(explosionForce, ForceMode.Impulse);
                 // Do damage (AFTER adding force, so if the ragdoll replaces it it'll fly off).
                 // I don't know what ClosestPointOnBounds returns if the point is in the collider so clamp the dist/radius ratio to [0,1]

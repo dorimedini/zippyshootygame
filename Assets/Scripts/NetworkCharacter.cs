@@ -13,6 +13,11 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public GrapplingCharacter grappleChar;
     public GameObject hookshotPrefab;
     public Transform grappleHand;
+    public Rigidbody rb;
+    public GravityAffected gravityComponent;
+
+    float disableRemoteUpdatesFor;
+    bool remoteUpdatesDisabled;
 
     GameObject activeHookshot;
     Vector3 realPosition, grappleTarget;
@@ -29,6 +34,8 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         baseLayerIdx = anim.GetLayerIndex("Base Layer");
         flyGrappleArmLayerIdx = anim.GetLayerIndex("FlyGrappleArm");
         flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
+        disableRemoteUpdatesFor = 0;
+        remoteUpdatesDisabled = false;
         if (photonView.IsMine)
             GetComponentInChildren<SkinnedMeshRenderer>().material = localPlayerMaterial;
         else
@@ -40,7 +47,12 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!photonView.IsMine)
+        disableRemoteUpdatesFor = Mathf.Max(0, disableRemoteUpdatesFor - Time.deltaTime);
+        if (remoteUpdatesDisabled && Tools.NearlyEqual(disableRemoteUpdatesFor, 0, 0.01f))
+        {
+            EnableRemoteUpdates();
+        }
+        if (!photonView.IsMine && !remoteUpdatesDisabled)
         {
             float lerpConst = 0.1f;
             transform.position = Vector3.Lerp(transform.position, realPosition, lerpConst);
@@ -57,6 +69,36 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         // As the grapple rope shares common behaviour across the network and we want the graphics updated locally, the NetworkCharacter
         // is responsible for drawing it's own grapple rope.
         DrawRope();
+    }
+
+    void DisableRemoteUpdates(float duration)
+    {
+        if (photonView.IsMine)
+        {
+            Debug.LogError("Attempt to disable remote updates of local player");
+            return;
+        }
+        remoteUpdatesDisabled = true;
+        disableRemoteUpdatesFor = duration;
+        // No longer get gravity updates from remote character
+        gravityComponent.enabled = true;
+        rb.isKinematic = false;
+    }
+
+    void EnableRemoteUpdates()
+    {
+        if (!remoteUpdatesDisabled)
+            return; // The Disable() function makes sure this flag can only be true if network character isn't local
+        remoteUpdatesDisabled = false;
+        gravityComponent.enabled = false;
+        rb.isKinematic = true;
+    }
+
+    public void ApplyLocalForce(Vector3 explosionForce, ForceMode mode)
+    {
+        DisableRemoteUpdates(UserDefinedConstants.localMovementOverrideWindow);
+        explosionForce *= UserDefinedConstants.localForceDampen;
+        rb.AddForce(explosionForce, mode);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo message)
