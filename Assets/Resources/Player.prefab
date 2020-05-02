@@ -346,6 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crosshairCtrl: {fileID: 6061469911277925537}
   cam: {fileID: 2068110431}
+  rb: {fileID: 8945275936811725004}
 --- !u!114 &6061469911277925537
 MonoBehaviour:
   m_ObjectHideFlags: 0

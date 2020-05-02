@@ -4,10 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(CrosshairGUIController))]
+[RequireComponent(typeof(Rigidbody))]
 public class ShootingCharacter : MonoBehaviourPun
 {
     public CrosshairGUIController crosshairCtrl;
     public Camera cam;
+    public Rigidbody rb;
 
     private bool buttonDown, buttonUp, charging;
     private float weaponCooldownCounter, chargeTime;
@@ -71,8 +73,9 @@ public class ShootingCharacter : MonoBehaviourPun
 
     void FireProjectile(float charge)
     {
+        Vector3 currentShooterSpeed = rb.velocity;
         Vector3 force = charge * cam.transform.forward * UserDefinedConstants.projectileImpulse;
         Vector3 source = cam.transform.position + cam.transform.forward;
-        projectileCtrl.BroadcastFireProjectile(source, force, photonView.Owner.UserId);
+        projectileCtrl.BroadcastFireProjectile(source, force, currentShooterSpeed, photonView.Owner.UserId);
     }
 }
