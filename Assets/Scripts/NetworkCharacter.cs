@@ -15,13 +15,14 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public Transform grappleHand;
     public Rigidbody rb;
     public GravityAffected gravityComponent;
+    public Transform rootGraphicTransform;
 
     float disableRemoteUpdatesFor;
     bool remoteUpdatesDisabled;
 
     GameObject activeHookshot;
     Vector3 realPosition, grappleTarget;
-    Quaternion realRotation;
+    Quaternion realRotation, realRootGraphicRotation;
     float realFwdBack, realLeftRight, realDistFromGround;
     bool isInAir, grappling;
 
@@ -65,6 +66,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             anim.SetLayerWeight(baseLayerIdx, baseLayerWeight);
             anim.SetLayerWeight(flyGrappleArmLayerIdx, grappleLayersWeight);
             anim.SetLayerWeight(flyRestOfBodyLayerIdx, grappleLayersWeight);
+            rootGraphicTransform.rotation = Quaternion.Lerp(rootGraphicTransform.rotation, realRootGraphicRotation, lerpConst);
         }
         // As the grapple rope shares common behaviour across the network and we want the graphics updated locally, the NetworkCharacter
         // is responsible for drawing it's own grapple rope.
@@ -115,6 +117,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             stream.SendNext(grappleChar.GetGrappleTarget());
             stream.SendNext(anim.GetLayerWeight(baseLayerIdx));
             stream.SendNext(anim.GetLayerWeight(flyGrappleArmLayerIdx));
+            stream.SendNext(rootGraphicTransform.rotation);
         }
         else
         {
@@ -128,6 +131,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
             grappleTarget = (Vector3)stream.ReceiveNext();
             baseLayerWeight = (float)stream.ReceiveNext();
             grappleLayersWeight = (float)stream.ReceiveNext();
+            realRootGraphicRotation = (Quaternion)stream.ReceiveNext();
         }
     }
 
