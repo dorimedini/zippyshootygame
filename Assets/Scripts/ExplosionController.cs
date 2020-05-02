@@ -10,24 +10,17 @@ public class ExplosionController : MonoBehaviourPun
 
     public void BroadcastExplosion(Vector3 position, string shooterId)
     {
-        photonView.RPC("Explosion", RpcTarget.All, position, shooterId);
+        photonView.RPC("RemoteExplosion", RpcTarget.All, position, shooterId);
     }
 
     [PunRPC]
-    public void Explosion(Vector3 position, string shooterId)
+    public void RemoteExplosion(Vector3 position, string shooterId)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, UserDefinedConstants.explosionRadius);
-        foreach (Collider col in colliders)
+        foreach (var col in OtherPlayersInExplosion(position, shooterId))
         {
             // Only affect the local player, provided he's not the shooter.
-            // To check this, compare the user ID to the shooter AND to the local player AND to the explosion victim.
-            // We don't want to affect the shooter because it would interfere with the shoot-down-and-launch movement mechanic
-            if (col.GetComponent<NetworkCharacter>() == null)
-                continue;
-            // The "Explosion" global view isn't instantiated on the network so it has no "owner".
-            // As such, we use the local-user-ID variable set by the network manager.
             string hitUserId = col.GetComponent<PhotonView>().Owner.UserId;
-            if (hitUserId != shooterId && hitUserId == localUserId)
+            if (hitUserId == localUserId)
             {
                 Rigidbody rb = col.GetComponent<Rigidbody>();
                 float dist = (rb.ClosestPointOnBounds(position) - position).magnitude;
@@ -37,7 +30,7 @@ public class ExplosionController : MonoBehaviourPun
                     // momentarily turn off root motion until player is lifted off the ground.
                     col.GetComponent<PlayerMovementController>().DisableRootMotionFor(0.1f);
                     // Some force from the explosion source, and some "upward" (inward-radial) force. Must be proportional to distance
-                    Vector3 explosionForce = (  UserDefinedConstants.explosionForce * (rb.position - position).normalized +
+                    Vector3 explosionForce = (UserDefinedConstants.explosionForce * (rb.position - position).normalized +
                                                 UserDefinedConstants.explosionLift * (-rb.position)
                                              ) / (dist + 1); // In case dist is close to zero
                     rb.AddForce(explosionForce, ForceMode.Impulse);
@@ -49,5 +42,14 @@ public class ExplosionController : MonoBehaviourPun
                 }
             }
         }
+    }
+
+    List<Collider> OtherPlayersInExplosion(Vector3 position, string shooterId)
+    {
+        List<Collider> playerCols = new List<Collider>();
+        foreach (Collider col in Physics.OverlapSphere(position, UserDefinedConstants.explosionRadius))
+            if (col.GetComponent<NetworkCharacter>() != null && col.GetComponent<PhotonView>().Owner.UserId != shooterId)
+                playerCols.Add(col);
+        return playerCols;
     }
 }
