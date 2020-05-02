@@ -84,7 +84,7 @@ public class PlayerMovementController : MonoBehaviour
         rootMotionOffFor = Mathf.Max(0, rootMotionOffFor - Time.deltaTime);
         if (grounded && Tools.NearlyEqual(rootMotionOffFor, 0, 0.01f) && !inGrappleSequence)
         {
-            anim.applyRootMotion = true;
+            ReenableRootMotion();
         }
     }
 
@@ -139,5 +139,9 @@ public class PlayerMovementController : MonoBehaviour
         }
         anim.applyRootMotion = false;
         rootMotionOffFor = duration;
+    }
+    void ReenableRootMotion()
+    {
+        anim.applyRootMotion = true;
     }
 }
