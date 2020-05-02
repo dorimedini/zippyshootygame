@@ -49,7 +49,6 @@ public class HookshotController : MonoBehaviour
         audioSourceObject.transform.position = grappleSourceTransform.position;
         float distToTarget = (hookTarget - grappleSourceTransform.position).magnitude;
         float distToCurrentTarget = Mathf.Lerp(distToTarget, 0.5f, timeToTargetRatio);
-        Debug.Log(string.Format("Current target distance is {0}, derived from {1} (at {2} distance ratio)", distToCurrentTarget, distToTarget, timeToTargetRatio));
         int totalLinks = (int)(12f * distToCurrentTarget);
         int totalSegments = (int)Mathf.Ceil(totalLinks / HookshotSegment.TotalLinks()) + 1;
         int linksInFirstSegment = totalLinks % HookshotSegment.TotalLinks();
