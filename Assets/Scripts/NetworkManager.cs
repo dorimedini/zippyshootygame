@@ -21,7 +21,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        UserDefinedConstants.LoadFromPlayerPrefs();
+        //UserDefinedConstants.LoadFromPlayerPrefs();
+        UserDefinedConstants.LoadDefaultValues();
         settingsMngr = new UserSettingsManager();
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
         InitArena();
