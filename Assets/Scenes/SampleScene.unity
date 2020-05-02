@@ -299,6 +299,9 @@ MonoBehaviour:
   chargeStages: 5
   mat: {fileID: 2100000, guid: 603ef2b89c95a8545b7b78a377578061, type: 2}
   originalColor: {r: 1, g: 0.9686275, b: 0.6, a: 0.29803923}
+  shockwavePrefab: {fileID: 1279800417172544160, guid: 53d9c037960f1e942b7c3eb02f9b4498,
+    type: 3}
+  dmgCtrl: {fileID: 1178146673}
 --- !u!114 &488312513
 MonoBehaviour:
   m_ObjectHideFlags: 0

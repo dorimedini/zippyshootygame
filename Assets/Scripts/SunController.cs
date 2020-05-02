@@ -9,6 +9,7 @@ public class SunController : MonoBehaviourPun
     public Material mat;
     public Color originalColor;
     public GameObject shockwavePrefab;
+    public DamageController dmgCtrl;
 
     private int chargeStage;
 
@@ -39,8 +40,13 @@ public class SunController : MonoBehaviourPun
     {
         chargeStage = 0;
         mat.color = originalColor;
-        Debug.Log("Overcharge");
         Destroy(Instantiate(shockwavePrefab, Vector3.zero, Quaternion.identity), 5f);
-        // TODO: Every player will call this, so display graphics and damage/knock back the LOCAL player.
+
+        // Damage and knock back relative to distance from sun
+        GameObject playerObj = PhotonNetwork.LocalPlayer.TagObject as GameObject;
+        float dist = playerObj.transform.position.magnitude;
+        float damage = 50 * (1 - dist / UserDefinedConstants.sphereRadius);
+        dmgCtrl.BroadcastInflictDamage(shooterId, damage, PhotonNetwork.LocalPlayer.UserId);
+        playerObj.GetComponent<Rigidbody>().AddForce(playerObj.transform.position.normalized * damage, ForceMode.Impulse);
     }
 }
