@@ -12,14 +12,16 @@ public class RagdollController : MonoBehaviourPun
         ragdoll = Resources.Load("PlayerRagdoll") as GameObject;
     }
 
-    public void BroadcastRagdoll(Vector3 position, Quaternion rotation, float timeout)
+    public void BroadcastRagdoll(Vector3 position, Vector3 velocity, Quaternion rotation, float timeout)
     {
-        photonView.RPC("Ragdoll", RpcTarget.Others, position, rotation, timeout);
+        photonView.RPC("Ragdoll", RpcTarget.Others, position, velocity, rotation, timeout);
     }
 
     [PunRPC]
-    public void Ragdoll(Vector3 position, Quaternion rotation, float timeout)
+    public void Ragdoll(Vector3 position, Vector3 velocity, Quaternion rotation, float timeout)
     {
-        Destroy(Instantiate(ragdoll, position, rotation), timeout);
+        var activeRagdoll = Instantiate(ragdoll, position, rotation);
+        activeRagdoll.GetComponent<Rigidbody>().velocity = velocity;
+        Destroy(activeRagdoll, timeout);
     }
 }

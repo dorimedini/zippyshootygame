@@ -80,10 +80,12 @@ public class SpawnManager : MonoBehaviour
         {
             // Ragdoll is basically graphics, have every player instantiate it locally. Desync in location of the ragdoll is acceptable.
             // We spawn our own ragdoll though, so we can tell the spawn camera to follow the ragdoll
-            ragdollCtrl.BroadcastRagdoll(player.transform.position, player.transform.rotation, UserDefinedConstants.spawnTime);
+            Vector3 currentPlayerVelocity = player.GetComponent<Rigidbody>().velocity;
+            ragdollCtrl.BroadcastRagdoll(player.transform.position, currentPlayerVelocity, player.transform.rotation, UserDefinedConstants.spawnTime);
             activeRagdoll = Instantiate(RagdollController.ragdoll, player.transform.position, player.transform.rotation);
             Destroy(activeRagdoll, UserDefinedConstants.spawnTime + 0.2f); // Give some legroom so the spawn camera can access position of ragdoll while waiting to spawn
             ragdollActive = true;
+            activeRagdoll.GetComponent<Rigidbody>().velocity = currentPlayerVelocity;
             respawnTime = UserDefinedConstants.spawnTime;
             msgCtrl.AppendMessage("U DED");
             msgCtrl.AppendMessage(string.Format("Respawn in {0:f2}", UserDefinedConstants.spawnTime));
