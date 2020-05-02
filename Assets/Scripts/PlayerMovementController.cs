@@ -15,7 +15,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private float fwdBack;
     private float leftRight;
-    private Vector3 movement;
+    private Vector3 movement, prevSpeedDelta, speedDelta;
     private float distFromGround;
     private bool jumping;
     private bool initialJump;
@@ -34,6 +34,7 @@ public class PlayerMovementController : MonoBehaviour
         anim.speed = 2 * UserDefinedConstants.movementSpeed;
         initialJump = jumping = false;
         airtimeCooldown = rootMotionOffFor = 0;
+        prevSpeedDelta = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -117,10 +118,14 @@ public class PlayerMovementController : MonoBehaviour
     void FixedUpdateHandleAirborneMovement()
     {
         // If we're airborne we need to handle movement ourselves; the airborne animation is stationary.
+        // Note that we don't want to cap airborne speed (we may be flung) but the player cannot accelerate much via movement controls.
+        // So, remember the part of the speed the movement controls added last time, and only add the velocity change between the two movement
+        // velocities to the current velocity. In this way, player can only slightely change the speed of airborne movement
         // Also, root motion should NOT be applied while airborne!
         anim.applyRootMotion = false;
-        Vector3 speed = rb.rotation * (airMovementSpeed * movement);
-        rb.MovePosition(rb.position + Time.deltaTime * speed);
+        prevSpeedDelta = speedDelta;
+        speedDelta = rb.rotation * (airMovementSpeed * movement);
+        rb.velocity += (speedDelta - prevSpeedDelta);
     }
 
     public void LaunchFromPillar(int pillarId, float pillarHeightChange)
