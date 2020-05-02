@@ -11,6 +11,7 @@ public class GrapplingCharacter : MonoBehaviour
     public Rigidbody rb;
     public NetworkCharacter networkCharacter;
     public PlayerMovementController moveCtrl;
+    public Transform rootGraphicTransform;
 
     private bool grappling;
     private bool initialGrapple;
@@ -107,6 +108,32 @@ public class GrapplingCharacter : MonoBehaviour
         if (!InGrappleSequence() && !Tools.NearlyEqual(cam.fieldOfView, cameraOriginalFOV, 0.01f))
         {
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, cameraOriginalFOV, 0.1f);
+        }
+    }
+
+    // When grappling, override the animation's rotation in LateUpdate
+    void LateUpdate()
+    {
+        float rotationLerpConst = 0.1f;
+        if (InGrappleSequence())
+        {
+            var newGraphicRotation = Quaternion.LookRotation(grapplePoint - cam.transform.position, -transform.position);
+            // During the rampup phase we lerp, but during grapple - lock it tight. Reason is, the mouse-look behaviour rotates
+            // the character; we want to keep it that way, and if we lerp the graphic rotation we'll see the player turn, see the
+            // graphic turn with him, and then slide back to superman position.
+            if (!grappleRampup)
+            {
+                rootGraphicTransform.rotation = newGraphicRotation;
+            }
+            else
+            {
+                rootGraphicTransform.rotation = Quaternion.Lerp(rootGraphicTransform.rotation, newGraphicRotation, rotationLerpConst);
+            }
+        }
+        else
+        {
+            // Go back to original graphic rotation. Easiest to just lerp the local rotation back to identity.
+            rootGraphicTransform.localRotation = Quaternion.Lerp(rootGraphicTransform.localRotation, Quaternion.identity, rotationLerpConst);
         }
     }
 

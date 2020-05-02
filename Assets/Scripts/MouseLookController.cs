@@ -7,6 +7,7 @@ public class MouseLookController : MonoBehaviour
 {
     public Camera cam;
     public Rigidbody rb;
+    public GrapplingCharacter grappleChar;
 
     void Update()
     {
