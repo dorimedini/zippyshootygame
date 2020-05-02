@@ -42,7 +42,7 @@
  * < V > Pillar hit effect
  * < V > Take camera back a bit so we don't see through walls
  * < V > Grappling twice in a row jerks the camera; lerp it (it looks like FOV isn't lerping)
- * <   > Visible delay in player knockback on explosion. Is there something that can be done?
+ * <   > Visible delay in player knockback on explosion. Maybe disable network-character input for half a second and fling the enemy locally, lerp later?
  * <   > Ragdoll doesn't get the explosion knockback if the hit kills a player. Fix it
  * <   > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * <   > Grapple superman animation should be fixed-oriented towards target point.
@@ -51,7 +51,7 @@
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
  * <   > Landing feels soft... maybe a little camera bounce?
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
- * <   > Sun should damage on proximity?
+ * <   > Sun should damage on proximity? Hitting the sun should 'charge' it until a maximal value on which a 'discharge' occurs damaging proportional to proximity?
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * -------   > Maybe don't launch projectile from directly in front of face
