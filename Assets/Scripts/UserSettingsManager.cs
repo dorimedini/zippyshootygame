@@ -51,6 +51,7 @@ public class UserSettingsManager
         UserDefinedConstants.maxGrappleDistanceRatio = GetSetting("Grapple distance / radius (ratio): ", UserDefinedConstants.maxGrappleDistanceRatio);
         UserDefinedConstants.projectileHitDamage = GetSetting("Projectile hit damage: ", UserDefinedConstants.projectileHitDamage);
         UserDefinedConstants.launchForceMultiplier = GetSetting("Pillar launch force: ", UserDefinedConstants.launchForceMultiplier);
+        UserDefinedConstants.explosionParalysisTime = GetSetting("Explosion paralysis duration: ", UserDefinedConstants.explosionParalysisTime);
         UserDefinedConstants.localMovementOverrideWindow = GetSetting("Movement override window: ", UserDefinedConstants.localMovementOverrideWindow);
         UserDefinedConstants.localForceDampen = GetSetting("Local-force dampen ratio: ", UserDefinedConstants.localForceDampen);
 

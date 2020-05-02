@@ -28,6 +28,7 @@ public static class UserDefinedConstants
     public static float minProjectileCharge;
     public static float projectileHitDamage;
     public static float launchForceMultiplier;
+    public static float explosionParalysisTime;
 
     // Explosions override location updates from remote players. movementOverrideWindow controls for how long, and localForceDampen controls
     // which percentage of the "real" force (applied remotely, updated later) should be applied locally.
@@ -58,7 +59,7 @@ public static class UserDefinedConstants
         sphereRadius = fromPrefs ? PlayerPrefs.GetFloat("sphereRadius", 70f) : 70f;
         movementSpeed = fromPrefs ? PlayerPrefs.GetFloat("movementSpeed", 1f) : 1f;
         maxChargeTime = fromPrefs ? PlayerPrefs.GetFloat("maxChargeTime", 1f) : 1f;
-        explosionLift = fromPrefs ? PlayerPrefs.GetFloat("explosionLift", 1f) : 1f;
+        explosionLift = fromPrefs ? PlayerPrefs.GetFloat("explosionLift", 0.2f) : 0.2f;
         explosionForce = fromPrefs ? PlayerPrefs.GetFloat("explosionForce", 25f) : 25f;
         weaponCooldown = fromPrefs ? PlayerPrefs.GetFloat("weaponCooldown", 0.5f) : 0.5f;
         explosionRadius = fromPrefs ? PlayerPrefs.GetFloat("explosionRadius", 15f) : 15f;
@@ -71,7 +72,8 @@ public static class UserDefinedConstants
         minProjectileCharge = fromPrefs ? PlayerPrefs.GetFloat("minProjectileCharge", 0.3f) : 0.3f;
         projectileHitDamage = fromPrefs ? PlayerPrefs.GetFloat("projectileHitDamage", 15f) : 15f;
         launchForceMultiplier = fromPrefs ? PlayerPrefs.GetFloat("launchForceMultiplier", 4f) : 4f;
-        localMovementOverrideWindow = fromPrefs ? PlayerPrefs.GetFloat("localMovementOverrideWindow", 0.2f) : 0.2f;
+        explosionParalysisTime = fromPrefs ? PlayerPrefs.GetFloat("explosionParalysisTime", 1f) : 1f;
+        localMovementOverrideWindow = fromPrefs ? PlayerPrefs.GetFloat("localMovementOverrideWindow", 0.7f) : 0.7f;
         localForceDampen = fromPrefs ? PlayerPrefs.GetFloat("localForceDampen", 0.8f) : 0.8f;
         chargeMode = fromPrefs ? PlayerPrefs.GetInt("chargeMode", 0) == 1 : false;
     }
@@ -101,6 +103,7 @@ public static class UserDefinedConstants
         PlayerPrefs.SetFloat("minProjectileCharge", minProjectileCharge);
         PlayerPrefs.SetFloat("projectileHitDamage", projectileHitDamage);
         PlayerPrefs.SetFloat("launchForceMultiplier", launchForceMultiplier);
+        PlayerPrefs.SetFloat("explosionParalysisTime", explosionParalysisTime);
         PlayerPrefs.SetFloat("localMovementOverrideWindow", localMovementOverrideWindow);
         PlayerPrefs.SetFloat("localForceDampen", localForceDampen);
         PlayerPrefs.SetInt("chargeMode", chargeMode ? 1 : 0);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class ExplosionController : MonoBehaviourPun
 {
@@ -10,44 +11,55 @@ public class ExplosionController : MonoBehaviourPun
 
     public void BroadcastExplosion(Vector3 position, string shooterId)
     {
-        photonView.RPC("RemoteExplosion", RpcTarget.All, position, shooterId);
-        // Disable updates from network characters for a moment, and apply local explosion force to give local player immediate feedback.
-        // Dampen the effect a bit, so when we start syncing again it'll be a bit smoother
+        // Send a message to each remote player containing relevant explosion data.
+        // We do these calculations here because we're applying the same force both on the remote player (via RPC) and locally (to give immediate feedback).
+        // Compute hit players, which force to apply and how far away the target is (for damage calculation).
+        Dictionary<string, Vector3> userIdsTohits = new Dictionary<string, Vector3>();
+        Dictionary<string, float> userIdsToDistances = new Dictionary<string, float>();
         foreach (Collider remotePlayerCol in OtherPlayersInExplosion(position, shooterId, false))
         {
+            string hitUserId = remotePlayerCol.GetComponent<PhotonView>().Owner.UserId;
             Rigidbody rb = remotePlayerCol.GetComponent<Rigidbody>();
             Vector3 hitPosition = rb.ClosestPointOnBounds(position);
             float dist = (hitPosition - position).magnitude;
             if (dist <= UserDefinedConstants.explosionRadius)
             {
-                remotePlayerCol.GetComponent<NetworkCharacter>().ApplyLocalForce(ExplosionForce(hitPosition, position, dist), ForceMode.Impulse);
+                userIdsTohits[hitUserId] = ExplosionForce(hitPosition, position, dist);
+                userIdsToDistances[hitUserId] = dist;
+                // While we're here, apply the force locally to the network character
+                remotePlayerCol.GetComponent<NetworkCharacter>().ApplyLocalForce(userIdsTohits[hitUserId], ForceMode.Impulse);
+            }
+        }
+
+        // Get players and send RPCs
+        Dictionary<int, Player> playerDict = PhotonNetwork.CurrentRoom.Players;
+        foreach (string targetUserId in userIdsTohits.Keys)
+        {
+            Vector3 force = userIdsTohits[targetUserId];
+            foreach (int playerIdx in playerDict.Keys)
+            {
+                Player player = playerDict[playerIdx];
+                if (player.UserId == targetUserId)
+                {
+                    photonView.RPC("RemoteExplosion", player, userIdsTohits[targetUserId], userIdsToDistances[targetUserId], shooterId);
+                    break;
+                }
             }
         }
     }
 
     [PunRPC]
-    public void RemoteExplosion(Vector3 position, string shooterId)
+    public void RemoteExplosion(Vector3 explosionForce, float dist, string shooterId)
     {
-        // Only affect the local player, provided he's not the shooter.
-        foreach (var col in OtherPlayersInExplosion(position, shooterId, true))
-        {
-            Rigidbody rb = col.GetComponent<Rigidbody>();
-            Vector3 hitPosition = rb.ClosestPointOnBounds(position);
-            float dist = (hitPosition - position).magnitude;
-            if (dist <= UserDefinedConstants.explosionRadius)
-            {
-                // When player is off the ground, root motion isn't applied. In case player is grounded when explosion hit,
-                // momentarily turn off root motion until player is lifted off the ground.
-                col.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.localMovementOverrideWindow / 2);
-                Vector3 explosionForce = ExplosionForce(hitPosition, position, dist);
-                rb.AddForce(explosionForce, ForceMode.Impulse);
-                // Do damage (AFTER adding force, so if the ragdoll replaces it it'll fly off).
-                // I don't know what ClosestPointOnBounds returns if the point is in the collider so clamp the dist/radius ratio to [0,1]
-                // and use that value to get the proportion of damage to deal.
-                float damage = UserDefinedConstants.projectileHitDamage * (1 - Mathf.Clamp01(dist / UserDefinedConstants.explosionRadius));
-                dmgCtrl.BroadcastInflictDamage(shooterId, damage, col.GetComponent<PhotonView>().Owner.UserId);
-            }
-        }
+        // We only reach this method if this local player was hit by an explosive force.
+        // Apply force (disable root motion for a bit):
+        Player player = PhotonNetwork.LocalPlayer;
+        GameObject playerObj = player.TagObject as GameObject;
+        playerObj.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.explosionParalysisTime);
+        playerObj.GetComponent<Rigidbody>().AddForce(explosionForce, ForceMode.Impulse);
+        // Do damage (to self):
+        float damage = UserDefinedConstants.projectileHitDamage * (1 - Mathf.Clamp01(dist / UserDefinedConstants.explosionRadius));
+        dmgCtrl.BroadcastInflictDamage(shooterId, damage, player.UserId);
     }
 
     List<Collider> OtherPlayersInExplosion(Vector3 position, string shooterId, bool localOnly)
