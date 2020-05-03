@@ -8,7 +8,6 @@ using Photon.Pun;
 public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiateMagicCallback
 {
     public Animator anim;
-    public Material localPlayerMaterial;
     public PlayerMovementController playerMovement;
     public GrapplingCharacter grappleChar;
     public GameObject hookshotPrefab;
@@ -37,12 +36,6 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         flyRestOfBodyLayerIdx = anim.GetLayerIndex("FlyRestOfBody");
         disableRemoteUpdatesFor = 0;
         remoteUpdatesDisabled = false;
-        if (photonView.IsMine)
-            GetComponentInChildren<SkinnedMeshRenderer>().material = localPlayerMaterial;
-        else
-        {
-            anim.applyRootMotion = false;
-        }
     }
 
     // Update is called once per frame

@@ -428,7 +428,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 2e1af66c37a006142acda498a20fc296, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 1
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -591,7 +591,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 6287008124743745102}
-  localPlayerMaterial: {fileID: 2100000, guid: 12eb21ce665eea44092f794048a94558, type: 2}
   playerMovement: {fileID: 642572647237074428}
   grappleChar: {fileID: 3049088878652703782}
   hookshotPrefab: {fileID: 3091063935066273103, guid: de85edbaa6d4d884f9478baf2fe0a4be,

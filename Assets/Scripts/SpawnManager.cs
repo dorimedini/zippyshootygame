@@ -9,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject spawnCam;
     public RagdollController ragdollCtrl;
     public MessagesController msgCtrl;
+    public Material localPlayerMaterial;
 
     List<PillarBehaviour> pillars = null;
     private GeoSphereGenerator gsg;
@@ -119,6 +120,10 @@ public class SpawnManager : MonoBehaviour
         // by the transform component.
         // Local players must be kinematic because they apply forces to themselves (jump, explosion knockback, grapple...)
         player.GetComponent<Rigidbody>().isKinematic = false;
+        // Local player sees different graphics
+        player.GetComponentInChildren<SkinnedMeshRenderer>().material = localPlayerMaterial;
+        // Local player moves via animator
+        player.GetComponent<Animator>().applyRootMotion = true;
         return player;
     }
 

@@ -1276,6 +1276,7 @@ MonoBehaviour:
   spawnCam: {fileID: 22186502}
   ragdollCtrl: {fileID: 559608519}
   msgCtrl: {fileID: 1326363887}
+  localPlayerMaterial: {fileID: 2100000, guid: 12eb21ce665eea44092f794048a94558, type: 2}
   spawnHeight: 5
 --- !u!1001 &8623038837500012816
 PrefabInstance:
