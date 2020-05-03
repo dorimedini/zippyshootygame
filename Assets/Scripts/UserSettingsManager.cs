@@ -11,14 +11,14 @@ public class UserSettingsManager
         scroll = Vector2.zero;
     }
 
-    public void ExposeDebugSettings()
+    public void ExposeDebugSettings(bool midGame)
     {
         scroll = GUILayout.BeginScrollView(scroll);
 
         bool reset = GUILayout.Button("Reset to defaults");
         if (reset)
         {
-            UserDefinedConstants.LoadDefaultValues();
+            UserDefinedConstants.LoadDefaultValues(midGame);
             return;
         }
 
@@ -38,7 +38,7 @@ public class UserSettingsManager
         UserDefinedConstants.lookSpeedX = GetSetting("Horizontal look speed: ", UserDefinedConstants.lookSpeedX);
         UserDefinedConstants.lookSpeedY = GetSetting("Vertical look speed: ", UserDefinedConstants.lookSpeedY);
         UserDefinedConstants.grappleSpeed = GetSetting("Grapple fly speed: ", UserDefinedConstants.grappleSpeed);
-        UserDefinedConstants.sphereRadius = GetSetting("Sphere radius: ", UserDefinedConstants.sphereRadius);
+        if (!midGame) UserDefinedConstants.sphereRadius = GetSetting("Sphere radius: ", UserDefinedConstants.sphereRadius);
         UserDefinedConstants.movementSpeed = GetSetting("Movement speed multiplier: ", UserDefinedConstants.movementSpeed);
         UserDefinedConstants.explosionLift = GetSetting("Explosion lift force: ", UserDefinedConstants.explosionLift);
         UserDefinedConstants.explosionForce = GetSetting("Explosion force: ", UserDefinedConstants.explosionForce);

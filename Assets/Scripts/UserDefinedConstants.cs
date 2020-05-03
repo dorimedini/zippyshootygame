@@ -38,17 +38,17 @@ public static class UserDefinedConstants
 
     public static bool chargeMode;
 
-    public static void LoadFromPlayerPrefs()
+    public static void LoadFromPlayerPrefs(bool midGame)
     {
-        LoadAux(true);
+        LoadAux(true, midGame);
     }
 
-    public static void LoadDefaultValues()
+    public static void LoadDefaultValues(bool midGame)
     {
-        LoadAux(false);
+        LoadAux(false, midGame);
     }
 
-    static void LoadAux(bool fromPrefs)
+    static void LoadAux(bool fromPrefs, bool midGame)
     {
         nickname = fromPrefs ? PlayerPrefs.GetString("nickname", "NOOBNOOB") : "NOOBNOOB";
         sunDamage = fromPrefs ? PlayerPrefs.GetFloat("sunDamage", 50f) : 50f;
@@ -58,7 +58,7 @@ public static class UserDefinedConstants
         lookSpeedX = fromPrefs ? PlayerPrefs.GetFloat("lookSpeedX", 10f) : 10f;
         lookSpeedY = fromPrefs ? PlayerPrefs.GetFloat("lookSpeedY", 5f) : 5f;
         grappleSpeed = fromPrefs ? PlayerPrefs.GetFloat("grappleSpeed", 50f) : 50f;
-        sphereRadius = fromPrefs ? PlayerPrefs.GetFloat("sphereRadius", 70f) : 70f;
+        if (!midGame) sphereRadius = fromPrefs ? PlayerPrefs.GetFloat("sphereRadius", 70f) : 70f;
         movementSpeed = fromPrefs ? PlayerPrefs.GetFloat("movementSpeed", 1f) : 1f;
         maxChargeTime = fromPrefs ? PlayerPrefs.GetFloat("maxChargeTime", 1f) : 1f;
         explosionLift = fromPrefs ? PlayerPrefs.GetFloat("explosionLift", 0.2f) : 0.2f;
