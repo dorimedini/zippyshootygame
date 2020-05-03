@@ -671,7 +671,6 @@ GameObject:
   - component: {fileID: 8640920834140147558}
   - component: {fileID: 7559963777081130142}
   - component: {fileID: 2339561235521972213}
-  - component: {fileID: 7783836838969753669}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -761,18 +760,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7783836838969753669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7612542012632783299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 487978879a6085b4e939670ff6cc79e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7628629843590399426
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,7 +825,6 @@ GameObject:
   - component: {fileID: 4689910694189898746}
   - component: {fileID: 8277435731306499787}
   - component: {fileID: 8186030447744285648}
-  - component: {fileID: 1475710648346359874}
   m_Layer: 5
   m_Name: Red
   m_TagString: Untagged
@@ -902,18 +888,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1475710648346359874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8562437454230679550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 641178836e5ce2e4dae9e2ebaed0e8f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &9108460948245356737
 GameObject:
   m_ObjectHideFlags: 0
