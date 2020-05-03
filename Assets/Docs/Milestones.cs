@@ -53,7 +53,7 @@
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
  * <   > Landing feels soft... maybe a little camera bounce?
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
- * <   > Sun should damage on proximity? Hitting the sun should 'charge' it until a maximal value on which a 'discharge' occurs damaging proportional to proximity?
+ * < V > Hitting the sun should 'charge' it until a maximal value on which a 'discharge' occurs damaging proportional to proximity
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
  * -------   > This is a good point to add arms to self-player
  * -------   > Maybe don't launch projectile from directly in front of face
