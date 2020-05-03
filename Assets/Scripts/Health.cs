@@ -7,8 +7,7 @@ using Photon.Pun;
 [RequireComponent(typeof(NetworkCharacter))]
 public class Health : MonoBehaviourPun
 {
-    public HealthBar bar;
-    public Image redOverlay;
+    public PlayerUIController ui;
     public GameObject playerRagdoll;
 
     private float currentHealth;
@@ -20,21 +19,6 @@ public class Health : MonoBehaviourPun
         spawnMngr = GameObject.Find("_SCRIPTS").GetComponent<SpawnManager>();
         if (spawnMngr == null)
             Debug.LogError("No spawn manager found!");
-        bar.SetMaxHealth(UserDefinedConstants.maxHealth);
-        bar.HealToMax();
-    }
-
-    void Update()
-    {
-        Color c = redOverlay.color;
-        if (redOverlay.color.a > 0.01f)
-        {
-            redOverlay.color = new Color(c.r, c.g, c.b, Mathf.Max(0, c.a - Time.deltaTime));
-        }
-        else
-        {
-            redOverlay.color = new Color(c.r, c.g, c.b, 0);
-        }
     }
 
     public void InflictDamage(float damage)
@@ -57,7 +41,6 @@ public class Health : MonoBehaviourPun
 
     void InflictDamageUI(float damage)
     {
-        bar.TakeDamage(damage);
-        redOverlay.color = new Color(redOverlay.color.r, redOverlay.color.g, redOverlay.color.b, 0.5f);
+        ui.healthBar.TakeDamage(damage);
     }
 }
