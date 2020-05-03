@@ -47,6 +47,18 @@
  * < V > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * < V > Projectile should take the current player speed into account when computing initial speed
  * < V > Grapple superman animation should be fixed-oriented towards target point.
+ * <   > Destroy hookshot on death! Both local and network
+ * <   > Hide mouse cursor
+ * <   > Expose EHN as parameter
+ * <   > Pause menu, better settings, option to quit
+ * <   > Hard to see other players. Make the "find the line of sight" game fun!
+ *          Larger models?                                          (mark)
+ *          Trail of smoke behind projectiles?                      (mark)
+ *          Periodic sunray blasts to all player locations          (keep moving, mark)
+ *          Hanzo-vision powerup                                    (clue)
+ *          Sun-pointers powerup (color arrows toward each player)  (clue)
+ *          Heat-seeking missiles with lock-on time?                (reward)
+ *          Powerup mechanic idea: 3 collectables, have X seconds to collect all of them (from the moment the first was collected)
  * <   > Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Really need ambient music...
  * <   > Still a bit jerky when exploding a remote player and the remote starts sending the updates. Maybe use an even system, on ACK from remote player re-activate motion sync?
