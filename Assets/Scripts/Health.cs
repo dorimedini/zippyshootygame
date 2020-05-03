@@ -19,6 +19,8 @@ public class Health : MonoBehaviourPun
         spawnMngr = GameObject.Find("_SCRIPTS").GetComponent<SpawnManager>();
         if (spawnMngr == null)
             Debug.LogError("No spawn manager found!");
+        ui.healthBar.SetMaxHealth(UserDefinedConstants.maxHealth);
+        ui.healthBar.HealToMax();
     }
 
     public void InflictDamage(float damage)

@@ -659,7 +659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd85edb62537e54bb74f45ef3a2d3b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crosshairCtrl: {fileID: 6061469911277925537}
+  ui: {fileID: 5012099359957047308}
   cam: {fileID: 2068110431}
   rb: {fileID: 8945275936811725004}
 --- !u!114 &6061469911277925537

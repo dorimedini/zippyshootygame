@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-[RequireComponent(typeof(CrosshairGUIController))]
 [RequireComponent(typeof(Rigidbody))]
 public class ShootingCharacter : MonoBehaviourPun
 {
-    public CrosshairGUIController crosshairCtrl;
+    public PlayerUIController ui;
     public Camera cam;
     public Rigidbody rb;
 
@@ -47,7 +46,7 @@ public class ShootingCharacter : MonoBehaviourPun
             if (charging)
             {
                 chargeTime += Time.deltaTime;
-                crosshairCtrl.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
+                ui.crosshair.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
             }
 
             // Fire (when player releases button or max charge is reached)
@@ -56,7 +55,7 @@ public class ShootingCharacter : MonoBehaviourPun
                 buttonUp = false;
                 charging = false;
                 FireProjectile(chargeTime);
-                crosshairCtrl.updateChargeState(0, UserDefinedConstants.maxChargeTime);
+                ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
             }
 
         }

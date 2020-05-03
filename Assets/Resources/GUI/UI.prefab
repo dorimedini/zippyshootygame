@@ -492,6 +492,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8954516427487007438}
+  - component: {fileID: 4214513367192039843}
   m_Layer: 5
   m_Name: Crosshair
   m_TagString: Untagged
@@ -522,6 +523,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4214513367192039843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4291300822785724140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb181102b0d930f4b949e962038c2bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  images:
+  - {fileID: 686373856204892643}
+  - {fileID: 8177679462782806829}
+  - {fileID: 2155914739052425812}
+  - {fileID: 7074781394895009025}
 --- !u!1 &5879301447150970398
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 8064320638381130562}
+  crosshair: {fileID: 4214513367192039843}
 --- !u!1 &7628629843590399426
 GameObject:
   m_ObjectHideFlags: 0
