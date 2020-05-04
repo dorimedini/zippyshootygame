@@ -6,6 +6,12 @@ public class PausingPlayer : MonoBehaviour
 {
     public PauseMenuController pauseMenu;
 
+    public MouseLookController mouseLookChar;
+    public PlayerMovementController movementChar;
+    public GrapplingCharacter grappleChar;
+    public ShootingCharacter shootingChar;
+    public CrosshairGUIController crosshairCtrl;
+
     // Update is called once per frame
     void Update()
     {
@@ -24,13 +30,23 @@ public class PausingPlayer : MonoBehaviour
 
     public void Pause()
     {
-        // TODO: Disable player controls
+        SetPlayerActive(false);
         pauseMenu.gameObject.SetActive(true);
     }
 
     public void Resume()
     {
-        // TODO: Reactivate player
+        SetPlayerActive(true);
         pauseMenu.gameObject.SetActive(false);
+    }
+
+    void SetPlayerActive(bool active)
+    {
+        // TODO: Implement the Pause interface for other classes
+//        mouseLookChar.Pause(!active);
+//        movementChar.Pause(!active);
+        grappleChar.Pause(!active);
+//        shootingChar.Pause(!active);
+//        crosshairCtrl.Pause(!active);
     }
 }

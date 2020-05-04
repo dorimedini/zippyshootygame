@@ -1176,6 +1176,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 2862715760779352569}
+  mouseLookChar: {fileID: 2778773803360608355}
+  movementChar: {fileID: 642572647237074428}
+  grappleChar: {fileID: 3049088878652703782}
+  shootingChar: {fileID: 5163354516774611457}
+  crosshairCtrl: {fileID: 6061469911277925537}
 --- !u!1 &1246874328460490531
 GameObject:
   m_ObjectHideFlags: 0

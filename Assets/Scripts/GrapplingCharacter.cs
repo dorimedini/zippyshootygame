@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
-public class GrapplingCharacter : MonoBehaviour
+public class GrapplingCharacter : MonoBehaviour, Pausable
 {
     public Camera cam;
     public Animator anim;
@@ -21,12 +21,14 @@ public class GrapplingCharacter : MonoBehaviour
     private float cameraGrappleFOV, cameraOriginalFOV;
     private Vector3 grappleCameraPullback, originalCamLocalPos;
 
+    private bool paused;
+
     private int baseLayerIdx, flyGrappleArmLayerIdx, flyRestOfBodyLayerIdx;
 
     // Start is called before the first frame update
     void Start()
     {
-        grappleRampup = initialGrapple = grappling = false;
+        paused = grappleRampup = initialGrapple = grappling = false;
         originalCamLocalPos = cam.transform.localPosition;
         grappleCameraPullback = originalCamLocalPos + new Vector3(0, 0, -0.3f);
         cameraOriginalFOV = cam.fieldOfView;
@@ -48,7 +50,7 @@ public class GrapplingCharacter : MonoBehaviour
     void UpdateCancelGrapple()
     {
         // Cancel grapple on jump, even if not grounded
-        if (Input.GetButtonDown("Jump"))
+        if (!paused && Input.GetButtonDown("Jump"))
             CancelGrapple();
     }
     void UpdateGrapple()
@@ -56,7 +58,7 @@ public class GrapplingCharacter : MonoBehaviour
         // Player should be able to grapple at any time, even while grappling.
         // Only catch the initial buttondown though, so it doesn't speedfire.
         // Also, we need to grab the hit object and hit location here (in Update) for precision.
-        if (Input.GetButtonDown("Fire2"))
+        if (!paused && Input.GetButtonDown("Fire2"))
         {
             RaycastHit hit;
             Ray ray = new Ray(cam.transform.position + cam.transform.forward, cam.transform.forward);
@@ -187,6 +189,8 @@ public class GrapplingCharacter : MonoBehaviour
             AccelerateTowardsGrappleTarget();
         }
     }
+
+    public void Pause(bool pause) { paused = pause; }
 
     public Vector3 GetGrappleTarget() { return grapplePoint; }
     void CancelGrapple()
