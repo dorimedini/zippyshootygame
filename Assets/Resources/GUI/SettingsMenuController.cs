@@ -20,7 +20,6 @@ public class SettingsMenuController : MonoBehaviour
         var floatVals = UserDefinedConstants.GetFloatEntries();
         var stringVals = UserDefinedConstants.GetStringEntries();
         var boolVals = UserDefinedConstants.GetBoolEntries();
-        Debug.Log(string.Format("Building settings area, got {0} toggles, {1} texts and {2} floats (sliders)", boolVals.Count, stringVals.Count, floatVals.Count));
 
         foreach (var entry in boolVals.Values)
         {
@@ -28,7 +27,6 @@ public class SettingsMenuController : MonoBehaviour
         }
         foreach (var entry in stringVals.Values)
         {
-            Debug.Log("Instantiating string input with entry " + entry._name);
             textInputs.Add(InstantiateStringInput(entry).GetComponent<TextInputController>());
         }
         foreach (var entry in floatVals.Values)
