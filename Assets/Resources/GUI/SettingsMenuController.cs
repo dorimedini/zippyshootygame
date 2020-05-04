@@ -33,6 +33,8 @@ public class SettingsMenuController : MonoBehaviour
         }
         foreach (var entry in floatVals.Values)
         {
+            if (entry._name == "sphereRadius")
+                continue;
             sliderInputs.Add(InstantiateFloatInput(entry).GetComponent<SliderInputController>());
         }
     }

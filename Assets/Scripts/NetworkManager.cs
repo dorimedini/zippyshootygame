@@ -16,14 +16,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public bool offlineMode;
 
     GameObject myPlayer;
-    UserSettingsManager settingsMngr;
     GeoSphereGenerator arena;
 
     void Start()
     {
         //UserDefinedConstants.LoadFromPlayerPrefs();
         UserDefinedConstants.LoadDefaultValues(false);
-        settingsMngr = new UserSettingsManager();
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
         InitArena();
         pillarCtrl.Init(arena);
@@ -48,11 +46,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Username: ");
-            UserDefinedConstants.nickname = PhotonNetwork.LocalPlayer.NickName = GUILayout.TextField(PhotonNetwork.LocalPlayer.NickName);
+            GUILayout.Label("Sphere radius: ");
+            UserDefinedConstants.sphereRadius = float.Parse(GUILayout.TextField(string.Format("{0:f2}", UserDefinedConstants.sphereRadius)));
             GUILayout.EndHorizontal();
-
-            settingsMngr.ExposeDebugSettings(false);
 
             if (GUILayout.Button("Multiplayer"))
             {
