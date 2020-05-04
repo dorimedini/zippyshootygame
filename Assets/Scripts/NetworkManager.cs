@@ -47,6 +47,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             UserDefinedConstants.sphereRadius = float.Parse(GUILayout.TextField(string.Format("{0:f2}", UserDefinedConstants.sphereRadius)));
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Exponential hexagon number: ");
+            UserDefinedConstants.EHN = int.Parse(GUILayout.TextField(string.Format("{0}", UserDefinedConstants.EHN)));
+            GUILayout.EndHorizontal();
+
             if (GUILayout.Button("Multiplayer"))
             {
                 PhotonNetwork.ConnectUsingSettings();
