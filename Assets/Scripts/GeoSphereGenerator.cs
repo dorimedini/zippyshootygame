@@ -13,13 +13,6 @@ public class GeoSphereGenerator : MonoBehaviour
     public List<Material> hexMaterials;
     public List<Material> pentMaterials;
 
-    // Positive integer. Controls how many pillar center-points the geodesic sphere has.
-    // In the end there will be:
-    // 12 pentagons
-    // 30*(2^EHN-1) edge hexes
-    // 20*(2^EHN-1)(2^(EHN-1)-1) triangle hexes
-    public int expHexNumber;
-
     // Number of lights, between 1 and 4
     public int numLights;
     public float lightRadiusMultiplier; // 0.8f?
@@ -74,8 +67,8 @@ public class GeoSphereGenerator : MonoBehaviour
         origin = new Vector3(0, 0, 0);
         spherePoints = new List<Vector3>();
         expectedPillars = 12 +
-            30 * (Tools.IntPow(2, expHexNumber) - 1) +
-            20 * (Tools.IntPow(2, expHexNumber) - 1) * (Tools.IntPow(2, expHexNumber - 1) - 1);
+            30 * (Tools.IntPow(2, UserDefinedConstants.EHN) - 1) +
+            20 * (Tools.IntPow(2, UserDefinedConstants.EHN) - 1) * (Tools.IntPow(2, UserDefinedConstants.EHN - 1) - 1);
         epsilon = baseEdgeLength() / 100f;
         BuildSphere();
         colorPillarsByDeg();
@@ -118,7 +111,7 @@ public class GeoSphereGenerator : MonoBehaviour
     // Length of an edge of a pillar should be proportional to radius/2^EHN
     float baseEdgeLength()
     {
-        return baseEdgeMultiplier * UserDefinedConstants.sphereRadius / (float)Tools.IntPow(2, expHexNumber);
+        return baseEdgeMultiplier * UserDefinedConstants.sphereRadius / (float)Tools.IntPow(2, UserDefinedConstants.EHN);
     }
 
     // Use powers of this constant to determine the effect of the degree of a pillar
@@ -163,7 +156,7 @@ public class GeoSphereGenerator : MonoBehaviour
     //    H1  H2  H2  H2  H2  H2  H2  H1
     //  P0  H1  H1  H1  H1  H1  H1  H1  P0
     // 
-    // In the above example (with expHexNumber=3), P and H denote 
+    // In the above example (with EHN=3), P and H denote 
     // pentagons or hexagons, and the number next to the letter is
     // the degree of the pillar.
     //
@@ -181,7 +174,7 @@ public class GeoSphereGenerator : MonoBehaviour
     // until i satisfies 3(i-1)>=2^EHN.
     private (int, int) degRange(int deg)
     {
-        int exp = (int)Tools.IntPow(2, expHexNumber);
+        int exp = (int)Tools.IntPow(2, UserDefinedConstants.EHN);
         int deg2StartIdx = 12 + 30 * (exp - 1);
         if (deg <= 1)
             return deg == 0 ? (0, 12) : (12, deg2StartIdx);
@@ -200,7 +193,7 @@ public class GeoSphereGenerator : MonoBehaviour
     {
         if (i < 12) 
             return 0;
-        int exp = (int)Tools.IntPow(2, expHexNumber);
+        int exp = (int)Tools.IntPow(2, UserDefinedConstants.EHN);
         int deg2StartIdx = 12 + 30 * (exp - 1);
         if (i < deg2StartIdx)
             return 1;
@@ -218,7 +211,7 @@ public class GeoSphereGenerator : MonoBehaviour
     }
     private int maxDegree()
     {
-        return Mathf.FloorToInt((float)Tools.IntPow(2, expHexNumber) / 3f + 1f);
+        return Mathf.FloorToInt((float)Tools.IntPow(2, UserDefinedConstants.EHN) / 3f + 1f);
     }
 
     // Some sphere points may be added several times by the subdivide algorithm.
@@ -275,7 +268,7 @@ public class GeoSphereGenerator : MonoBehaviour
                 pentCenters[tindices[i * 3 + 0]],
                 pentCenters[tindices[i * 3 + 1]],
                 pentCenters[tindices[i * 3 + 2]],
-                expHexNumber);
+                UserDefinedConstants.EHN);
         }
         removeDuplicates();
         // Now lengthen the pentagon points to fit the radius as well (in the spherePoints
@@ -346,11 +339,11 @@ public class GeoSphereGenerator : MonoBehaviour
     // inwards from the edges.
     // So, when we sort the pillars, ensure the following order:
     // 1. The 12 pentagons are first (already taken care of for us).
-    // 2. The 30*(2^expHexNumber - 1) edge hexes come next, grouped
+    // 2. The 30*(2^EHN - 1) edge hexes come next, grouped
     //    by common plane first, then by order of hexes closer to
     //    the end-pentagon with smaller index.
     //    Actually, we don't need to group these at all...
-    // 3. The 20*(2^expHexNumber - 1)*(2^(expHexNumber-1) - 1) 
+    // 3. The 20*(2^EHN- 1)*(2^(EHN-1) - 1) 
     //    inner-triangle-hexes come last, grouped by "quadrant" (only
     //    there're 12 of them) which is uniquely defined by the the
     //    30-entry binary vector denoting the hex's relative location

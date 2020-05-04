@@ -58,6 +58,12 @@ public static class UserDefinedConstants
     {
         {"chargeMode", new Entry<bool>(false, "chargeMode", "Charge mode")}
     };
+    private static Dictionary<string, RangeEntry<int>> intEntries = new Dictionary<string, RangeEntry<int>>
+    {
+        {"EHN", new RangeEntry<int>(3, "EHN", "Exponential hexagon number", false, 1, 4)}
+    };
+
+    public static int EHN { get { return intEntries["EHN"]; } set { intEntries["EHN"]._val = value; } }
 
     public static string nickname { get { return stringEntries["nickname"]; } set { stringEntries["nickname"]._val = value; } }
 
