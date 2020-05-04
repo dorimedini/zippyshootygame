@@ -45,6 +45,6 @@ public class SliderInputController : MonoBehaviour
     // Called when text value of slider changes
     public void OnTextUpdate()
     {
-        slider.value = float.Parse(valueText.text); // Should invoke OnUpdate()
+        slider.value = Mathf.Clamp(float.Parse(valueText.text), min, max);
     }
 }
