@@ -71,7 +71,18 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnResetToDefaults()
     {
-        // TODO: Reset all UI values to default
+        foreach (SliderInputController slider in sliderInputs)
+        {
+            slider.value = floatVals[slider.key]._default_val;
+        }
+        foreach (TextInputController text in textInputs)
+        {
+            text.value = stringVals[text.key]._default_val;
+        }
+        foreach (ToggleInputController toggle in toggleInputs)
+        {
+            toggle.value = boolVals[toggle.key]._default_val;
+        }
     }
 
     GameObject InstantiateFloatInput(UserDefinedConstants.FloatEntry entry)
