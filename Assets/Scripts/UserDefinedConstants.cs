@@ -141,7 +141,7 @@ public static class UserDefinedConstants
             PlayerPrefs.SetInt(boolEntry._name, boolEntry ? 1 : 0);
     }
 
-    public static Dictionary<string, FloatEntry> GetFloatEntries() { return floatEntries; }
-    public static Dictionary<string, Entry<string>> GetStringEntries() { return stringEntries; }
-    public static Dictionary<string, Entry<bool>> GetBoolEntries() { return boolEntries; }
+    public static ref Dictionary<string, FloatEntry> GetFloatEntries() { return ref floatEntries; }
+    public static ref Dictionary<string, Entry<string>> GetStringEntries() { return ref stringEntries; }
+    public static ref Dictionary<string, Entry<bool>> GetBoolEntries() { return ref boolEntries; }
 }
