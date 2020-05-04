@@ -61,7 +61,9 @@ public class ShootingCharacter : MonoBehaviourPun
         }
         else // !chargeMode
         {
-            // Fire immediately (at "max charge"), if cooldown allows
+            // Fire immediately (at "max charge"), if cooldown allows.
+            // TODO: If we switched from weapon charge mode to normal mode we need to update the crosshair GUI like this somewhere...
+            ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
             if (buttonDown && Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f))
             {
                 weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
