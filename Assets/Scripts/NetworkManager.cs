@@ -23,9 +23,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //UserDefinedConstants.LoadFromPlayerPrefs();
         UserDefinedConstants.LoadDefaultValues(false);
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
-        InitArena();
-        pillarCtrl.Init(arena);
-        spawner.Init(arena);
     }
 
     void OnDestroy()
@@ -78,6 +75,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
+        InitArena();
+        pillarCtrl.Init(arena);
+        spawner.Init(arena);
         PhotonNetwork.JoinRandomRoom();
     }
 

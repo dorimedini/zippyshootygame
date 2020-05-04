@@ -77,11 +77,6 @@ public class GeoSphereGenerator : MonoBehaviour
             30 * (Tools.IntPow(2, expHexNumber) - 1) +
             20 * (Tools.IntPow(2, expHexNumber) - 1) * (Tools.IntPow(2, expHexNumber - 1) - 1);
         epsilon = baseEdgeLength() / 100f;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
         BuildSphere();
         colorPillarsByDeg();
     }
