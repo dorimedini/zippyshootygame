@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour, Pausable
 {
     public float airMovementSpeed = 5;
     public float minimalAirtime = 0.5f; // Don't check for grounded state too soon into the jump
@@ -22,6 +22,8 @@ public class PlayerMovementController : MonoBehaviour
     private bool grounded;
     private float airtimeCooldown;
     private float rootMotionOffFor;
+
+    private bool paused;
 
     static int locomotionState = Animator.StringToHash("Base Layer.Locomotion");
     static int jumpStartState = Animator.StringToHash("Base Layer.JumpStart");
@@ -60,7 +62,7 @@ public class PlayerMovementController : MonoBehaviour
     void UpdateJump()
     {
         // Handle jumping
-        if (!jumping && Input.GetButton("Jump") && grounded)
+        if (!paused && !jumping && Input.GetButton("Jump") && grounded)
         {
             airtimeCooldown = minimalAirtime;
             initialJump = true;
@@ -91,8 +93,11 @@ public class PlayerMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
-        anim.SetFloat("FwdBack", fwdBack);
-        anim.SetFloat("LeftRight", leftRight);
+        if (!paused)
+        {
+            anim.SetFloat("FwdBack", fwdBack);
+            anim.SetFloat("LeftRight", leftRight);
+        }
         anim.SetBool("InAir", !grounded);
         anim.SetFloat("DistFromGround", Mathf.Min(1f, distFromGround));
         currentBaseAnimState = anim.GetCurrentAnimatorStateInfo(0);
@@ -112,7 +117,8 @@ public class PlayerMovementController : MonoBehaviour
     void FixedUpdateInitialJump()
     {
         // Give the initial burst of speed, and allow some XZ movement while in the air
-        rb.velocity += UserDefinedConstants.jumpSpeed * transform.up;
+        if (!paused)
+            rb.velocity += UserDefinedConstants.jumpSpeed * transform.up;
         initialJump = false;
     }
     void FixedUpdateHandleAirborneMovement()
@@ -125,7 +131,13 @@ public class PlayerMovementController : MonoBehaviour
         anim.applyRootMotion = false;
         prevSpeedDelta = speedDelta;
         speedDelta = rb.rotation * (airMovementSpeed * movement);
-        rb.velocity += (speedDelta - prevSpeedDelta);
+        if (!paused)
+            rb.velocity += (speedDelta - prevSpeedDelta);
+    }
+
+    public void Pause(bool pause)
+    {
+        paused = pause;
     }
 
     public void LaunchFromPillar(int pillarId, float pillarHeightChange)
