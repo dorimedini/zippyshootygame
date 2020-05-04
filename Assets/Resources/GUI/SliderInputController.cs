@@ -11,6 +11,7 @@ public class SliderInputController : MonoBehaviour
     public Slider slider;
     public TMP_InputField valueText;
     public TextMeshProUGUI labelTMP;
+    public string key;
 
     public float value
     {

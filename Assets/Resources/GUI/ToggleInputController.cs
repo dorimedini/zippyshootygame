@@ -10,6 +10,7 @@ public class ToggleInputController : MonoBehaviour
     public string defaultValue;
     public TextMeshProUGUI labelTMP;
     public Toggle toggle;
+    public string key;
 
     public bool value
     {

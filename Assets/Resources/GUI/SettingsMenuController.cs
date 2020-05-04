@@ -7,6 +7,10 @@ public class SettingsMenuController : MonoBehaviour
     public GameObject settingsContainer;
     public GameObject sliderInputPrefab, stringInputPrefab, toggleInputPrefab;
 
+    Dictionary<string, UserDefinedConstants.FloatEntry> floatVals = UserDefinedConstants.GetFloatEntries();
+    Dictionary<string, UserDefinedConstants.Entry<string>> stringVals = UserDefinedConstants.GetStringEntries();
+    Dictionary<string, UserDefinedConstants.Entry<bool>> boolVals = UserDefinedConstants.GetBoolEntries();
+
     List<SliderInputController> sliderInputs;
     List<TextInputController> textInputs;
     List<ToggleInputController> toggleInputs;
@@ -17,9 +21,6 @@ public class SettingsMenuController : MonoBehaviour
         sliderInputs = new List<SliderInputController>();
         textInputs = new List<TextInputController>();
         toggleInputs = new List<ToggleInputController>();
-        var floatVals = UserDefinedConstants.GetFloatEntries();
-        var stringVals = UserDefinedConstants.GetStringEntries();
-        var boolVals = UserDefinedConstants.GetBoolEntries();
 
         foreach (var entry in boolVals.Values)
         {
@@ -37,7 +38,18 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnApply()
     {
-        // TODO: Read all settings values to user constants
+        foreach (SliderInputController slider in sliderInputs)
+        {
+            floatVals[slider.key]._val = slider.value;
+        }
+        foreach (TextInputController text in textInputs)
+        {
+            stringVals[text.key]._val = text.value;
+        }
+        foreach (ToggleInputController toggle in toggleInputs)
+        {
+            boolVals[toggle.key]._val = toggle.value;
+        }
     }
 
     public void OnCancel()
@@ -54,6 +66,7 @@ public class SettingsMenuController : MonoBehaviour
     {
         var obj = Instantiate(sliderInputPrefab, settingsContainer.transform);
         SliderInputController slider = obj.GetComponent<SliderInputController>();
+        slider.key = entry._name;
         slider.min = entry._min;
         slider.max = entry._max;
         slider.value = entry;
@@ -65,6 +78,7 @@ public class SettingsMenuController : MonoBehaviour
     {
         var obj = Instantiate(stringInputPrefab, settingsContainer.transform);
         TextInputController text = obj.GetComponent<TextInputController>();
+        text.key = entry._name;
         text.value = entry;
         text.label = entry._label;
         return obj;
@@ -74,6 +88,7 @@ public class SettingsMenuController : MonoBehaviour
     {
         var obj = Instantiate(toggleInputPrefab, settingsContainer.transform);
         ToggleInputController toggle = obj.GetComponent<ToggleInputController>();
+        toggle.key = entry._name;
         toggle.value = entry;
         toggle.label = entry._label;
         return obj;

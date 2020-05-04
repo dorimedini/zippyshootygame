@@ -9,6 +9,7 @@ public class TextInputController : MonoBehaviour
     public string defaultValue;
     public TextMeshProUGUI labelTMP;
     public TMP_InputField inputTMP;
+    public string key;
 
     public string value
     {
