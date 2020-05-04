@@ -3,20 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class MouseLookController : MonoBehaviour
+public class MouseLookController : MonoBehaviour, Pausable
 {
     public Camera cam;
     public Rigidbody rb;
     public GrapplingCharacter grappleChar;
 
+    private bool paused;
+
+    void Start()
+    {
+        paused = false;
+    }
+
     void Update()
     {
-        // Rotation
-        float rotX = Input.GetAxis("Mouse X");
-        float rotY = -Input.GetAxis("Mouse Y");
-        transform.rotation = rb.rotation * Quaternion.Euler(0, UserDefinedConstants.lookSpeedX * rotX, 0);
-        // Rotate the camera depending on Y axis input.
-        cam.transform.Rotate(UserDefinedConstants.lookSpeedY * rotY, 0, 0);
+        if (!paused)
+        {
+            // Rotation
+            float rotX = Input.GetAxis("Mouse X");
+            float rotY = -Input.GetAxis("Mouse Y");
+            transform.rotation = rb.rotation * Quaternion.Euler(0, UserDefinedConstants.lookSpeedX * rotX, 0);
+            // Rotate the camera depending on Y axis input.
+            cam.transform.Rotate(UserDefinedConstants.lookSpeedY * rotY, 0, 0);
+        }
         // If we look too far up: the camera's "up" direction will form an angle of over 180 degrees with
         // the player's forward direction. We can check this by checking SignedAngle from player's forward
         // to camera's up. If this angle is negative and less than -90 degrees, we leaned too far back.
@@ -33,4 +43,6 @@ public class MouseLookController : MonoBehaviour
                 cam.transform.LookAt(2 * transform.position, transform.forward);
         }
     }
+
+    public void Pause(bool pause) { paused = pause; }
 }
