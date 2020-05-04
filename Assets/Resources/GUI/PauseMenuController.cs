@@ -10,7 +10,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void OnQuit()
     {
-        // TODO: Quit game
+        Application.Quit(0);
     }
 
     public void OnResume()
