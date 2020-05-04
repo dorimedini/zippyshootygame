@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsMenuController : MonoBehaviour
 {
@@ -54,7 +55,18 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnCancel()
     {
-        // TODO: Set UI values on all input fields to be the previous values
+        foreach (SliderInputController slider in sliderInputs)
+        {
+            slider.value = floatVals[slider.key]._val;
+        }
+        foreach (TextInputController text in textInputs)
+        {
+            text.value = stringVals[text.key]._val;
+        }
+        foreach (ToggleInputController toggle in toggleInputs)
+        {
+            toggle.value = boolVals[toggle.key]._val;
+        }
     }
 
     public void OnResetToDefaults()
