@@ -14,41 +14,41 @@ public static class UserDefinedConstants
         public Entry(T dv, string n, string l, bool mgok) { _midgame_ok = mgok; _val = _default_val = dv; _name = n; _label = l; }
         public static implicit operator T(Entry<T> e) => e._val;
     }
-    public class FloatEntry : Entry<float>
+    public class RangeEntry<T> : Entry<T>
     {
-        public float _min, _max;
-        public FloatEntry(float dv, string n, string l, float min, float max) : this(dv, n, l, true, min, max) { }
-        public FloatEntry(float dv, string n, string l, bool mgok, float min, float max) : base(dv, n, l, mgok) { _min = min; _max = max; }
+        public T _min, _max;
+        public RangeEntry(T dv, string n, string l, T min, T max) : this(dv, n, l, true, min, max) { }
+        public RangeEntry(T dv, string n, string l, bool mgok, T min, T max) : base(dv, n, l, mgok) { _min = min; _max = max; }
     }
 
-    private static Dictionary<string, FloatEntry> floatEntries = new Dictionary<string, FloatEntry>
+    private static Dictionary<string, RangeEntry<float>> floatEntries = new Dictionary<string, RangeEntry<float>>
     {
-        {"sunDamage", new FloatEntry(50, "sunDamage", "Sun damage", 0, 1000f)},
-        {"spawnTime", new FloatEntry(5, "spawnTime", "Spawn time", 0.05f, 5*60)},
-        {"maxHealth", new FloatEntry(100, "maxHealth", "Max health", 1, 500)},
-        {"jumpSpeed", new FloatEntry(8, "jumpSpeed", "Jump speed", 0.05f, 50)},
-        {"lookSpeedX", new FloatEntry(10, "lookSpeedX", "Horizontal look speed", 1, 50)},
-        {"lookSpeedY", new FloatEntry(5, "lookSpeedY", "Vertical look speed", 1, 50)},
-        {"grappleSpeed", new FloatEntry(50, "grappleSpeed", "Grapple speed", 1, 200)},
-        {"sphereRadius", new FloatEntry(70, "sphereRadius", "Sphere radius", false, 20, 500)},
-        {"movementSpeed", new FloatEntry(1, "movementSpeed", "Movement speed", 0.05f, 15)},
-        {"maxChargeTime", new FloatEntry(1, "maxChargeTime", "Max weapon charge time", 0.05f, 10)},
-        {"explosionLift", new FloatEntry(0.2f, "explosionLift", "Explosion lift force", 0, 10)},
-        {"explosionForce", new FloatEntry(25, "explosionForce", "Explosion force", 0, 200)},
-        {"weaponCooldown", new FloatEntry(0.5f, "weaponCooldown", "Weapon cooldown", 0.01f, 5)},
-        {"explosionRadius", new FloatEntry(15, "explosionRadius", "Explosion radius", 0, 50)},
-        {"shotSoundVolume", new FloatEntry(0.15f, "shotSoundVolume", "Shot sound volume", 0, 1)},
-        {"messageBoxUpTime", new FloatEntry(5, "messageBoxUpTime", "Messagebox uptime", 0.5f, 10)},
-        {"projectileImpulse", new FloatEntry(50, "projectileImpulse", "Projectile initial speed", 1, 200)},
-        {"gravityMultiplier", new FloatEntry(1, "gravityMultiplier", "Gravity multiplier", 0.05f, 10)},
-        {"grappleRampupTime", new FloatEntry(0.5f, "grappleRampupTime", "Grapple rampup time", 0.01f, 2)},
-        {"maxGrappleDistanceRatio", new FloatEntry(1, "maxGrappleDistanceRatio", "Grapple distance / radius ratio", 0.01f, 3)},
-        {"minProjectileCharge", new FloatEntry(0.3f, "minProjectileCharge", "Min weapon charge", 0, 1)},
-        {"projectileHitDamage", new FloatEntry(15, "projectileHitDamage", "Projectile hit damage", 0, 200)},
-        {"launchForceMultiplier", new FloatEntry(4, "launchForceMultiplier", "Pillar launch force multiplier", 1, 10)},
-        {"explosionParalysisTime", new FloatEntry(1, "explosionParalysisTime", "Explosion paralysis time", 0, 3)},
-        {"localMovementOverrideWindow", new FloatEntry(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
-        {"localForceDampen", new FloatEntry(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
+        {"sunDamage", new RangeEntry<float>(50, "sunDamage", "Sun damage", 0, 1000f)},
+        {"spawnTime", new RangeEntry<float>(5, "spawnTime", "Spawn time", 0.05f, 5*60)},
+        {"maxHealth", new RangeEntry<float>(100, "maxHealth", "Max health", 1, 500)},
+        {"jumpSpeed", new RangeEntry<float>(8, "jumpSpeed", "Jump speed", 0.05f, 50)},
+        {"lookSpeedX", new RangeEntry<float>(10, "lookSpeedX", "Horizontal look speed", 1, 50)},
+        {"lookSpeedY", new RangeEntry<float>(5, "lookSpeedY", "Vertical look speed", 1, 50)},
+        {"grappleSpeed", new RangeEntry<float>(50, "grappleSpeed", "Grapple speed", 1, 200)},
+        {"sphereRadius", new RangeEntry<float>(70, "sphereRadius", "Sphere radius", false, 20, 500)},
+        {"movementSpeed", new RangeEntry<float>(1, "movementSpeed", "Movement speed", 0.05f, 15)},
+        {"maxChargeTime", new RangeEntry<float>(1, "maxChargeTime", "Max weapon charge time", 0.05f, 10)},
+        {"explosionLift", new RangeEntry<float>(0.2f, "explosionLift", "Explosion lift force", 0, 10)},
+        {"explosionForce", new RangeEntry<float>(25, "explosionForce", "Explosion force", 0, 200)},
+        {"weaponCooldown", new RangeEntry<float>(0.5f, "weaponCooldown", "Weapon cooldown", 0.01f, 5)},
+        {"explosionRadius", new RangeEntry<float>(15, "explosionRadius", "Explosion radius", 0, 50)},
+        {"shotSoundVolume", new RangeEntry<float>(0.15f, "shotSoundVolume", "Shot sound volume", 0, 1)},
+        {"messageBoxUpTime", new RangeEntry<float>(5, "messageBoxUpTime", "Messagebox uptime", 0.5f, 10)},
+        {"projectileImpulse", new RangeEntry<float>(50, "projectileImpulse", "Projectile initial speed", 1, 200)},
+        {"gravityMultiplier", new RangeEntry<float>(1, "gravityMultiplier", "Gravity multiplier", 0.05f, 10)},
+        {"grappleRampupTime", new RangeEntry<float>(0.5f, "grappleRampupTime", "Grapple rampup time", 0.01f, 2)},
+        {"maxGrappleDistanceRatio", new RangeEntry<float>(1, "maxGrappleDistanceRatio", "Grapple distance / radius ratio", 0.01f, 3)},
+        {"minProjectileCharge", new RangeEntry<float>(0.3f, "minProjectileCharge", "Min weapon charge", 0, 1)},
+        {"projectileHitDamage", new RangeEntry<float>(15, "projectileHitDamage", "Projectile hit damage", 0, 200)},
+        {"launchForceMultiplier", new RangeEntry<float>(4, "launchForceMultiplier", "Pillar launch force multiplier", 1, 10)},
+        {"explosionParalysisTime", new RangeEntry<float>(1, "explosionParalysisTime", "Explosion paralysis time", 0, 3)},
+        {"localMovementOverrideWindow", new RangeEntry<float>(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
+        {"localForceDampen", new RangeEntry<float>(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
@@ -141,7 +141,7 @@ public static class UserDefinedConstants
             PlayerPrefs.SetInt(boolEntry._name, boolEntry ? 1 : 0);
     }
 
-    public static ref Dictionary<string, FloatEntry> GetFloatEntries() { return ref floatEntries; }
+    public static ref Dictionary<string, RangeEntry<float>> GetFloatEntries() { return ref floatEntries; }
     public static ref Dictionary<string, Entry<string>> GetStringEntries() { return ref stringEntries; }
     public static ref Dictionary<string, Entry<bool>> GetBoolEntries() { return ref boolEntries; }
 }

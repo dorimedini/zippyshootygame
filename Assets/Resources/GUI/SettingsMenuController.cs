@@ -8,7 +8,7 @@ public class SettingsMenuController : MonoBehaviour
     public GameObject settingsContainer;
     public GameObject sliderInputPrefab, stringInputPrefab, toggleInputPrefab;
 
-    Dictionary<string, UserDefinedConstants.FloatEntry> floatVals = UserDefinedConstants.GetFloatEntries();
+    Dictionary<string, UserDefinedConstants.RangeEntry<float>> floatVals = UserDefinedConstants.GetFloatEntries();
     Dictionary<string, UserDefinedConstants.Entry<string>> stringVals = UserDefinedConstants.GetStringEntries();
     Dictionary<string, UserDefinedConstants.Entry<bool>> boolVals = UserDefinedConstants.GetBoolEntries();
 
@@ -33,7 +33,7 @@ public class SettingsMenuController : MonoBehaviour
         }
         foreach (var entry in floatVals.Values)
         {
-            if (entry._name == "sphereRadius")
+            if (!entry._midgame_ok)
                 continue;
             sliderInputs.Add(InstantiateFloatInput(entry).GetComponent<SliderInputController>());
         }
@@ -87,7 +87,7 @@ public class SettingsMenuController : MonoBehaviour
         }
     }
 
-    GameObject InstantiateFloatInput(UserDefinedConstants.FloatEntry entry)
+    GameObject InstantiateFloatInput(UserDefinedConstants.RangeEntry<float> entry)
     {
         var obj = Instantiate(sliderInputPrefab, settingsContainer.transform);
         SliderInputController slider = obj.GetComponent<SliderInputController>();
