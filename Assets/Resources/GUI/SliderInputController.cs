@@ -47,5 +47,8 @@ public class SliderInputController : MonoBehaviour
     public void OnTextUpdate()
     {
         slider.value = Mathf.Clamp(float.Parse(valueText.text), min, max);
+        // In case the slider only allows integer inputs, even if the text is a fraction the value will be an integer.
+        // So, always update the text after updating the value from the text.
+        OnUpdate();
     }
 }

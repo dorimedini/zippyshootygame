@@ -11,10 +11,12 @@ public class SettingsMenuController : MonoBehaviour
     Dictionary<string, UserDefinedConstants.RangeEntry<float>> floatVals = UserDefinedConstants.GetFloatEntries();
     Dictionary<string, UserDefinedConstants.Entry<string>> stringVals = UserDefinedConstants.GetStringEntries();
     Dictionary<string, UserDefinedConstants.Entry<bool>> boolVals = UserDefinedConstants.GetBoolEntries();
+    Dictionary<string, UserDefinedConstants.RangeEntry<int>> intVals = UserDefinedConstants.GetIntEntries();
 
     List<SliderInputController> sliderInputs;
     List<TextInputController> textInputs;
     List<ToggleInputController> toggleInputs;
+    List<SliderInputController> intInputs;  // Sliders have integer-only mode
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +24,7 @@ public class SettingsMenuController : MonoBehaviour
         sliderInputs = new List<SliderInputController>();
         textInputs = new List<TextInputController>();
         toggleInputs = new List<ToggleInputController>();
+        intInputs = new List<SliderInputController>();
 
         foreach (var entry in boolVals.Values)
         {
@@ -36,6 +39,12 @@ public class SettingsMenuController : MonoBehaviour
             if (!entry._midgame_ok)
                 continue;
             sliderInputs.Add(InstantiateFloatInput(entry).GetComponent<SliderInputController>());
+        }
+        foreach (var entry in intVals.Values)
+        {
+            if (!entry._midgame_ok)
+                continue;
+            intInputs.Add(InstantiateIntInput(entry).GetComponent<SliderInputController>());
         }
     }
 
@@ -53,6 +62,10 @@ public class SettingsMenuController : MonoBehaviour
         {
             boolVals[toggle.key]._val = toggle.value;
         }
+        foreach (SliderInputController intSlider in intInputs)
+        {
+            intVals[intSlider.key]._val = (int)intSlider.value;
+        }
     }
 
     public void OnCancel()
@@ -68,6 +81,10 @@ public class SettingsMenuController : MonoBehaviour
         foreach (ToggleInputController toggle in toggleInputs)
         {
             toggle.value = boolVals[toggle.key]._val;
+        }
+        foreach (SliderInputController intSlider in intInputs)
+        {
+            intSlider.value = intVals[intSlider.key]._val;
         }
     }
 
@@ -85,6 +102,10 @@ public class SettingsMenuController : MonoBehaviour
         {
             toggle.value = boolVals[toggle.key]._default_val;
         }
+        foreach (SliderInputController intSlider in intInputs)
+        {
+            intSlider.value = intVals[intSlider.key]._default_val;
+        }
     }
 
     GameObject InstantiateFloatInput(UserDefinedConstants.RangeEntry<float> entry)
@@ -96,6 +117,19 @@ public class SettingsMenuController : MonoBehaviour
         slider.max = entry._max;
         slider.value = entry;
         slider.label = entry._label;
+        return obj;
+    }
+
+    GameObject InstantiateIntInput(UserDefinedConstants.RangeEntry<int> entry)
+    {
+        var obj = Instantiate(sliderInputPrefab, settingsContainer.transform);
+        SliderInputController slider = obj.GetComponent<SliderInputController>();
+        slider.key = entry._name;
+        slider.min = entry._min;
+        slider.max = entry._max;
+        slider.value = entry;
+        slider.label = entry._label;
+        obj.GetComponentInChildren<Slider>().wholeNumbers = true;
         return obj;
     }
 

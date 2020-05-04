@@ -150,4 +150,5 @@ public static class UserDefinedConstants
     public static ref Dictionary<string, RangeEntry<float>> GetFloatEntries() { return ref floatEntries; }
     public static ref Dictionary<string, Entry<string>> GetStringEntries() { return ref stringEntries; }
     public static ref Dictionary<string, Entry<bool>> GetBoolEntries() { return ref boolEntries; }
+    public static ref Dictionary<string, RangeEntry<int>> GetIntEntries() { return ref intEntries; }
 }
