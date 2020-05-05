@@ -132,11 +132,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     {
         if (!IsGrappling())
         {
-            if (activeHookshot != null)
-            {
-                Destroy(activeHookshot);
-                activeHookshot = null;
-            }
+            DestroyActiveHookshot();
             return;
         }
         // If the rope already exists, we only ever need to update the target; the hand transform is always the same (player's hand).
@@ -169,5 +165,20 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         info.Sender.TagObject = gameObject;
+    }
+
+    void DestroyActiveHookshot()
+    {
+        if (activeHookshot != null)
+        {
+            Destroy(activeHookshot);
+            activeHookshot = null;
+        }
+    }
+
+    void OnDestroy()
+    {
+        // TODO: Test this (need a friend)
+        DestroyActiveHookshot();
     }
 }
