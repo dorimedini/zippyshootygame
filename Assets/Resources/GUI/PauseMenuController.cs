@@ -14,6 +14,12 @@ public class PauseMenuController : MonoBehaviour
         Application.Quit(0);
     }
 
+    public void OnQuitToMainMenu()
+    {
+        // TODO: Need to disconnect from room or something, destroy the arena & whatnot.
+        // TODO: Most of this logic should be in NetworkManager, the GUI stuff (reactivate main menu) can be done here
+    }
+
     public void OnResume()
     {
         pauseBehaviourComponent.Resume();
