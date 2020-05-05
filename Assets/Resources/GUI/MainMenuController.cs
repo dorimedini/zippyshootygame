@@ -42,4 +42,11 @@ public class MainMenuController : MonoBehaviour
         radiusInput.value = UserDefinedConstants.sphereRadius;
         EHNInput.value = UserDefinedConstants.EHN;
     }
+
+    public void ResetToDefaults()
+    {
+        radiusInput.value = UserDefinedConstants.GetFloatEntries()["sphereRadius"]._default_val;
+        EHNInput.value = UserDefinedConstants.GetIntEntries()["EHN"]._default_val;
+        ApplySettings();
+    }
 }
