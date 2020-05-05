@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -16,8 +17,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void OnQuitToMainMenu()
     {
-        // TODO: Need to disconnect from room or something, destroy the arena & whatnot.
-        // TODO: Most of this logic should be in NetworkManager, the GUI stuff (reactivate main menu) can be done here
+        PhotonNetwork.Disconnect();
     }
 
     public void OnResume()

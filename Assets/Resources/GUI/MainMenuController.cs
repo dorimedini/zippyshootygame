@@ -9,8 +9,12 @@ public class MainMenuController : MonoBehaviour
 
     void Start()
     {
-        radiusInput.value = UserDefinedConstants.sphereRadius;
-        EHNInput.value = UserDefinedConstants.EHN;
+        ReadSettings();
+    }
+
+    void OnEnabled()
+    {
+        ReadSettings();
     }
 
     public void OnSingleplayer()
@@ -31,5 +35,11 @@ public class MainMenuController : MonoBehaviour
     {
         UserDefinedConstants.sphereRadius = radiusInput.value;
         UserDefinedConstants.EHN = (int)EHNInput.value;
+    }
+
+    void ReadSettings()
+    {
+        radiusInput.value = UserDefinedConstants.sphereRadius;
+        EHNInput.value = UserDefinedConstants.EHN;
     }
 }

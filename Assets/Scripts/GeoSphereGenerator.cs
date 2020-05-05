@@ -50,7 +50,6 @@ public class GeoSphereGenerator : MonoBehaviour
             new Vector3(0.0f, Z, X),  new Vector3(0.0f, Z, -X), new Vector3(0.0f, -Z, X),  new Vector3(0.0f, -Z, -X),
             new Vector3(Z, X, 0.0f),  new Vector3(-Z, X, 0.0f), new Vector3(Z, -X, 0.0f),  new Vector3(-Z, -X, 0.0f)
         };
-    GameObject containingSphere;           // The inverted sphere surrounding the arena
     List<PillarBehaviour> pillars;             // Updated in addPillars(). First 12 items are the pentagons.
     Dictionary<(int, int), Plane> planes;  // Indexed by pentagon-index pairs, updated in initializePlanes()
     List<List<int>> neighbors;             // Lists of pillar IDs that touch the respective pillar (lists are of length 5 or 6)
@@ -78,7 +77,6 @@ public class GeoSphereGenerator : MonoBehaviour
 
     void BuildSphere()
     {
-        initializeBoundingSphere();
         initializeSpherePoints();   // Compute the vertex locations of the pillar midpoints
         addPillars();                 // Instantiate the pillar objects
         initializePlanes();         // Each neighboring pair of pentagons, along with the origin, define a plane
@@ -228,13 +226,6 @@ public class GeoSphereGenerator : MonoBehaviour
                 }
         if (spherePoints.Count != expectedPillars)
             Debug.LogError(string.Format("Expected {0} pillars, spherePoints list contains {1} items", expectedPillars, spherePoints.Count));
-    }
-
-    private void initializeBoundingSphere()
-    {
-        containingSphere = Instantiate(Resources.Load("Prefabs/InvertableSphere"), origin, Quaternion.identity) as GameObject;
-        containingSphere.GetComponent<AddInvertedMeshCollider>().CreateInvertedMeshCollider();
-        containingSphere.transform.localScale *= UserDefinedConstants.sphereRadius;
     }
 
     private void subdivide(Vector3 v1, Vector3 v2, Vector3 v3, int depth) {
@@ -561,6 +552,7 @@ public class GeoSphereGenerator : MonoBehaviour
             lightComp.color = lightColors[i % lightColors.Count];
             lightComp.range = lightRadiusMultiplier * UserDefinedConstants.sphereRadius;
             lightComp.intensity = lightIntensity;
+            lights[i].transform.parent = transform;
         }
         // Place them
         switch(numLights)

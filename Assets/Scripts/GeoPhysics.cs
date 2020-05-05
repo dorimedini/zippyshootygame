@@ -54,10 +54,6 @@ public static class GeoPhysics
         }
         if (hitPillar == null)
         {
-            // We may have hit the bounding sphere between the pillars with this raycast. If so, ground is radius away from origin.
-            // If hits[] has no elements we've already returned
-            if (hits[0].collider.gameObject.name == "InvertableSphere(Clone)")
-                return UserDefinedConstants.sphereRadius - player.position.magnitude;
             Debug.LogError(string.Format("Raycast didn't get a pillar / bounding-sphere hit! Hit {0} instead", hits[0].collider.gameObject.name));
             return -1;
         }

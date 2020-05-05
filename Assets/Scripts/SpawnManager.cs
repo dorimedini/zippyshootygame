@@ -12,7 +12,6 @@ public class SpawnManager : MonoBehaviour
     public Material localPlayerMaterial;
 
     List<PillarBehaviour> pillars = null;
-    private GeoSphereGenerator gsg;
     private float respawnTime;
     private bool ragdollActive;
     private GameObject activeRagdoll;
@@ -43,11 +42,11 @@ public class SpawnManager : MonoBehaviour
     }
 
     // NetworkManager should create the GeoSphere and give a reference to the spawn manager
-    public void Init(GeoSphereGenerator arena = null)
+    public void Init(List<PillarBehaviour> pillars)
     {
-        if (arena != null)
-            gsg = arena;
-        pillars = gsg.GetPillars();
+        if (pillars == null)
+            Debug.LogError("Got null pillars[] list");
+        this.pillars = pillars;
         initalized = true;
     }
 
@@ -56,8 +55,6 @@ public class SpawnManager : MonoBehaviour
         // Players should spawn above one of the pentagons.
         // Need to spawn them high enough s.t. they don't fall through; say, initialHeight+something.
         // Also, after setting the 'up' direction as the center of the sphere, we need to give a random look direction.
-        if (pillars == null)
-            Init();
         var spawns = new List<Tuple<Vector3, Quaternion>>();
         for (int i=0; i<12; ++i)
         {

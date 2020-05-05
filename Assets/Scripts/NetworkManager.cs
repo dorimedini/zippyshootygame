@@ -12,6 +12,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public ExplosionController explosionCtrl;
     public PillarExtensionController pillarCtrl;
     public SpawnManager spawner;
+    public MainMenuController mainMenu;
 
     public bool offlineMode;
 
@@ -74,9 +75,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         InitArena();
-        pillarCtrl.Init(arena);
-        spawner.Init(arena);
         SpawnMyPlayer();
+    }
+
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        standbyCamera.SetActive(true);
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        base.OnDisconnected(cause);
+        DestroyArena();
+        mainMenu.gameObject.SetActive(true);
     }
 
     void SpawnMyPlayer()
@@ -90,5 +102,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameObject gsg = Instantiate(geospherePrefab, Vector3.zero, Quaternion.identity);
         arena = gsg.GetComponent<GeoSphereGenerator>();
+        pillarCtrl.Init(arena.GetPillars());
+        spawner.Init(arena.GetPillars());
+    }
+
+    void DestroyArena()
+    {
+        Destroy(arena.gameObject);
     }
 }
