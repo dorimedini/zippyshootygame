@@ -49,8 +49,8 @@
  * < V > Grapple superman animation should be fixed-oriented towards target point.
  * <   > Destroy hookshot on death! Both local and network
  * <   > Hide mouse cursor
- * <   > Expose EHN as parameter
- * <   > Pause menu, better settings, option to quit
+ * < V > Expose EHN as parameter
+ * < V > Pause menu, better settings, option to quit
  * <   > Hard to see other players. Make the "find the line of sight" game fun!
  *          Larger models?                                          (mark)
  *          Trail of smoke behind projectiles?                      (mark)
