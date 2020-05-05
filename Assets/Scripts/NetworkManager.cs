@@ -33,42 +33,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void OnGUI()
     {
         GUILayout.Label(PhotonNetwork.NetworkClientState.ToString());
-        if (!PhotonNetwork.IsConnected)
-        {
-            GUILayout.BeginArea(new Rect(0, 0, Screen.width / 4, Screen.height));
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginVertical();
-            GUILayout.Space(20);
-            GUILayout.FlexibleSpace();
+    }
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Sphere radius: ");
-            UserDefinedConstants.sphereRadius = float.Parse(GUILayout.TextField(string.Format("{0:f2}", UserDefinedConstants.sphereRadius)));
-            GUILayout.EndHorizontal();
+    public void StartSingleplayer()
+    {
+        PhotonNetwork.OfflineMode = true;
+        OnJoinedLobby();
+    }
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Exponential hexagon number: ");
-            UserDefinedConstants.EHN = int.Parse(GUILayout.TextField(string.Format("{0}", UserDefinedConstants.EHN)));
-            GUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Multiplayer"))
-            {
-                PhotonNetwork.ConnectUsingSettings();
-            }
-            else if (GUILayout.Button("Singleplayer"))
-            {
-                PhotonNetwork.OfflineMode = true;
-                OnJoinedLobby();
-            }
-
-            GUILayout.FlexibleSpace();
-            GUILayout.Space(20);
-            GUILayout.EndVertical();
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
-        }
+    public void StartMultiplayer()
+    {
+        PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()

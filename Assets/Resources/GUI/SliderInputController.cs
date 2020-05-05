@@ -16,7 +16,11 @@ public class SliderInputController : MonoBehaviour
     public float value
     {
         get { return slider.value; }
-        set { slider.value = value; }
+        set
+        {
+            slider.value = value;
+            OnUpdate();
+        }
     }
 
     public float min
