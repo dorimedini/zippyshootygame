@@ -42,7 +42,7 @@ public class PausingPlayer : MonoBehaviour
 
     void SetPlayerActive(bool active)
     {
-        // TODO: Implement the Pause interface for other classes
+        Cursor.visible = !active;
         mouseLookChar.Pause(!active);
         movementChar.Pause(!active);
         grappleChar.Pause(!active);

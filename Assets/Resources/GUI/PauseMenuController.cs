@@ -12,11 +12,13 @@ public class PauseMenuController : MonoBehaviour
 
     public void OnQuit()
     {
+        Cursor.visible = true;
         Application.Quit(0);
     }
 
     public void OnQuitToMainMenu()
     {
+        Cursor.visible = true;
         PhotonNetwork.Disconnect();
     }
 

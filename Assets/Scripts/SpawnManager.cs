@@ -122,6 +122,8 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<SkinnedMeshRenderer>().material = localPlayerMaterial;
         // Local player moves via animator
         player.GetComponent<Animator>().applyRootMotion = true;
+        // Hide the cursor when player gets control
+        Cursor.visible = false;
         return player;
     }
 
