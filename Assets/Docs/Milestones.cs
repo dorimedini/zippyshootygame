@@ -48,11 +48,11 @@
  * < V > Projectile should take the current player speed into account when computing initial speed
  * < V > Grapple superman animation should be fixed-oriented towards target point.
  * < V > Destroy hookshot on death! Both local and network
- * <   > Hide mouse cursor
+ * < V > Hide mouse cursor
  * < V > Expose EHN as parameter
  * < V > Pause menu, better settings, option to quit
  * <   > Hard to see other players. Make the "find the line of sight" game fun!
- *          Larger models?                                          (mark)
+ *   X      Larger models?                                          (mark)              --> I think just setting smaller radius does the trick
  *          Trail of smoke behind projectiles?                      (mark)
  *          Periodic sunray blasts to all player locations          (keep moving, mark)
  *          Hanzo-vision powerup                                    (clue)
