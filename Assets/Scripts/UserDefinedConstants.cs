@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,19 +7,30 @@ public static class UserDefinedConstants
 {
     public class Entry<T>
     {
-        public T _val;
+        protected T __val;
+        public T _val { get { return __val; } set { setval(value); } }
         public T _default_val;
         public string _name, _label;
         public bool _midgame_ok;
         public Entry(T dv, string n, string l) : this(dv, n, l, true) { }
-        public Entry(T dv, string n, string l, bool mgok) { _midgame_ok = mgok; _val = _default_val = dv; _name = n; _label = l; }
+        public Entry(T dv, string n, string l, bool mgok) { _midgame_ok = mgok; __val = _val = _default_val = dv; _name = n; _label = l; }
+        virtual public void setval(T val) { __val = val; }
         public static implicit operator T(Entry<T> e) => e._val;
     }
-    public class RangeEntry<T> : Entry<T>
+    public class RangeEntry<T> : Entry<T> where T : IComparable
     {
         public T _min, _max;
         public RangeEntry(T dv, string n, string l, T min, T max) : this(dv, n, l, true, min, max) { }
         public RangeEntry(T dv, string n, string l, bool mgok, T min, T max) : base(dv, n, l, mgok) { _min = min; _max = max; }
+        override public void setval(T val)
+        {
+            if (val.CompareTo(_min) == -1)
+                __val = _min;
+            else if (val.CompareTo(_max) == 1)
+                __val = _max;
+            else
+                __val = val;
+        }
     }
 
     private static Dictionary<string, RangeEntry<float>> floatEntries = new Dictionary<string, RangeEntry<float>>
