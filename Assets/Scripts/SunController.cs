@@ -16,8 +16,7 @@ public class SunController : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
-        mat.color = originalColor;
-        chargeStage = 0;
+        ResetColor();
     }
 
     public void BroadcastHit(string shooterId)
@@ -29,8 +28,7 @@ public class SunController : MonoBehaviourPun
     [PunRPC]
     public void Hit(string shooterId)
     {
-        ++chargeStage;
-        mat.color = Color.Lerp(originalColor, Color.red, (float)chargeStage / (chargeStages + 1));
+        IncrementColor();
         if (chargeStage == chargeStages)
         {
             Overcharge(shooterId);
@@ -39,8 +37,7 @@ public class SunController : MonoBehaviourPun
 
     void Overcharge(string shooterId)
     {
-        chargeStage = 0;
-        mat.color = originalColor;
+        ResetColor();
         Destroy(Instantiate(shockwavePrefab, Vector3.zero, Quaternion.identity), 5f);
 
         // Damage and knock back relative to distance from sun
@@ -53,6 +50,18 @@ public class SunController : MonoBehaviourPun
 
     void OnDestroy()
     {
+        ResetColor();
+    }
+
+    void ResetColor()
+    {
+        chargeStage = 0;
         mat.color = originalColor;
+    }
+
+    void IncrementColor()
+    {
+        ++chargeStage;
+        mat.color = Color.Lerp(originalColor, Color.red, (float)chargeStage / (chargeStages + 1));
     }
 }
