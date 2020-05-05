@@ -55,9 +55,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        InitArena();
-        pillarCtrl.Init(arena);
-        spawner.Init(arena);
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -76,6 +73,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        InitArena();
+        pillarCtrl.Init(arena);
+        spawner.Init(arena);
         SpawnMyPlayer();
     }
 
