@@ -47,7 +47,7 @@
  * < V > Respawn camera should use dynamic zoom, in case the player dies an a high pillar / the body falls off a high pillar
  * < V > Projectile should take the current player speed into account when computing initial speed
  * < V > Grapple superman animation should be fixed-oriented towards target point.
- * <   > Destroy hookshot on death! Both local and network
+ * < V > Destroy hookshot on death! Both local and network
  * <   > Hide mouse cursor
  * < V > Expose EHN as parameter
  * < V > Pause menu, better settings, option to quit
