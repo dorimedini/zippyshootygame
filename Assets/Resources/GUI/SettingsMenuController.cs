@@ -108,6 +108,8 @@ public class SettingsMenuController : MonoBehaviour
         }
     }
 
+    void OnDisable() { OnCancel(); }
+
     GameObject InstantiateFloatInput(UserDefinedConstants.RangeEntry<float> entry)
     {
         var obj = Instantiate(sliderInputPrefab, settingsContainer.transform);

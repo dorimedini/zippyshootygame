@@ -1180,7 +1180,6 @@ MonoBehaviour:
   movementChar: {fileID: 642572647237074428}
   grappleChar: {fileID: 3049088878652703782}
   shootingChar: {fileID: 5163354516774611457}
-  crosshairCtrl: {fileID: 6061469911277925537}
 --- !u!1 &1246874328460490531
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,7 +2444,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e96b7eb3386f28438bbb9e8dd62e3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuRoot: {fileID: 6147512915457370259}
+  landingMenuIdx: 0
+  menus:
+  - {fileID: 2530698695943417166}
+  - {fileID: 1414571063027891011}
   pauseBehaviourComponent: {fileID: 5868569426042505193}
 --- !u!1 &3293694823290377799
 GameObject:

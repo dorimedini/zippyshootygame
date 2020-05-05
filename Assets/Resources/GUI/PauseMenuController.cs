@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class PauseMenuController : MonoBehaviour
 {
-    public GameObject menuRoot;
+    public int landingMenuIdx;
+    public GameObject[] menus;
     public PausingPlayer pauseBehaviourComponent;
 
     public void OnQuit()
@@ -16,5 +17,12 @@ public class PauseMenuController : MonoBehaviour
     public void OnResume()
     {
         pauseBehaviourComponent.Resume();
+    }
+
+    public void ShowMainPauseMenu()
+    {
+        menus[0].SetActive(true);
+        for (int i = 1; i < menus.Length; ++i)
+            menus[i].SetActive(false);
     }
 }

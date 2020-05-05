@@ -10,7 +10,6 @@ public class PausingPlayer : MonoBehaviour
     public PlayerMovementController movementChar;
     public GrapplingCharacter grappleChar;
     public ShootingCharacter shootingChar;
-    public CrosshairGUIController crosshairCtrl;
 
     // Update is called once per frame
     void Update()
@@ -32,6 +31,7 @@ public class PausingPlayer : MonoBehaviour
     {
         SetPlayerActive(false);
         pauseMenu.gameObject.SetActive(true);
+        pauseMenu.ShowMainPauseMenu();
     }
 
     public void Resume()
@@ -47,6 +47,5 @@ public class PausingPlayer : MonoBehaviour
         movementChar.Pause(!active);
         grappleChar.Pause(!active);
         shootingChar.Pause(!active);
-//        crosshairCtrl.Pause(!active);
     }
 }
