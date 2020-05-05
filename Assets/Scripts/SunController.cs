@@ -16,6 +16,7 @@ public class SunController : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
+        mat.color = originalColor;
         chargeStage = 0;
     }
 
@@ -48,5 +49,10 @@ public class SunController : MonoBehaviourPun
         float damage = UserDefinedConstants.sunDamage * (1 - dist / UserDefinedConstants.sphereRadius);
         dmgCtrl.BroadcastInflictDamage(shooterId, damage, PhotonNetwork.LocalPlayer.UserId);
         playerObj.GetComponent<Rigidbody>().AddForce(playerObj.transform.position.normalized * damage, ForceMode.Impulse);
+    }
+
+    void OnDestroy()
+    {
+        mat.color = originalColor;
     }
 }
