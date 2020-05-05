@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(Rigidbody))]
-public class ShootingCharacter : MonoBehaviourPun
+public class ShootingCharacter : MonoBehaviourPun, Pausable
 {
     public PlayerUIController ui;
     public Camera cam;
@@ -14,10 +14,12 @@ public class ShootingCharacter : MonoBehaviourPun
     private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
 
+    private bool paused;
+
     // Start is called before the first frame update
     void Start()
     {
-        charging = false;
+        paused = charging = false;
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
@@ -26,9 +28,15 @@ public class ShootingCharacter : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        buttonDown = Input.GetButtonDown("Fire1");
-        buttonUp = Input.GetButtonUp("Fire1");
+        if (!paused)
+        {
+            buttonDown = Input.GetButtonDown("Fire1");
+            buttonUp = Input.GetButtonUp("Fire1");
+        }
         weaponCooldownCounter = Mathf.Max(weaponCooldownCounter - Time.deltaTime, 0);
+
+        if (paused)
+            return;
 
         // Different behaviour depending on weapon mode
         if (UserDefinedConstants.chargeMode)
@@ -79,4 +87,6 @@ public class ShootingCharacter : MonoBehaviourPun
         Vector3 source = cam.transform.position + cam.transform.forward;
         projectileCtrl.BroadcastFireProjectile(source, force, currentShooterSpeed, photonView.Owner.UserId);
     }
+
+    public void Pause(bool pause) { paused = pause; }
 }

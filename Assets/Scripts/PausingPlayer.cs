@@ -46,7 +46,7 @@ public class PausingPlayer : MonoBehaviour
         mouseLookChar.Pause(!active);
         movementChar.Pause(!active);
         grappleChar.Pause(!active);
-//        shootingChar.Pause(!active);
+        shootingChar.Pause(!active);
 //        crosshairCtrl.Pause(!active);
     }
 }
