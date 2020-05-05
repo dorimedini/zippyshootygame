@@ -10,6 +10,8 @@ using Photon.Pun;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
+    public Rigidbody rb;
+
     // Projectiles should ignore collision with the shooter player.
     // This string may be empty if in offline mode, but that's OK we only use this for uniqueness
     public string shooterId;
@@ -18,6 +20,8 @@ public class Projectile : MonoBehaviour
     public string projectileId;
 
     private bool destroyed;
+
+    private bool lockedOn;
 
     Mesh mesh;
     MeshRenderer rend;
@@ -30,8 +34,21 @@ public class Projectile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        destroyed = false;
+        lockedOn = destroyed = false;
         InitControllers();
+    }
+
+    void Update()
+    {
+        if (!lockedOn)
+        {
+            // Just rotate the head of the missile in the direction of the current speed
+            transform.up = rb.velocity.normalized;
+        }
+        else
+        {
+            // TODO: Implement lock-on mechanism for shooting characters
+        }
     }
 
     void InitControllers()
