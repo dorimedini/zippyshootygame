@@ -41,42 +41,51 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // Different behaviour depending on weapon mode
         if (UserDefinedConstants.chargeMode)
         {
-            // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
-            if (Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f) && buttonDown && !charging)
-            {
-                buttonDown = false;
-                charging = true;
-                weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
-                chargeTime = UserDefinedConstants.minProjectileCharge;
-            }
-
-            // Update weapon charge (if charging) and GUI
-            if (charging)
-            {
-                chargeTime += Time.deltaTime;
-                ui.crosshair.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
-            }
-
-            // Fire (when player releases button or max charge is reached)
-            if (charging && (buttonUp || chargeTime >= UserDefinedConstants.maxChargeTime))
-            {
-                buttonUp = false;
-                charging = false;
-                FireProjectile(chargeTime);
-                ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
-            }
-
+            UpdateChargefire();
         }
         else // !chargeMode
         {
-            // Fire immediately (at "max charge"), if cooldown allows.
-            // TODO: If we switched from weapon charge mode to normal mode we need to update the crosshair GUI like this somewhere...
+            UpdateInstafire();
+        }
+    }
+
+    void UpdateChargefire()
+    {
+        // Start weapon charge if cooldown allows, we're not currently charging (somehow?) and the player initiated charge
+        if (Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f) && buttonDown && !charging)
+        {
+            buttonDown = false;
+            charging = true;
+            weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
+            chargeTime = UserDefinedConstants.minProjectileCharge;
+        }
+
+        // Update weapon charge (if charging) and GUI
+        if (charging)
+        {
+            chargeTime += Time.deltaTime;
+            ui.crosshair.updateChargeState(chargeTime, UserDefinedConstants.maxChargeTime);
+        }
+
+        // Fire (when player releases button or max charge is reached)
+        if (charging && (buttonUp || chargeTime >= UserDefinedConstants.maxChargeTime))
+        {
+            buttonUp = false;
+            charging = false;
+            FireProjectile(chargeTime);
             ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
-            if (buttonDown && Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f))
-            {
-                weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
-                FireProjectile(1);
-            }
+        }
+    }
+
+    void UpdateInstafire()
+    {
+        // Fire immediately (at "max charge"), if cooldown allows.
+        // TODO: If we switched from weapon charge mode to normal mode we need to update the crosshair GUI like this somewhere...
+        ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
+        if (buttonDown && Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f))
+        {
+            weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
+            FireProjectile(1);
         }
     }
 
