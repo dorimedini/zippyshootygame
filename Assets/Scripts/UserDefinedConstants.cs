@@ -68,7 +68,8 @@ public static class UserDefinedConstants
     };
     private static Dictionary<string, Entry<bool>> boolEntries = new Dictionary<string, Entry<bool>>
     {
-        {"chargeMode", new Entry<bool>(false, "chargeMode", "Charge mode")}
+        {"chargeMode", new Entry<bool>(false, "chargeMode", "Charge mode")},
+        {"weaponLockMode", new Entry<bool>(false, "weaponLockMode", "Weapon lock mode")} // TODO: these modes are mutually exclusive, make a dropdown thing
     };
     private static Dictionary<string, RangeEntry<int>> intEntries = new Dictionary<string, RangeEntry<int>>
     {
@@ -110,6 +111,7 @@ public static class UserDefinedConstants
     public static float localForceDampen { get { return floatEntries["localForceDampen"]; } set { floatEntries["localForceDampen"]._val = value; } }
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }
+    public static bool weaponLockMode { get { return boolEntries["weaponLockMode"]; } set { boolEntries["weaponLockMode"]._val = value; } }
 
     public static void LoadFromPlayerPrefs(bool midGame)
     {

@@ -43,6 +43,10 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         {
             UpdateChargefire();
         }
+        else if (UserDefinedConstants.weaponLockMode)
+        {
+            UpdateLockFire();
+        }
         else // !chargeMode
         {
             UpdateInstafire();
@@ -75,6 +79,32 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             FireProjectile(chargeTime);
             ui.crosshair.updateChargeState(0, UserDefinedConstants.maxChargeTime);
         }
+    }
+
+    void UpdateLockFire()
+    {
+        // TODO: Implement
+        // Basic idea:
+        // 1. Need to choose a button for a hold-to-lock, or passive locking (player in sights-->commence locking).
+        //    A button is uncomfortable (or is it?), but passive locking can be buggy and can't always make the right decision:
+        //    what if player A has player B in his sights, and player C also comes into A's vision and A decides he wants to start
+        //    locking on C. He would need to jerk the cursor aside and carefully re-place the crosshair on player C, wasting 
+        //    valuable lock time.
+        //    Maybe set this as a boolean option?
+        //    Also, maybe the 'lock' button can be just to press and hold the 'fire' button; if released before lockTime is over
+        //    it just fires in a straight line, otherwise it's heat-seeking.
+        // 2. Change the cursor graphic to a + sign, make it smaller. Perhaps 3px yellow with 1px black outline, with alpha channel
+        //    on everything? Also need an indication of the lock-on area, perhaps another yellow-black circle, depending on a new
+        //    float constant 'lockSightRadius'
+        // 3. Introduce a 'lockTime' float value determining how long it takes to lock on. If player A has player B in his sights
+        //    when Fire key is pressed, locking commences and continues until either a. player A releases the fire button or b.
+        //    lockTime seconds pass. During the locking phase, show box graphics with three or four descending sizes, located at
+        //    player B's location. If locking completed, show a flashing yellow-red square around player B until the fire button
+        //    is released. Player A can release the fire button to fire a heat-seeking projectile in this case; if the fire button
+        //    was released before the lockTime seconds passed, a regular projectile is fired.
+        // 4. On fire button release, revert the graphics to normal
+        // 5. Default crosshair should have a randomly-floating square, similar in color to the locking-phase squares, to indicate
+        //    locking mechanism is idle.
     }
 
     void UpdateInstafire()
