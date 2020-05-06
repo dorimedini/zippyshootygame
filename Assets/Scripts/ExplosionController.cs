@@ -54,7 +54,7 @@ public class ExplosionController : MonoBehaviourPun
         // We only reach this method if this local player was hit by an explosive force.
         // Apply force (disable root motion for a bit):
         Player player = PhotonNetwork.LocalPlayer;
-        GameObject playerObj = player.TagObject as GameObject;
+        GameObject playerObj = NetworkCharacter.GetPlayerGameObject(player);
         playerObj.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.explosionParalysisTime);
         playerObj.GetComponent<Rigidbody>().AddForce(explosionForce, ForceMode.Impulse);
         // Do damage (to self):

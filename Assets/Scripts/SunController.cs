@@ -41,7 +41,7 @@ public class SunController : MonoBehaviourPun
         Destroy(Instantiate(shockwavePrefab, Vector3.zero, Quaternion.identity), 5f);
 
         // Damage and knock back relative to distance from sun
-        GameObject playerObj = PhotonNetwork.LocalPlayer.TagObject as GameObject;
+        GameObject playerObj = NetworkCharacter.GetPlayerGameObject(PhotonNetwork.LocalPlayer);
         float dist = playerObj.transform.position.magnitude;
         float damage = UserDefinedConstants.sunDamage * (1 - dist / UserDefinedConstants.sphereRadius);
         dmgCtrl.BroadcastInflictDamage(shooterId, damage, PhotonNetwork.LocalPlayer.UserId);

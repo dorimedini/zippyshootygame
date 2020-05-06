@@ -20,7 +20,7 @@ public class DamageController : MonoBehaviourPun
         {
             if (player.UserId == targetUserId)
             {
-                GameObject obj = player.TagObject as GameObject;
+                GameObject obj = NetworkCharacter.GetPlayerGameObject(player);
                 Health h = obj.GetComponent<Health>();
                 if (h == null)
                     Debug.LogError("No Health component found on component with a PlayerMoveController!");

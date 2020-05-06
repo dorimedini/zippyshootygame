@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerMovementController))]
@@ -165,6 +166,11 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         info.Sender.TagObject = gameObject;
+    }
+
+    public static GameObject GetPlayerGameObject(Player player)
+    {
+        return (GameObject)player.TagObject;
     }
 
     void DestroyActiveHookshot()
