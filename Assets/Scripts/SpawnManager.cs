@@ -111,7 +111,6 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<GravityAffected>().enabled = true;
         player.GetComponentInChildren<ShootingCharacter>().enabled = true;
         player.GetComponent<PausingPlayer>().enabled = true;
-        player.GetComponentInChildren<CrosshairGUIController>().enabled = true;
         player.GetComponentInChildren<HeadTowardsOrigin>().enabled = true;
         player.transform.Find("UI").gameObject.SetActive(true);
         // Remote players have isKinematic set to true by default. This prevents jitter, because player position/rotation is defined completely
