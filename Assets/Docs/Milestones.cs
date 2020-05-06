@@ -53,7 +53,7 @@
  * < V > Pause menu, better settings, option to quit
  * <   > Hard to see other players. Make the "find the line of sight" game fun!
  *   X      Larger models?                                          (mark)              --> I think just setting smaller radius does the trick
- *          Trail of smoke behind projectiles?                      (mark)
+ *   V      Trail of smoke behind projectiles?                      (mark)
  *          Periodic sunray blasts to all player locations          (keep moving, mark)
  *          Hanzo-vision powerup                                    (clue)
  *          Sun-pointers powerup (color arrows toward each player)  (clue)
