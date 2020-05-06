@@ -18,12 +18,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     GameObject myPlayer;
     GeoSphereGenerator arena;
+    List<RoomInfo> rooms;
 
     void Start()
     {
         //UserDefinedConstants.LoadFromPlayerPrefs();
         UserDefinedConstants.LoadDefaultValues(false);
         PhotonNetwork.LocalPlayer.NickName = UserDefinedConstants.nickname;
+        rooms = new List<RoomInfo>();
     }
 
     void OnDestroy()
@@ -45,6 +47,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void StartMultiplayer()
     {
         PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public List<RoomInfo> GetRooms() { return rooms; }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        base.OnRoomListUpdate(roomList);
+        rooms = new List<RoomInfo>();
+        foreach (RoomInfo room in roomList)
+            rooms.Add(room);
     }
 
     public override void OnConnectedToMaster()
