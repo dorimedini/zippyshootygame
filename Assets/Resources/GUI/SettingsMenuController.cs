@@ -7,6 +7,7 @@ public class SettingsMenuController : MonoBehaviour
 {
     public GameObject settingsContainer;
     public GameObject sliderInputPrefab, stringInputPrefab, toggleInputPrefab;
+    public CrosshairGUIController crosshairGUI;
 
     Dictionary<string, UserDefinedConstants.RangeEntry<float>> floatVals = UserDefinedConstants.GetFloatEntries();
     Dictionary<string, UserDefinedConstants.Entry<string>> stringVals = UserDefinedConstants.GetStringEntries();
@@ -66,6 +67,7 @@ public class SettingsMenuController : MonoBehaviour
         {
             intVals[intSlider.key]._val = (int)intSlider.value;
         }
+        RefreshSettingsInComponents();
     }
 
     public void OnCancel()
@@ -106,6 +108,11 @@ public class SettingsMenuController : MonoBehaviour
         {
             intSlider.value = intVals[intSlider.key]._default_val;
         }
+    }
+
+    void RefreshSettingsInComponents()
+    {
+        crosshairGUI.UpdateLockMode();
     }
 
     void OnDisable() { OnCancel(); }

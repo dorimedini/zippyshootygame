@@ -61,6 +61,7 @@ public static class UserDefinedConstants
         {"explosionParalysisTime", new RangeEntry<float>(1, "explosionParalysisTime", "Explosion paralysis time", 0, 3)},
         {"localMovementOverrideWindow", new RangeEntry<float>(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
         {"localForceDampen", new RangeEntry<float>(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
+        {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
@@ -69,7 +70,7 @@ public static class UserDefinedConstants
     private static Dictionary<string, Entry<bool>> boolEntries = new Dictionary<string, Entry<bool>>
     {
         {"chargeMode", new Entry<bool>(false, "chargeMode", "Charge mode")},
-        {"weaponLockMode", new Entry<bool>(false, "weaponLockMode", "Weapon lock mode")} // TODO: these modes are mutually exclusive, make a dropdown thing
+        {"weaponLockMode", new Entry<bool>(true, "weaponLockMode", "Weapon lock mode")} // TODO: these modes are mutually exclusive, make a dropdown thing
     };
     private static Dictionary<string, RangeEntry<int>> intEntries = new Dictionary<string, RangeEntry<int>>
     {
@@ -109,6 +110,7 @@ public static class UserDefinedConstants
     // which percentage of the "real" force (applied remotely, updated later) should be applied locally.
     public static float localMovementOverrideWindow { get { return floatEntries["localMovementOverrideWindow"]; } set { floatEntries["localMovementOverrideWindow"]._val = value; } }
     public static float localForceDampen { get { return floatEntries["localForceDampen"]; } set { floatEntries["localForceDampen"]._val = value; } }
+    public static float lockScopeRadius { get { return floatEntries["lockScopeRadius"]; } set { floatEntries["lockScopeRadius"]._val = value; } }
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }
     public static bool weaponLockMode { get { return boolEntries["weaponLockMode"]; } set { boolEntries["weaponLockMode"]._val = value; } }

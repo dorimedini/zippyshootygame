@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ShootingCharacter : MonoBehaviourPun, Pausable
@@ -10,16 +11,21 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     public Camera cam;
     public Rigidbody rb;
 
-    private bool buttonDown, buttonUp, charging;
+    private bool buttonDown, buttonUp, buttonPressed, charging;
     private float weaponCooldownCounter, chargeTime;
     private ProjectileController projectileCtrl;
 
     private bool paused;
 
+    private Transform lockTarget;
+    public RectTransform lockingImage;
+    public RectTransform uiCanvas;
+
     // Start is called before the first frame update
     void Start()
     {
         paused = charging = false;
+        lockTarget = null;
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
@@ -31,6 +37,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         if (!paused)
         {
             buttonDown = Input.GetButtonDown("Fire1");
+            buttonPressed = Input.GetButton("Fire1");
             buttonUp = Input.GetButtonUp("Fire1");
         }
         weaponCooldownCounter = Mathf.Max(weaponCooldownCounter - Time.deltaTime, 0);
@@ -83,6 +90,57 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
     void UpdateLockFire()
     {
+        // Initial lock-on check
+        // TODO: If player is locked on (and for some reason has the fire button down...?), don't search for a new target!
+        if (buttonDown)
+        {
+            if (lockTarget != null)
+            {
+                Debug.LogWarning("Got fire-button-down but lock-target is already set, did we miss a fire-button-up event?");
+                lockTarget = null;
+            }
+            // I'm not a performance expert but it may be best to just iterate over all players and see who's in scope.
+            // Any targetable object will have an angle less than 1+maxAngle anyway, so this is like setting it to infinity:
+            float sharpestAngle = 1 + MaxAngleToBeTargeted();
+            foreach (Player player in PhotonNetwork.PlayerList)
+            {
+                if (NetworkCharacter.IsLocalPlayer(player))
+                    continue;
+                Transform playerTrans = NetworkCharacter.GetPlayerCenter(player);
+                float targetSightAngle = TargetSightAngle(playerTrans.position);
+                bool canBeTargeted = CanBeTargeted(targetSightAngle);
+                // If several enemy players are in scope, choose the player closest to the center of the scope.
+                if (canBeTargeted && targetSightAngle < sharpestAngle)
+                {
+                    lockTarget = playerTrans;
+                    sharpestAngle = targetSightAngle;
+                }
+            }
+
+            if (lockTarget != null)
+            {
+                // TODO: Initiate locking sequence
+                lockingImage.gameObject.SetActive(true);
+            }
+        }
+
+        // Continue lock-on sequence if target is still in scope
+        if (buttonPressed && lockTarget != null && CanBeTargeted(lockTarget.position))
+        {
+            // TODO: Replace image with a prefab that handles that advancement graphics for different stages of lock-on.
+            // TODO: Keep track of lock time - after a while we should transfer to locked-on mode
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, lockTarget.position);
+            lockingImage.anchoredPosition = screenPoint - uiCanvas.sizeDelta / 2f;
+        }
+        else // Either the button is up, or target doesn't exist / not in scope
+        {
+            // TODO: If button is pressed, target exists and is already locked (and not in scope), do not disable the image.
+            // TODO: Only disable the image if the shooter is NOT locked on target.
+            // TODO: If the user was locked on, and the button-up event happened, fire!
+            //lockingImage.gameObject.SetActive(false);
+            //lockTarget = null;
+        }
+
         // TODO: Implement
         // Basic idea:
         // 1. Need to choose a button for a hold-to-lock, or passive locking (player in sights-->commence locking).
@@ -105,6 +163,55 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // 4. On fire button release, revert the graphics to normal
         // 5. Default crosshair should have a randomly-floating square, similar in color to the locking-phase squares, to indicate
         //    locking mechanism is idle.
+    }
+
+    float TargetSightAngle(Vector3 target)
+    {
+        // To check if player 2 is in player 1's scope, we ensure the angle between p1's line of sight and p2's location is bounded above
+        // by a specific constant, depending on lock scope radius.
+        return Vector3.Angle(cam.transform.forward, target - cam.transform.position);
+    }
+
+    float MaxAngleToBeTargeted()
+    {
+        // Say p1 wants to target another player:
+        //
+        //                                        p3
+        //      lock scope                    ______------
+        //          ^             ______------  \
+        //            ______------               | max angle A
+        //   p1 --- O ______    -    -    -    - +  -    -
+        //                  ------______
+        //                              ------______    p2
+        //                                          ------
+        //
+        // In the above illustration, p1 sees p3 but not within his lock scope, so p1 cannot target p3. p2, on the other hand,
+        // is within the scope.
+        // This can be checked by computing the angle A, and then checking if the angle between p1 and the target is at most A.
+        // To compute A, we only need to know the scope radius of p1:
+        //
+        //           <--------1------->/\    ^
+        //                             ||    |  Scope radius
+        // p1 camera    -    -    -    ||    v
+        //                             ||
+        //                             \/
+        //                    scope circle (side view)
+        //
+        //             angle = arctan(scope radius / 1)
+        //
+        // The actual world-space is proportional to lockScopeRadius as defined by the user, but not equal exacly to the value.
+        // This actually depends on how "far away" the scope circle is from the camera, but this distance doesn't actually exist
+        // as the scope circle is a UI element.
+        // By manual testing, if we arbitrarily set the "distance of the scope from camera" to 1 (as in the above illustration),
+        // we get A=arctan(radius) and the radius can be computed by:
+        float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
+        return Mathf.Rad2Deg * Mathf.Atan(radius);
+    }
+    bool CanBeTargeted(Vector3 target) { return CanBeTargeted(TargetSightAngle(target)); }
+    bool CanBeTargeted(float targetSightAngle)
+    {
+        // TODO: Also check if there's nothing blocking the way! Make sure a raycast (NOT raycastall) from player to target hits the target
+        return targetSightAngle <= MaxAngleToBeTargeted();
     }
 
     void UpdateInstafire()

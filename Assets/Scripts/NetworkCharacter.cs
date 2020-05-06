@@ -16,6 +16,7 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public Rigidbody rb;
     public GravityAffected gravityComponent;
     public Transform rootGraphicTransform;
+    public Transform characterCenter;
 
     float disableRemoteUpdatesFor;
     bool remoteUpdatesDisabled;
@@ -171,6 +172,17 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
     public static GameObject GetPlayerGameObject(Player player)
     {
         return (GameObject)player.TagObject;
+    }
+
+    public static Transform GetPlayerCenter(Player player)
+    {
+        var obj = GetPlayerGameObject(player);
+        return obj.GetComponent<NetworkCharacter>().characterCenter;
+    }
+
+    public static bool IsLocalPlayer(Player player)
+    {
+        return player.UserId == PhotonNetwork.LocalPlayer.UserId;
     }
 
     void DestroyActiveHookshot()
