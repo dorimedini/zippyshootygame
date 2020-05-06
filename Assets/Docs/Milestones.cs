@@ -64,6 +64,7 @@
  * <   > Still a bit jerky when exploding a remote player and the remote starts sending the updates. Maybe use an even system, on ACK from remote player re-activate motion sync?
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
  * <   > Landing feels soft... maybe a little camera bounce?
+ * <   > Fix GUI jitter... need to do some research / find someone experienced
  * <   > GUI: Waiting room to join game (will be useful for respawn later)
  * < V > Hitting the sun should 'charge' it until a maximal value on which a 'discharge' occurs damaging proportional to proximity
  * <   > Weapon model and animation (maybe make in blender? Or take ready made)
