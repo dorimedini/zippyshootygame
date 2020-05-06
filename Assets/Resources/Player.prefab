@@ -1501,6 +1501,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4389458254784927439}
   - component: {fileID: 8330797507778378187}
+  - component: {fileID: 2207453912322477208}
+  - component: {fileID: 7194991551224317799}
   m_Layer: 5
   m_Name: SettingsMenu
   m_TagString: Untagged
@@ -1549,6 +1551,44 @@ MonoBehaviour:
     type: 3}
   toggleInputPrefab: {fileID: 1297933575657060634, guid: 83df1e50c00053749aada0804c80ac72,
     type: 3}
+--- !u!223 &2207453912322477208
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414571063027891011}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 1
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &7194991551224317799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414571063027891011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &1438136495634370136
 GameObject:
   m_ObjectHideFlags: 0
