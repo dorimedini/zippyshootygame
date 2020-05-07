@@ -123,7 +123,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
             if (lockTarget != null)
             {
-                StartTargetting(targetedPlayer);
+                StartTargeting(targetedPlayer);
             }
         }
 
@@ -131,7 +131,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // 1. We are currently targeting and not locked on yet
         // 2. Either the player can no longer be targeted, or we're not pressing the fire button anymore
         if (targetedPlayer != null && !lockedOnTarget && (!CanBeTargeted(targetedPlayer) || !buttonPressed))
-            StopTargetting(targetedPlayer);
+            StopTargeting(targetedPlayer);
 
         // When targeting completes it's handled in the Action passed to StartTargeting
 
@@ -147,7 +147,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
                 FireProjectileMaxImpulse();
             }
             if (targetedPlayer != null)
-                StopTargetting(targetedPlayer);
+                StopTargeting(targetedPlayer);
         }
         // TODO: Implement
         // Basic idea:
@@ -222,7 +222,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // TODO: Also check if there's nothing blocking the way! Make sure a raycast (NOT raycastall) from player to target hits the target
         return targetSightAngle <= MaxAngleToBeTargeted();
     }
-    void StartTargetting(Player player)
+    void StartTargeting(Player player)
     {
         // TODO: Stop idle-floaty-square image in the crosshair when targetting
         // Inform remote player he's being targeted
@@ -239,7 +239,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             lockedOnTarget = true;
         });
     }
-    void StopTargetting(Player player)
+    void StopTargeting(Player player)
     {
         // TODO: Reactivate idle-floaty-square image in the crosshair
         lockingImageCtrl.StopTargeting();
