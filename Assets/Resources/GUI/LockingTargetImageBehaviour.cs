@@ -10,6 +10,8 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     public RectTransform uiCanvas;
     public Camera playerCam;
     public RectTransform targetingImageTransform;
+    public Image lockedImage1;
+    public Image lockedImage2;
     public Image[] lockStateSquares;
 
     public float borderAlpha, innerAlpha;
@@ -18,6 +20,8 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     private float lockingFor;
     private Action onLock;
     private Transform target;
+    private float currentLockImageAlpha;
+    private bool lockImageAlphaIncreasing;
 
     // Update is called once per frame
     void Update()
@@ -55,25 +59,39 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     {
         locked = active = false;
         lockingFor = 0;
+        DisableTargetingImages();
+    }
+
+    public void DisableTargetingImages()
+    {
         foreach (Image image in lockStateSquares)
             image.gameObject.SetActive(false);
+        lockedImage1.gameObject.SetActive(false);
+        lockedImage2.gameObject.SetActive(false);
     }
 
     void UpdateImage()
     {
+        // Show different image for locked-on
+        PlaceSquareOnTarget();
+        if (locked)
+        {
+            UpdateImageLockedState();
+        }
+        else
+        {
+            UpdateImageTargetState();
+        }
+    }
+
+    void PlaceSquareOnTarget()
+    {
         // Rotate and place the square so it overlays the target player
         Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(playerCam, target.position);
         targetingImageTransform.anchoredPosition = screenPoint - uiCanvas.sizeDelta / 2f;
-        // Show different image for locked-on
-        if (locked)
-        {
-            // TODO: Show locked-on square graphic (flashy red-white?)
-            return;
-        }
-        SetImageTargetState();
     }
 
-    void SetImageTargetState()
+    void UpdateImageTargetState()
     {
         int totalStates = 9;
         int state = Mathf.FloorToInt(Mathf.Clamp(totalStates * Mathf.Clamp01(lockingFor / UserDefinedConstants.timeToLockOn), 0.5f, (float)totalStates -0.5f));
@@ -131,9 +149,35 @@ public class LockingTargetImageBehaviour : MonoBehaviour
             borderAlpha);
     }
 
+    void UpdateImageLockedState()
+    {
+        // Lerp alpha on upper image.
+        // It'll stop around alpha=0.5f due to direction toggle after lerp
+        float flashSpeed = 4;
+        float newAlpha = lockImageAlphaIncreasing ?
+            Mathf.Lerp(0, 1f, lockedImage2.color.a + flashSpeed * Time.deltaTime) :
+            Mathf.Lerp(0, 1f, lockedImage2.color.a - flashSpeed * Time.deltaTime);
+        lockedImage2.color = new Color(lockedImage2.color.r, lockedImage2.color.g, lockedImage2.color.b, newAlpha);
+        // Toggle lerp direction
+        if ((lockImageAlphaIncreasing && newAlpha >= 0.5f)
+            || (!lockImageAlphaIncreasing && Tools.NearlyEqual(newAlpha, 0, 0.01f)))
+        {
+            lockImageAlphaIncreasing = !lockImageAlphaIncreasing;
+        }
+    }
+
     void Locked()
     {
         locked = true;
+        DisableTargetingImages();
+        lockedImage1.gameObject.SetActive(true);
+        lockedImage2.gameObject.SetActive(true);
+        currentLockImageAlpha = lockedImage2.color.a;
+        if (currentLockImageAlpha < 0.4f)
+        {
+            Debug.LogWarning("Expected alpha of lock-on-image overlay to be 0.5, it's " + currentLockImageAlpha.ToString() + "...");
+        }
+        lockImageAlphaIncreasing = false;
         onLock?.Invoke();
     }
 }
