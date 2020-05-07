@@ -122,6 +122,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void DestroyArena()
     {
-        Destroy(arena.gameObject);
+        if (arena != null && arena.gameObject != null)
+            Destroy(arena.gameObject);
     }
 }
