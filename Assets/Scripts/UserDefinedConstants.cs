@@ -42,7 +42,7 @@ public static class UserDefinedConstants
         {"lookSpeedX", new RangeEntry<float>(10, "lookSpeedX", "Horizontal look speed", 1, 50)},
         {"lookSpeedY", new RangeEntry<float>(5, "lookSpeedY", "Vertical look speed", 1, 50)},
         {"grappleSpeed", new RangeEntry<float>(50, "grappleSpeed", "Grapple speed", 1, 200)},
-        {"sphereRadius", new RangeEntry<float>(70, "sphereRadius", "Sphere radius", false, 20, 500)},
+        {"sphereRadius", new RangeEntry<float>(40, "sphereRadius", "Sphere radius", false, 20, 500)},
         {"movementSpeed", new RangeEntry<float>(1, "movementSpeed", "Movement speed", 0.05f, 15)},
         {"maxChargeTime", new RangeEntry<float>(1, "maxChargeTime", "Max weapon charge time", 0.05f, 10)},
         {"explosionLift", new RangeEntry<float>(0.2f, "explosionLift", "Explosion lift force", 0, 10)},
