@@ -94,7 +94,6 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     void UpdateLockFire()
     {
         // Initial lock-on check
-        // TODO: If player is locked on (and for some reason has the fire button down...?), don't search for a new target!
         if (buttonDown)
         {
             if (lockTarget != null)
