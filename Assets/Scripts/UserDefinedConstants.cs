@@ -61,7 +61,8 @@ public static class UserDefinedConstants
         {"explosionParalysisTime", new RangeEntry<float>(1, "explosionParalysisTime", "Explosion paralysis time", 0, 3)},
         {"localMovementOverrideWindow", new RangeEntry<float>(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
         {"localForceDampen", new RangeEntry<float>(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
-        {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)}
+        {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)},
+        {"timeToLockOn", new RangeEntry<float>(1.5f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
@@ -111,6 +112,7 @@ public static class UserDefinedConstants
     public static float localMovementOverrideWindow { get { return floatEntries["localMovementOverrideWindow"]; } set { floatEntries["localMovementOverrideWindow"]._val = value; } }
     public static float localForceDampen { get { return floatEntries["localForceDampen"]; } set { floatEntries["localForceDampen"]._val = value; } }
     public static float lockScopeRadius { get { return floatEntries["lockScopeRadius"]; } set { floatEntries["lockScopeRadius"]._val = value; } }
+    public static float timeToLockOn { get { return floatEntries["timeToLockOn"]; } set { floatEntries["timeToLockOn"]._val = value; } }
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }
     public static bool weaponLockMode { get { return boolEntries["weaponLockMode"]; } set { boolEntries["weaponLockMode"]._val = value; } }

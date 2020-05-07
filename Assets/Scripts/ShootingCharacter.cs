@@ -10,6 +10,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     public PlayerUIController ui;
     public Camera cam;
     public Rigidbody rb;
+    public LockingTargetImageBehaviour lockingImageCtrl;
 
     private bool buttonDown, buttonUp, buttonPressed, charging;
     private float weaponCooldownCounter, chargeTime;
@@ -18,13 +19,15 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     private bool paused;
 
     private Transform lockTarget;
-    public RectTransform lockingImage;
+    private Player targetedPlayer;
+    private bool lockedOnTarget;
     public RectTransform uiCanvas;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        paused = charging = false;
+        lockedOnTarget = paused = charging = false;
         lockTarget = null;
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
@@ -97,7 +100,9 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             if (lockTarget != null)
             {
                 Debug.LogWarning("Got fire-button-down but lock-target is already set, did we miss a fire-button-up event?");
+                targetedPlayer = null;
                 lockTarget = null;
+                lockedOnTarget = false;
             }
             // I'm not a performance expert but it may be best to just iterate over all players and see who's in scope.
             // Any targetable object will have an angle less than 1+maxAngle anyway, so this is like setting it to infinity:
@@ -112,6 +117,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
                 // If several enemy players are in scope, choose the player closest to the center of the scope.
                 if (canBeTargeted && targetSightAngle < sharpestAngle)
                 {
+                    targetedPlayer = player;
                     lockTarget = playerTrans;
                     sharpestAngle = targetSightAngle;
                 }
@@ -119,28 +125,32 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
             if (lockTarget != null)
             {
-                // TODO: Initiate locking sequence
-                lockingImage.gameObject.SetActive(true);
+                StartTargetting(targetedPlayer);
             }
         }
 
-        // Continue lock-on sequence if target is still in scope
-        if (buttonPressed && lockTarget != null && CanBeTargeted(lockTarget.position))
-        {
-            // TODO: Replace image with a prefab that handles that advancement graphics for different stages of lock-on.
-            // TODO: Keep track of lock time - after a while we should transfer to locked-on mode
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, lockTarget.position);
-            lockingImage.anchoredPosition = screenPoint - uiCanvas.sizeDelta / 2f;
-        }
-        else // Either the button is up, or target doesn't exist / not in scope
-        {
-            // TODO: If button is pressed, target exists and is already locked (and not in scope), do not disable the image.
-            // TODO: Only disable the image if the shooter is NOT locked on target.
-            // TODO: If the user was locked on, and the button-up event happened, fire!
-            //lockingImage.gameObject.SetActive(false);
-            //lockTarget = null;
-        }
+        // Stop targeting if:
+        // 1. We are currently targeting and not locked on yet
+        // 2. Either the player can no longer be targeted, or we're not pressing the fire button anymore
+        if (targetedPlayer != null && !lockedOnTarget && (!CanBeTargeted(targetedPlayer) || !buttonPressed))
+            StopTargetting(targetedPlayer);
 
+        // When targeting completes it's handled in the Action passed to StartTargeting
+
+        // Fire on button up!
+        if (buttonUp)
+        {
+            if (lockedOnTarget)
+            {
+                FireSeekingProjectile();
+            }
+            else
+            {
+                FireProjectileMaxImpulse();
+            }
+            if (targetedPlayer != null)
+                StopTargetting(targetedPlayer);
+        }
         // TODO: Implement
         // Basic idea:
         // 1. Need to choose a button for a hold-to-lock, or passive locking (player in sights-->commence locking).
@@ -207,11 +217,44 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
         return Mathf.Rad2Deg * Mathf.Atan(radius);
     }
+    bool CanBeTargeted(Player player) { return CanBeTargeted(NetworkCharacter.GetPlayerCenter(player).position); }
     bool CanBeTargeted(Vector3 target) { return CanBeTargeted(TargetSightAngle(target)); }
     bool CanBeTargeted(float targetSightAngle)
     {
         // TODO: Also check if there's nothing blocking the way! Make sure a raycast (NOT raycastall) from player to target hits the target
         return targetSightAngle <= MaxAngleToBeTargeted();
+    }
+    void StartTargetting(Player player)
+    {
+        // TODO: Stop idle-floaty-square image in the crosshair when targetting
+        // Inform remote player he's being targeted
+        var targetChar = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
+        if (targetChar == null)
+        {
+            Debug.LogError("Target character has no TargetableCharacter component!");
+            return;
+        }
+        targetChar.BecameTargeted();
+        lockingImageCtrl.StartTargeting(NetworkCharacter.GetPlayerCenter(player), () =>
+        {
+            targetChar.BecameLockedOn();
+            lockedOnTarget = true;
+        });
+    }
+    void StopTargetting(Player player)
+    {
+        // TODO: Reactivate idle-floaty-square image in the crosshair
+        lockingImageCtrl.StopTargeting();
+        targetedPlayer = null;
+        lockTarget = null;
+        lockedOnTarget = false;
+        var targetChar = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
+        if (targetChar == null)
+        {
+            Debug.LogError("Target character has no TargetableCharacter component (how did we START targeting this guy?)");
+            return;
+        }
+        targetChar.BecameUntargeted();
     }
 
     void UpdateInstafire()
@@ -222,9 +265,11 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         if (buttonDown && Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f))
         {
             weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
-            FireProjectile(1);
+            FireProjectileMaxImpulse();
         }
     }
+
+    void FireProjectileMaxImpulse() { FireProjectile(1); }
 
     void FireProjectile(float charge)
     {
@@ -232,6 +277,11 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         Vector3 force = charge * cam.transform.forward * UserDefinedConstants.projectileImpulse;
         Vector3 source = cam.transform.position + cam.transform.forward;
         projectileCtrl.BroadcastFireProjectile(source, force, currentShooterSpeed, photonView.Owner.UserId);
+    }
+
+    void FireSeekingProjectile()
+    {
+        // TODO: Implement (target is set at this point)
     }
 
     public void Pause(bool pause) { paused = pause; }
