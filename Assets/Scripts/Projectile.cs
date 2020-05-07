@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Photon.Pun;
-
+using System;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -21,7 +21,8 @@ public class Projectile : MonoBehaviour
 
     private bool destroyed;
 
-    private bool lockedOn;
+    public bool lockedOn;
+    public Transform target;
 
     Mesh mesh;
     MeshRenderer rend;
@@ -34,7 +35,7 @@ public class Projectile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lockedOn = destroyed = false;
+        destroyed = false;
         InitControllers();
     }
 
@@ -42,12 +43,29 @@ public class Projectile : MonoBehaviour
     {
         if (!lockedOn)
         {
-            // Just rotate the head of the missile in the direction of the current speed
+            // Rotate the head of the missile in the direction of the current speed
             transform.up = rb.velocity.normalized;
         }
         else
         {
-            // TODO: Implement lock-on mechanism for shooting characters
+            // Rotate to face target ('up' direction is the missile pointy bit) and accelerate in target's direction.
+            // Don't turn immediately though, limit by turn speed.
+            // We want to look at the sun, with 'up' direction towards target.
+            Vector3 targetDirection = (target.position - transform.position).normalized;
+            Vector3 perpToTarget = Quaternion.Euler(0, 90, 0) * targetDirection;
+            Quaternion targetRotation = Quaternion.LookRotation(perpToTarget, targetDirection);
+            // Take missile turn speed to be the maximal angle change per frame.
+            float angle = Quaternion.Angle(transform.rotation, targetRotation);
+            // When the missile starts going fast the turnspeed needs a boost, otherwise the missile will miss if it's in the air for too long
+            float speedOffsetMultplier = 5 * Mathf.Sqrt(rb.velocity.magnitude);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Mathf.Clamp01(speedOffsetMultplier * UserDefinedConstants.missileTurnSpeed / angle));
+            // Accelerate
+            rb.velocity = (rb.velocity.magnitude + UserDefinedConstants.missileAcceleration * Time.deltaTime) * transform.up;
+            // FIXME: Quaternion.Lerp doesn't seem like it's lerping around the axis I want.
+            // To fix this we need finer control over what the target rotation is:
+            // Set U to be the up vector of the missile (what we want facing the target) and let D be the vector from the projectile
+            // to the target.
+            // We want to rotate Angle(U,V) degrees (capped by missile turn speed) towards V round the UxV axis (or VxU?).
         }
     }
 

@@ -271,16 +271,27 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
     void FireProjectile(float charge)
     {
-        Vector3 currentShooterSpeed = rb.velocity;
         Vector3 force = charge * cam.transform.forward * UserDefinedConstants.projectileImpulse;
-        Vector3 source = cam.transform.position + cam.transform.forward;
-        projectileCtrl.BroadcastFireProjectile(source, force, currentShooterSpeed, photonView.Owner.UserId);
+        projectileCtrl.BroadcastFireProjectile(ProjectileSource(), force, rb.velocity, photonView.Owner.UserId);
     }
 
     void FireSeekingProjectile()
     {
-        // TODO: Implement (target is set at this point)
+        // FIXME: A seeking projectile may need to be very different from a normal projectile when syncing.
+        // If each player is allowed to spawn his own copy of the graphics and only the shooter is responsible for
+        // collision detection this may hurt the way players feel when evading missiles; the graphic you see may not
+        // be the real location of what you're running from.
+        // On the other hand, there may be many seeking projectiles in the air at once, so syncing all of their photon
+        // views may be infeasble.
+        // Start with graphics for all and collider for shooter, as with regular projectiles; the behaviour should be
+        // to rotate towards target every frame, and every frame apply constant acceleration (we'll hit something
+        // eventually, I think, so that's enough).
+        // Note that a seeking projectile shouldn't take the current player speed into account
+        Vector3 force = cam.transform.forward * UserDefinedConstants.projectileImpulse;
+        projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, photonView.Owner.UserId, targetedPlayer.UserId);
     }
+
+    Vector3 ProjectileSource() { return cam.transform.position + cam.transform.forward; }
 
     public void Pause(bool pause) { paused = pause; }
 }

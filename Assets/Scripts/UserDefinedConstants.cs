@@ -62,7 +62,9 @@ public static class UserDefinedConstants
         {"localMovementOverrideWindow", new RangeEntry<float>(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
         {"localForceDampen", new RangeEntry<float>(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
         {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)},
-        {"timeToLockOn", new RangeEntry<float>(1f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)}
+        {"timeToLockOn", new RangeEntry<float>(1f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)},
+        {"missileAcceleration", new RangeEntry<float>(1f, "missileAcceleration", "Locked missile acceleration", 0f, 10)},
+        {"missileTurnSpeed", new RangeEntry<float>(1f, "missileTurnSpeed", "Missile turn speed", 0f, 10)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
@@ -113,6 +115,8 @@ public static class UserDefinedConstants
     public static float localForceDampen { get { return floatEntries["localForceDampen"]; } set { floatEntries["localForceDampen"]._val = value; } }
     public static float lockScopeRadius { get { return floatEntries["lockScopeRadius"]; } set { floatEntries["lockScopeRadius"]._val = value; } }
     public static float timeToLockOn { get { return floatEntries["timeToLockOn"]; } set { floatEntries["timeToLockOn"]._val = value; } }
+    public static float missileAcceleration { get { return floatEntries["missileAcceleration"]; } set { floatEntries["missileAcceleration"]._val = value; } }
+    public static float missileTurnSpeed { get { return floatEntries["missileTurnSpeed"]; } set { floatEntries["missileTurnSpeed"]._val = value; } }
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }
     public static bool weaponLockMode { get { return boolEntries["weaponLockMode"]; } set { boolEntries["weaponLockMode"]._val = value; } }
