@@ -101,7 +101,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         base.OnDisconnected(cause);
         DestroyArena();
-        mainMenu.gameObject.SetActive(true);
+        if (mainMenu != null && mainMenu.gameObject != null)
+            mainMenu.gameObject.SetActive(true);
     }
 
     void SpawnMyPlayer()
