@@ -109,7 +109,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             float sharpestAngle = 1 + MaxAngleToBeTargeted();
             foreach (Player player in PhotonNetwork.PlayerList)
             {
-                if (NetworkCharacter.IsLocalPlayer(player))
+                if (NetworkCharacter.IsLocalPlayer(player) || !NetworkCharacter.IsPlayerAlive(player))
                     continue;
                 Transform playerTrans = NetworkCharacter.GetPlayerCenter(player);
                 float targetSightAngle = TargetSightAngle(playerTrans.position);
@@ -217,7 +217,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
         return Mathf.Rad2Deg * Mathf.Atan(radius);
     }
-    bool CanBeTargeted(Player player) { return CanBeTargeted(NetworkCharacter.GetPlayerCenter(player).position); }
+    bool CanBeTargeted(Player player) { return NetworkCharacter.IsPlayerAlive(player) && CanBeTargeted(NetworkCharacter.GetPlayerCenter(player).position); }
     bool CanBeTargeted(Vector3 target) { return CanBeTargeted(TargetSightAngle(target)); }
     bool CanBeTargeted(float targetSightAngle)
     {

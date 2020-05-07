@@ -93,7 +93,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         base.OnLeftRoom();
-        standbyCamera.SetActive(true);
+        if (standbyCamera != null) // Player didn't quit, just left the room
+            standbyCamera.SetActive(true);
     }
 
     public override void OnDisconnected(DisconnectCause cause)

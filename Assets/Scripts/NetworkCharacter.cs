@@ -169,8 +169,15 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         info.Sender.TagObject = gameObject;
     }
 
+    public static bool IsPlayerAlive(Player player)
+    {
+        return GetPlayerGameObject(player) != null;
+    }
+
     public static GameObject GetPlayerGameObject(Player player)
     {
+        if (player == null || player.TagObject == null)
+            return null;
         return (GameObject)player.TagObject;
     }
 
