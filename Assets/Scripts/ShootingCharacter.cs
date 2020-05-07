@@ -11,6 +11,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     public Camera cam;
     public Rigidbody rb;
     public LockingTargetImageBehaviour lockingImageCtrl;
+    public RectTransform uiCanvas;
 
     private bool buttonDown, buttonUp, buttonPressed, charging;
     private float weaponCooldownCounter, chargeTime;
@@ -21,8 +22,6 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     private Transform lockTarget;
     private Player targetedPlayer;
     private bool lockedOnTarget;
-    public RectTransform uiCanvas;
-
 
     // Start is called before the first frame update
     void Start()

@@ -62,7 +62,7 @@ public static class UserDefinedConstants
         {"localMovementOverrideWindow", new RangeEntry<float>(0.7f, "localMovementOverrideWindow", "Local-movement-override time window", 0.01f, 2)},
         {"localForceDampen", new RangeEntry<float>(0.8f, "localForceDampen", "Local-force dampen", 0, 1)},
         {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)},
-        {"timeToLockOn", new RangeEntry<float>(1.5f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)}
+        {"timeToLockOn", new RangeEntry<float>(1f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
