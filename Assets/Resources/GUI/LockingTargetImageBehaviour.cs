@@ -20,7 +20,6 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     private float lockingFor;
     private Action onLock;
     private Transform target;
-    private float currentLockImageAlpha;
     private bool lockImageAlphaIncreasing;
 
     // Update is called once per frame
@@ -39,6 +38,11 @@ public class LockingTargetImageBehaviour : MonoBehaviour
             }
             UpdateImage();
         }
+    }
+
+    void OnDestroy()
+    {
+        ResetAlpha();
     }
 
     public void StartTargeting(Transform target, Action onLockAction)
@@ -172,8 +176,13 @@ public class LockingTargetImageBehaviour : MonoBehaviour
         DisableTargetingImages();
         lockedImage1.gameObject.SetActive(true);
         lockedImage2.gameObject.SetActive(true);
-        currentLockImageAlpha = lockedImage2.color.a;
-        lockImageAlphaIncreasing = false;
+        ResetAlpha();
         onLock?.Invoke();
+    }
+
+    void ResetAlpha()
+    {
+        lockImageAlphaIncreasing = false;
+        lockedImage2.color = new Color(lockedImage2.color.r, lockedImage2.color.g, lockedImage2.color.b, 0.5f);
     }
 }
