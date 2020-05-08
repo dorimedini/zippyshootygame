@@ -118,28 +118,16 @@ public class LockingTargetImageBehaviour : MonoBehaviour
         activeBorderImageIdx = targetingStage <= 2 ? lockStateSquares.Length - 1 :
                             (targetingStage <= 5 ? lockStateSquares.Length - 3 : lockStateSquares.Length - 5);
 
-        // First phase
-        if (targetingStage <= 2)
+        // This was easier to read once, until I found out I could do the same logic in less lines :)
+        for (int i=0; i<totalStates/3; ++i)
         {
-            activeHalfAlphaImages[lockStateSquares.Length - 7] = (targetingStage == 2);
-            activeHalfAlphaImages[lockStateSquares.Length - 5] = (targetingStage != 0);
-            activeHalfAlphaImages[lockStateSquares.Length - 3] = true;
-        }
-
-        // Second phase
-        else if (targetingStage <= 5)
-        {
-            activeHalfAlphaImages[lockStateSquares.Length - 9] = (targetingStage == 5);
-            activeHalfAlphaImages[lockStateSquares.Length - 7] = (targetingStage != 3);
-            activeHalfAlphaImages[lockStateSquares.Length - 5] = true;
-        }
-
-        // Third phase
-        else // 6 <= state <= 8
-        {
-            activeHalfAlphaImages[lockStateSquares.Length - 11] = (targetingStage == 8);
-            activeHalfAlphaImages[lockStateSquares.Length - 9] = (targetingStage != 6);
-            activeHalfAlphaImages[lockStateSquares.Length - 7] = true;
+            if (targetingStage <= 3 * i + 2)
+            {
+                activeHalfAlphaImages[lockStateSquares.Length - 7 - 2 * i] = (targetingStage == 3 * i + 2);
+                activeHalfAlphaImages[lockStateSquares.Length - 5 - 2 * i] = (targetingStage != 3 * i);
+                activeHalfAlphaImages[lockStateSquares.Length - 3 - 2 * i] = true;
+                break;
+            }
         }
 
         // Update game object states
