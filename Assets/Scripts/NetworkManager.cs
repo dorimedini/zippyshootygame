@@ -62,6 +62,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         base.OnRoomListUpdate(roomList);
+        msg.AppendMessage("Got room list update, now see " + roomList.Count + " rooms");
         rooms = new List<RoomInfo>();
         foreach (RoomInfo room in roomList)
             rooms.Add(room);
@@ -69,6 +70,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
+        msg.AppendMessage("Connected to master");
+        msg.AppendMessage("Region: " + PhotonNetwork.CloudRegion);
+        msg.AppendMessage("Game version: " + PhotonNetwork.GameVersion);
         if (PhotonNetwork.OfflineMode) return;
         if (!PhotonNetwork.JoinLobby())
             Debug.LogError(string.Format("OnConnectedToMaster, JoinLobby() returned false!"));
@@ -76,20 +80,30 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
+        msg.AppendMessage("Joined lobby '" + PhotonNetwork.CurrentLobby.Name + "' of type '" + PhotonNetwork.CurrentLobby.Type + "'");
         mainMenu.ShowRoomButtons();
     }
 
-    public override void OnJoinRandomFailed(short code, string msg)
+    public override void OnJoinRandomFailed(short code, string message)
     {
+        msg.AppendMessage("Failed to join random room, creating one...");
         RoomOptions options = new RoomOptions();
+        options.IsOpen = true;
+        options.IsVisible = true;
         options.PublishUserId = true;
         if (!PhotonNetwork.CreateRoom(null, options))
             Debug.LogError("Failed to create a room!");
     }
 
-    public override void OnCreateRoomFailed(short code, string msg)
+    public override void OnCreateRoomFailed(short code, string message)
     {
-        Debug.LogError(string.Format("OnCreateRoomFailed. Code: {0}, message: '{1}'", code, msg));
+        Debug.LogError(string.Format("OnCreateRoomFailed. Code: {0}, message: '{1}'", code, message));
+    }
+
+    public override void OnCreatedRoom()
+    {
+        base.OnCreatedRoom();
+        msg.AppendMessage("Created room");
     }
 
     public override void OnJoinedRoom()
@@ -101,6 +115,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
+        msg.AppendMessage("Left room");
         base.OnLeftRoom();
         if (standbyCamera != null) // Player didn't quit, just left the room
             standbyCamera.SetActive(true);
@@ -108,6 +123,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
+        msg.AppendMessage("Disconnected");
         base.OnDisconnected(cause);
         DestroyArena();
         if (mainMenu != null && mainMenu.gameObject != null)
