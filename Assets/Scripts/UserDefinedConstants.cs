@@ -64,7 +64,7 @@ public static class UserDefinedConstants
         {"lockScopeRadius", new RangeEntry<float>(1f, "lockScopeRadius", "Lock-on scope radius", 0.05f, 10)},
         {"timeToLockOn", new RangeEntry<float>(1f, "timeToLockOn", "Time it takes for weapon to lock", 0.05f, 10)},
         {"missileAcceleration", new RangeEntry<float>(1f, "missileAcceleration", "Locked missile acceleration", 0f, 10)},
-        {"missileTurnSpeed", new RangeEntry<float>(1f, "missileTurnSpeed", "Missile turn speed", 0f, 10)}
+        {"missileTurnSpeed", new RangeEntry<float>(2f, "missileTurnSpeed", "Missile turn speed", 0f, 10)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
