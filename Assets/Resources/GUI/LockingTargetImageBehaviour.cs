@@ -149,6 +149,10 @@ public class LockingTargetImageBehaviour : MonoBehaviour
             lockStateSquares[activeBorderImageIdx].color.g,
             lockStateSquares[activeBorderImageIdx].color.b,
             borderAlpha);
+
+        // If we passed a phase but haven't reached the last phase yet, play a targeting sound
+        if (targetingStage % 3 == 0 && targetingStage != totalStates)
+            targetingSound.Play();
     }
 
     void UpdateImageLockedState()
@@ -175,6 +179,7 @@ public class LockingTargetImageBehaviour : MonoBehaviour
         lockedImage1.gameObject.SetActive(true);
         lockedImage2.gameObject.SetActive(true);
         ResetAlpha();
+        lockSound.Play();
         onLock?.Invoke();
     }
 
