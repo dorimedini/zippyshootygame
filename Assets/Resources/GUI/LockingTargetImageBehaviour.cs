@@ -14,6 +14,8 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     public Image lockedImage2;
     public Image[] lockStateSquares;
 
+    public AudioSource targetingSound, lockSound;
+
     public float borderAlpha, innerAlpha;
 
     private bool active, locked;
@@ -21,6 +23,7 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     private Action onLock;
     private Transform target;
     private bool lockImageAlphaIncreasing;
+    private int targetingStage;
 
     // Update is called once per frame
     void Update()
@@ -56,6 +59,7 @@ public class LockingTargetImageBehaviour : MonoBehaviour
         locked = false;
         this.target = target;
         onLock = onLockAction;
+        targetingStage = -1;
         UpdateImage();
     }
 
@@ -98,37 +102,43 @@ public class LockingTargetImageBehaviour : MonoBehaviour
     void UpdateImageTargetState()
     {
         int totalStates = 9;
-        int state = Mathf.FloorToInt(Mathf.Clamp(totalStates * Mathf.Clamp01(lockingFor / UserDefinedConstants.timeToLockOn), 0.5f, (float)totalStates -0.5f));
+        int newTargetingStage = Mathf.FloorToInt(Mathf.Clamp(totalStates * Mathf.Clamp01(lockingFor / UserDefinedConstants.timeToLockOn), 0.5f, (float)totalStates -0.5f));
+
+        // Maybe there's nothing to do
+        if (targetingStage == newTargetingStage)
+            return;
+        targetingStage = newTargetingStage;
+
         // Split into three phases; each phase fixes some border with alpha 75%, and each of the three states of a phase
         // also activate 50%-alpha squares going inward from the border.
         int activeBorderImageIdx;
         List<bool> activeHalfAlphaImages = Enumerable.Repeat(false, lockStateSquares.Length).ToList();
 
         // Border index
-        activeBorderImageIdx = state <= 2 ? lockStateSquares.Length - 1 :
-                            (state <= 5 ? lockStateSquares.Length - 3 : lockStateSquares.Length - 5);
+        activeBorderImageIdx = targetingStage <= 2 ? lockStateSquares.Length - 1 :
+                            (targetingStage <= 5 ? lockStateSquares.Length - 3 : lockStateSquares.Length - 5);
 
         // First phase
-        if (state <= 2)
+        if (targetingStage <= 2)
         {
-            activeHalfAlphaImages[lockStateSquares.Length - 7] = (state == 2);
-            activeHalfAlphaImages[lockStateSquares.Length - 5] = (state != 0);
+            activeHalfAlphaImages[lockStateSquares.Length - 7] = (targetingStage == 2);
+            activeHalfAlphaImages[lockStateSquares.Length - 5] = (targetingStage != 0);
             activeHalfAlphaImages[lockStateSquares.Length - 3] = true;
         }
 
         // Second phase
-        else if (state <= 5)
+        else if (targetingStage <= 5)
         {
-            activeHalfAlphaImages[lockStateSquares.Length - 9] = (state == 5);
-            activeHalfAlphaImages[lockStateSquares.Length - 7] = (state != 3);
+            activeHalfAlphaImages[lockStateSquares.Length - 9] = (targetingStage == 5);
+            activeHalfAlphaImages[lockStateSquares.Length - 7] = (targetingStage != 3);
             activeHalfAlphaImages[lockStateSquares.Length - 5] = true;
         }
 
         // Third phase
         else // 6 <= state <= 8
         {
-            activeHalfAlphaImages[lockStateSquares.Length - 11] = (state == 8);
-            activeHalfAlphaImages[lockStateSquares.Length - 9] = (state != 6);
+            activeHalfAlphaImages[lockStateSquares.Length - 11] = (targetingStage == 8);
+            activeHalfAlphaImages[lockStateSquares.Length - 9] = (targetingStage != 6);
             activeHalfAlphaImages[lockStateSquares.Length - 7] = true;
         }
 
