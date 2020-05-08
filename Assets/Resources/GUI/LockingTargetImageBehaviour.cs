@@ -173,10 +173,6 @@ public class LockingTargetImageBehaviour : MonoBehaviour
         lockedImage1.gameObject.SetActive(true);
         lockedImage2.gameObject.SetActive(true);
         currentLockImageAlpha = lockedImage2.color.a;
-        if (currentLockImageAlpha < 0.4f)
-        {
-            Debug.LogWarning("Expected alpha of lock-on-image overlay to be 0.5, it's " + currentLockImageAlpha.ToString() + "...");
-        }
         lockImageAlphaIncreasing = false;
         onLock?.Invoke();
     }
