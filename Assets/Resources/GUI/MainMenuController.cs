@@ -12,6 +12,8 @@ public class MainMenuController : MonoBehaviour
 
     public TextMeshProUGUI roomListArea;
 
+    public GameObject singleButton, multiButton, showRoomsButton, joinButton;
+
     void Start()
     {
         ReadSettings();
@@ -25,15 +27,15 @@ public class MainMenuController : MonoBehaviour
     public void OnSingleplayer()
     {
         ApplySettings();
+        HideSingleMultiButtons();
         netMngr.StartSingleplayer();
-        gameObject.SetActive(false);
     }
 
     public void OnMultiplayer()
     {
         ApplySettings();
+        HideSingleMultiButtons();
         netMngr.StartMultiplayer();
-        gameObject.SetActive(false);
     }
 
     public void OnQuit()
@@ -47,6 +49,11 @@ public class MainMenuController : MonoBehaviour
         roomListArea.text = rooms.Count == 0 ?
             "No rooms found" :
             string.Join("\n", rooms.Select(room => room.Name));
+    }
+
+    public void OnJoinRoom()
+    {
+        netMngr.JoinRoom();
     }
 
     void ApplySettings()
@@ -66,5 +73,28 @@ public class MainMenuController : MonoBehaviour
         radiusInput.value = UserDefinedConstants.GetFloatEntries()["sphereRadius"]._default_val;
         EHNInput.value = UserDefinedConstants.GetIntEntries()["EHN"]._default_val;
         ApplySettings();
+    }
+
+    public void HideSingleMultiButtons()
+    {
+        singleButton.SetActive(false);
+        multiButton.SetActive(false);
+    }
+
+    public void ShowSingleMultiButtons()
+    {
+        singleButton.SetActive(true);
+        multiButton.SetActive(true);
+    }
+
+    public void HideRoomButtons()
+    {
+        joinButton.SetActive(false);
+        showRoomsButton.SetActive(false);
+    }
+    public void ShowRoomButtons()
+    {
+        joinButton.SetActive(true);
+        showRoomsButton.SetActive(true);
     }
 }

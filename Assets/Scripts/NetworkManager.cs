@@ -16,6 +16,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public bool offlineMode;
 
+    public MessagesController msg;
+
     GameObject myPlayer;
     GeoSphereGenerator arena;
     List<RoomInfo> rooms;
@@ -51,6 +53,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public List<RoomInfo> GetRooms() { return rooms; }
 
+    public void JoinRoom()
+    {
+        mainMenu.gameObject.SetActive(false);
+        PhotonNetwork.JoinRandomRoom();
+    }
+
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         base.OnRoomListUpdate(roomList);
@@ -68,7 +76,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        PhotonNetwork.JoinRandomRoom();
+        mainMenu.ShowRoomButtons();
     }
 
     public override void OnJoinRandomFailed(short code, string msg)
@@ -86,6 +94,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        msg.AppendMessage("Joined room " + PhotonNetwork.CurrentRoom.Name);
         InitArena();
         SpawnMyPlayer();
     }
@@ -102,7 +111,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         base.OnDisconnected(cause);
         DestroyArena();
         if (mainMenu != null && mainMenu.gameObject != null)
+        {
             mainMenu.gameObject.SetActive(true);
+            mainMenu.HideRoomButtons();
+            mainMenu.ShowSingleMultiButtons();
+        }
     }
 
     void SpawnMyPlayer()
