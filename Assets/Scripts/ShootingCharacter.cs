@@ -176,7 +176,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     void SwitchToTargetIfCloserToCenter(TargetableCharacter candidate)
     {
         float targetSightAngle = TargetSightAngle(candidate.centerTransform.position);
-        bool canBeTargeted = CanBeTargeted(targetSightAngle);
+        bool canBeTargeted = CanBeTargeted(candidate, targetSightAngle);
         // If several enemy players are in scope, choose the player closest to the center of the scope.
         if (canBeTargeted && targetSightAngle < currentSharpestTargetAngle)
         {
@@ -226,12 +226,24 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
         return Mathf.Rad2Deg * Mathf.Atan(radius);
     }
-    bool CanBeTargeted(TargetableCharacter target) { return CanBeTargeted(target.centerTransform.position); }
-    bool CanBeTargeted(Vector3 target) { return CanBeTargeted(TargetSightAngle(target)); }
-    bool CanBeTargeted(float targetSightAngle)
+    bool CanBeTargeted(TargetableCharacter target) { return CanBeTargeted(target, TargetSightAngle(target.centerTransform.position)); }
+    bool CanBeTargeted(TargetableCharacter target, float targetSightAngle)
     {
-        // TODO: Also check if there's nothing blocking the way! Make sure a raycast (NOT raycastall) from player to target hits the target
-        return targetSightAngle <= MaxAngleToBeTargeted();
+        // Raycast from camera position should be safe, so long as the camera is within the bounds of the player collider.
+        // TODO: This may not always be the best idea as the camera can move for effect. Either remember to keep camera in, or find another way
+        RaycastHit hit;
+        if (!Physics.Raycast(cam.transform.position, target.centerTransform.position - cam.transform.position, out hit))
+        {
+            Debug.LogError("How is the raycast missing everything when we shot it at a targetable character center position?");
+            return false;
+        }
+        if (hit.collider.gameObject == gameObject)
+        {
+            Debug.LogError("Raycast hit self collider. That's not good");
+            return false;
+        }
+        // Return true if the raycast hit the target (otherwise, it means there's something in the way)
+        return hit.collider.gameObject == target.gameObject && targetSightAngle <= MaxAngleToBeTargeted();
     }
     void StartTargeting(TargetableCharacter targetChar)
     {
