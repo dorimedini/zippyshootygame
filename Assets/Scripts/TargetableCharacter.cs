@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UIElements;
 
 public class TargetableCharacter : MonoBehaviourPun
 {
@@ -11,6 +12,8 @@ public class TargetableCharacter : MonoBehaviourPun
     private string thisUserId;
     private HashSet<string> targetingEnemyIds;
     private HashSet<string> lockedEnemyIds;
+
+    public Transform centerTransform { get { return GetComponent<NetworkCharacter>().characterCenter; } }
 
     private enum TargetState { IDLE, TARGET, LOCK }
 

@@ -20,7 +20,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     private bool paused;
 
     private Transform lockTarget;
-    private Player targetedPlayer;
+    private TargetableCharacter targetedCharacter;
     private bool lockedOnTarget;
 
     // Start is called before the first frame update
@@ -98,7 +98,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             if (lockTarget != null)
             {
                 Debug.LogWarning("Got fire-button-down but lock-target is already set, did we miss a fire-button-up event?");
-                targetedPlayer = null;
+                targetedCharacter = null;
                 lockTarget = null;
                 lockedOnTarget = false;
             }
@@ -109,29 +109,29 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             {
                 if (NetworkCharacter.IsLocalPlayer(player) || !NetworkCharacter.IsPlayerAlive(player))
                     continue;
-                Transform playerTrans = NetworkCharacter.GetPlayerCenter(player);
-                float targetSightAngle = TargetSightAngle(playerTrans.position);
+                TargetableCharacter playerTarget = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
+                float targetSightAngle = TargetSightAngle(playerTarget.centerTransform.position);
                 bool canBeTargeted = CanBeTargeted(targetSightAngle);
                 // If several enemy players are in scope, choose the player closest to the center of the scope.
                 if (canBeTargeted && targetSightAngle < sharpestAngle)
                 {
-                    targetedPlayer = player;
-                    lockTarget = playerTrans;
+                    targetedCharacter = playerTarget;
+                    lockTarget = playerTarget.centerTransform;
                     sharpestAngle = targetSightAngle;
                 }
             }
 
             if (lockTarget != null)
             {
-                StartTargeting(targetedPlayer);
+                StartTargeting(targetedCharacter);
             }
         }
 
         // Stop targeting if:
         // 1. We are currently targeting and not locked on yet
         // 2. Either the player can no longer be targeted, or we're not pressing the fire button anymore
-        if (targetedPlayer != null && !lockedOnTarget && (!CanBeTargeted(targetedPlayer) || !buttonPressed))
-            StopTargeting(targetedPlayer);
+        if (targetedCharacter != null && !lockedOnTarget && (!CanBeTargeted(targetedCharacter) || !buttonPressed))
+            StopTargeting(targetedCharacter);
 
         // When targeting completes it's handled in the Action passed to StartTargeting
 
@@ -146,8 +146,8 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             {
                 FireProjectileMaxImpulse();
             }
-            if (targetedPlayer != null)
-                StopTargeting(targetedPlayer);
+            if (targetedCharacter != null)
+                StopTargeting(targetedCharacter);
         }
         // TODO: Implement
         // Basic idea:
@@ -215,38 +215,36 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
         return Mathf.Rad2Deg * Mathf.Atan(radius);
     }
-    bool CanBeTargeted(Player player) { return NetworkCharacter.IsPlayerAlive(player) && CanBeTargeted(NetworkCharacter.GetPlayerCenter(player).position); }
+    bool CanBeTargeted(TargetableCharacter target) { return CanBeTargeted(target.centerTransform.position); }
     bool CanBeTargeted(Vector3 target) { return CanBeTargeted(TargetSightAngle(target)); }
     bool CanBeTargeted(float targetSightAngle)
     {
         // TODO: Also check if there's nothing blocking the way! Make sure a raycast (NOT raycastall) from player to target hits the target
         return targetSightAngle <= MaxAngleToBeTargeted();
     }
-    void StartTargeting(Player player)
+    void StartTargeting(TargetableCharacter targetChar)
     {
         // TODO: Stop idle-floaty-square image in the crosshair when targetting
         // Inform remote player he's being targeted
-        var targetChar = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
         if (targetChar == null)
         {
             Debug.LogError("Target character has no TargetableCharacter component!");
             return;
         }
         targetChar.BroadcastBecameTargeted(UserId());
-        lockingImageCtrl.StartTargeting(NetworkCharacter.GetPlayerCenter(player), () =>
+        lockingImageCtrl.StartTargeting(targetChar.centerTransform, () =>
         {
             targetChar.BroadcastBecameLockedOn(UserId());
             lockedOnTarget = true;
         });
     }
-    void StopTargeting(Player player)
+    void StopTargeting(TargetableCharacter targetChar)
     {
         // TODO: Reactivate idle-floaty-square image in the crosshair
         lockingImageCtrl.StopTargeting();
-        targetedPlayer = null;
+        targetedCharacter = null;
         lockTarget = null;
         lockedOnTarget = false;
-        var targetChar = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
         if (targetChar == null)
         {
             Debug.LogError("Target character has no TargetableCharacter component (how did we START targeting this guy?)");
@@ -286,9 +284,9 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // Start with graphics for all and collider for shooter, as with regular projectiles; the behaviour should be
         // to rotate towards target every frame, and every frame apply constant acceleration (we'll hit something
         // eventually, I think, so that's enough).
-        // Note that a seeking projectile shouldn't take the current player speed into account
+        // Note that a seeking projectile shouldn't take the current player speed into account 
         Vector3 force = cam.transform.forward * UserDefinedConstants.projectileImpulse;
-        projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, UserId(), targetedPlayer.UserId);
+        projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, UserId(), targetedCharacter.photonView.Owner.UserId);
     }
 
     Vector3 ProjectileSource() { return cam.transform.position + cam.transform.forward; }
