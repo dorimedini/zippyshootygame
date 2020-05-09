@@ -22,7 +22,7 @@ public class Projectile : MonoBehaviour
     private bool destroyed;
 
     public bool lockedOn;
-    public Transform target;
+    public TargetableCharacter target;
 
     Mesh mesh;
     MeshRenderer rend;
@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
             // to the target.
             // We want to rotate Angle(U,V) degrees (capped by missile turn speed) towards V round the UxV axis (or VxU?).
             // Quaternion.Lerp doesn't rotate around the correct axis, so we need to use RotateAround; manually cap the rotation angle
-            Vector3 targetDirection = (target.position - transform.position).normalized;
+            Vector3 targetDirection = (target.centerTransform.position - transform.position).normalized;
             Vector3 rotationAxis = Vector3.Cross(transform.up, targetDirection);
             // Take missile turn speed to be the maximal angle change per frame.
             float angle = Mathf.Min(Vector3.Angle(transform.up, targetDirection), UserDefinedConstants.missileTurnSpeed);
@@ -106,6 +106,12 @@ public class Projectile : MonoBehaviour
             if (pillarCtrl == null)
                 InitControllers();
             pillarCtrl.BroadcastHitPillar(pillar.id);
+        }
+
+        // Is this projectile seeking a targetable player? If so we need to tell him we're not seeking him anymore
+        if (lockedOn)
+        {
+            target.BroadcastBecameUntargeted(shooterId);
         }
 
         // Did we hit the sun?

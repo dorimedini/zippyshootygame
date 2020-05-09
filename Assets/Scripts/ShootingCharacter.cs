@@ -141,10 +141,13 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             }
             else
             {
+                // If we didn't lock on, then we're no longer targeting anyone
+                if (targetedCharacter != null)
+                    StopTargeting(targetedCharacter);
                 FireProjectileMaxImpulse();
             }
-            if (targetedCharacter != null)
-                StopTargeting(targetedCharacter);
+            // Either way, locally, we're no longer targeting anyone (don't keep the indicator for the target of a fired projectile)
+            LocalStopTargeting();
         }
         // TODO: Implement
         // Basic idea:
@@ -246,12 +249,16 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             lockedOnTarget = true;
         });
     }
-    void StopTargeting(TargetableCharacter targetChar)
+    void LocalStopTargeting()
     {
         // TODO: Reactivate idle-floaty-square image in the crosshair
         lockingImageCtrl.StopTargeting();
         targetedCharacter = null;
         lockedOnTarget = false;
+    }
+    void StopTargeting(TargetableCharacter targetChar)
+    {
+        LocalStopTargeting();
         if (targetChar == null)
         {
             Debug.LogError("Target character has no TargetableCharacter component (how did we START targeting this guy?)");

@@ -187,6 +187,11 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         return obj.GetComponent<NetworkCharacter>().characterCenter;
     }
 
+    public static TargetableCharacter GetTargetableCharacter(Player player)
+    {
+        return GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
+    }
+
     public static Player GetPlayerByUserID(string userId)
     {
         foreach (Player player in PhotonNetwork.PlayerList)

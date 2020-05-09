@@ -99,7 +99,7 @@ public class ProjectileController : MonoBehaviourPun
             {
                 if (player.UserId == targetUserId)
                 {
-                    projectile.target = NetworkCharacter.GetPlayerCenter(player);
+                    projectile.target = NetworkCharacter.GetTargetableCharacter(player);
                     break;
                 }
             }
