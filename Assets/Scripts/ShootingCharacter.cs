@@ -111,6 +111,12 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
                 TargetableCharacter playerTarget = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
                 SwitchToTargetIfCloserToCenter(playerTarget);
             }
+            // If a dummy character is spawned it won't be in the player list but it should be targeted anyway
+            if (UserDefinedConstants.spawnDummyPlayer && NetworkManager.DummyPlayer != null)
+            {
+                TargetableCharacter playerTarget = NetworkManager.DummyPlayer.GetComponent<TargetableCharacter>();
+                SwitchToTargetIfCloserToCenter(playerTarget);
+            }
 
             if (targetedCharacter != null)
             {

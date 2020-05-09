@@ -94,6 +94,11 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    public GameObject SpawnDummyPlayer()
+    {
+        return SpawnCharacter();
+    }
+
     public GameObject SpawnMyself()
     {
         msgCtrl.AppendMessage("Respawning...");

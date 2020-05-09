@@ -8,6 +8,7 @@ using System.Linq;
 public class MainMenuController : MonoBehaviour
 {
     public SliderInputController radiusInput, EHNInput;
+    public ToggleInputController dummyPlayerInput;
     public NetworkManager netMngr;
 
     public TextMeshProUGUI roomListArea;
@@ -58,18 +59,21 @@ public class MainMenuController : MonoBehaviour
 
     void ApplySettings()
     {
+        UserDefinedConstants.spawnDummyPlayer = dummyPlayerInput.value;
         UserDefinedConstants.sphereRadius = radiusInput.value;
         UserDefinedConstants.EHN = (int)EHNInput.value;
     }
 
     void ReadSettings()
     {
+        dummyPlayerInput.value = UserDefinedConstants.spawnDummyPlayer;
         radiusInput.value = UserDefinedConstants.sphereRadius;
         EHNInput.value = UserDefinedConstants.EHN;
     }
 
     public void ResetToDefaults()
     {
+        dummyPlayerInput.value = UserDefinedConstants.GetBoolEntries()["spawnDummyPlayer"]._default_val;
         radiusInput.value = UserDefinedConstants.GetFloatEntries()["sphereRadius"]._default_val;
         EHNInput.value = UserDefinedConstants.GetIntEntries()["EHN"]._default_val;
         ApplySettings();

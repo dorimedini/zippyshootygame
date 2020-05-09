@@ -18,6 +18,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public MessagesController msg;
 
+    public static GameObject DummyPlayer;
+
     GameObject myPlayer;
     GeoSphereGenerator arena;
     List<RoomInfo> rooms;
@@ -111,6 +113,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         msg.AppendMessage("Joined room " + PhotonNetwork.CurrentRoom.Name);
         InitArena();
         SpawnMyPlayer();
+        if (UserDefinedConstants.spawnDummyPlayer)
+            DummyPlayer = spawner.SpawnDummyPlayer();
     }
 
     public override void OnLeftRoom()
