@@ -82,7 +82,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        msg.AppendMessage("Joined lobby '" + PhotonNetwork.CurrentLobby.Name + "' of type '" + PhotonNetwork.CurrentLobby.Type + "'");
+        if (!PhotonNetwork.OfflineMode)
+            msg.AppendMessage("Joined lobby '" + PhotonNetwork.CurrentLobby.Name + "' of type '" + PhotonNetwork.CurrentLobby.Type + "'");
         mainMenu.HideSingleMultiButtons();
         mainMenu.ShowRoomButtons();
     }
