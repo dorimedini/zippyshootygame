@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -28,14 +29,14 @@ public class MainMenuController : MonoBehaviour
     public void OnSingleplayer()
     {
         ApplySettings();
-        HideSingleMultiButtons();
+        DisableSingleMultiButtons();
         netMngr.StartSingleplayer();
     }
 
     public void OnMultiplayer()
     {
         ApplySettings();
-        HideSingleMultiButtons();
+        DisableSingleMultiButtons();
         netMngr.StartMultiplayer();
     }
 
@@ -84,12 +85,22 @@ public class MainMenuController : MonoBehaviour
         singleButton.SetActive(false);
         multiButton.SetActive(false);
     }
-
+    public void DisableSingleMultiButtons()
+    {
+        singleButton.GetComponent<Button>().interactable = false;
+        multiButton.GetComponent<Button>().interactable = false;
+    }
     public void ShowSingleMultiButtons()
     {
         singleButton.SetActive(true);
         multiButton.SetActive(true);
     }
+    public void EnableSingleMultiButtons()
+    {
+        singleButton.GetComponent<Button>().interactable = true;
+        multiButton.GetComponent<Button>().interactable = true;
+    }
+
 
     public void HideRoomButtons()
     {
