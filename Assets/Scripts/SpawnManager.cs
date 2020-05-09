@@ -97,11 +97,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject SpawnMyself()
     {
         msgCtrl.AppendMessage("Respawning...");
-        var spawnPoints = PlayerSpawnPoints();
-        var spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
-        Vector3 spawnLoc = spawnPoint.Item1;
-        Quaternion spawnRot = spawnPoint.Item2;
-        GameObject player = PhotonNetwork.Instantiate("Player", spawnLoc, spawnRot);
+        GameObject player = SpawnCharacter();
         // Good, now activate all relevant scripts
         player.GetComponentInChildren<Camera>().enabled = true;
         player.GetComponentInChildren<AudioListener>().enabled = true;
@@ -124,6 +120,15 @@ public class SpawnManager : MonoBehaviour
         // Hide the cursor when player gets control
         Cursor.visible = false;
         return player;
+    }
+
+    GameObject SpawnCharacter()
+    {
+        var spawnPoints = PlayerSpawnPoints();
+        var spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
+        Vector3 spawnLoc = spawnPoint.Item1;
+        Quaternion spawnRot = spawnPoint.Item2;
+        return PhotonNetwork.Instantiate("Player", spawnLoc, spawnRot);
     }
 
     private void ActivateSpawnCam()
