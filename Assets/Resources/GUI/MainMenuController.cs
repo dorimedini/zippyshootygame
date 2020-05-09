@@ -28,14 +28,12 @@ public class MainMenuController : MonoBehaviour
 
     public void OnSingleplayer()
     {
-        ApplySettings();
         DisableSingleMultiButtons();
         netMngr.StartSingleplayer();
     }
 
     public void OnMultiplayer()
     {
-        ApplySettings();
         DisableSingleMultiButtons();
         netMngr.StartMultiplayer();
     }
@@ -55,6 +53,7 @@ public class MainMenuController : MonoBehaviour
 
     public void OnJoinRoom()
     {
+        ApplySettings();
         netMngr.JoinRoom();
     }
 
