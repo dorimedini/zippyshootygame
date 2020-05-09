@@ -42,7 +42,6 @@ public class TargetableCharacter : MonoBehaviourPun
     [PunRPC]
     public void BecameTargeted(string enemyUserId)
     {
-        Debug.Log("Became targeted");
         targetingEnemyIds.Add(enemyUserId);
         if (lockedEnemyIds.Contains(enemyUserId))
         {
@@ -55,7 +54,6 @@ public class TargetableCharacter : MonoBehaviourPun
     [PunRPC]
     public void BecameLockedOn(string enemyUserId)
     {
-        Debug.Log("Became locked");
         lockedEnemyIds.Add(enemyUserId);
         targetingEnemyIds.Remove(enemyUserId);
         UpdateTargetedFeedbackState();
@@ -65,7 +63,6 @@ public class TargetableCharacter : MonoBehaviourPun
     public void BecameUntargeted(string enemyUserId)
     {
         // FIXME: This is fired when shooting player shoots the missile. The lock-on danger sound should continue as long as the projectile hasn't been destroyed!
-        Debug.Log("Became untargeted");
         targetingEnemyIds.Remove(enemyUserId);
         lockedEnemyIds.Remove(enemyUserId);
         UpdateTargetedFeedbackState();
@@ -85,7 +82,6 @@ public class TargetableCharacter : MonoBehaviourPun
                 // TODO: Shut off respective exclamation mark graphics
                 break;
             case TargetState.TARGET:
-                Debug.Log("switch state TARGET");
                 if (lockedSound.isPlaying)
                     lockedSound.Stop();
                 if (!targetedSound.isPlaying)
@@ -93,7 +89,6 @@ public class TargetableCharacter : MonoBehaviourPun
                 // TODO: Show a flashing yellow exclamation mark somewhere
                 break;
             case TargetState.LOCK:
-                Debug.Log("switch state LOCK");
                 if (targetedSound.isPlaying)
                     targetedSound.Stop();
                 if (!lockedSound.isPlaying)
