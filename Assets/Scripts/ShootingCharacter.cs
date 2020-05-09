@@ -19,7 +19,6 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
     private bool paused;
 
-    private Transform lockTarget;
     private TargetableCharacter targetedCharacter;
     private bool lockedOnTarget;
 
@@ -27,7 +26,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     void Start()
     {
         lockedOnTarget = paused = charging = false;
-        lockTarget = null;
+        targetedCharacter = null;
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
             Debug.LogError("Got null ProjectileController");
@@ -95,11 +94,10 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // Initial lock-on check
         if (buttonDown)
         {
-            if (lockTarget != null)
+            if (targetedCharacter != null)
             {
                 Debug.LogWarning("Got fire-button-down but lock-target is already set, did we miss a fire-button-up event?");
                 targetedCharacter = null;
-                lockTarget = null;
                 lockedOnTarget = false;
             }
             // I'm not a performance expert but it may be best to just iterate over all players and see who's in scope.
@@ -116,12 +114,11 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
                 if (canBeTargeted && targetSightAngle < sharpestAngle)
                 {
                     targetedCharacter = playerTarget;
-                    lockTarget = playerTarget.centerTransform;
                     sharpestAngle = targetSightAngle;
                 }
             }
 
-            if (lockTarget != null)
+            if (targetedCharacter != null)
             {
                 StartTargeting(targetedCharacter);
             }
@@ -243,7 +240,6 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // TODO: Reactivate idle-floaty-square image in the crosshair
         lockingImageCtrl.StopTargeting();
         targetedCharacter = null;
-        lockTarget = null;
         lockedOnTarget = false;
         if (targetChar == null)
         {
@@ -284,7 +280,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // Start with graphics for all and collider for shooter, as with regular projectiles; the behaviour should be
         // to rotate towards target every frame, and every frame apply constant acceleration (we'll hit something
         // eventually, I think, so that's enough).
-        // Note that a seeking projectile shouldn't take the current player speed into account 
+        // Note that a seeking projectile shouldn't take the current player speed into account
         Vector3 force = cam.transform.forward * UserDefinedConstants.projectileImpulse;
         projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, UserId(), targetedCharacter.photonView.Owner.UserId);
     }
