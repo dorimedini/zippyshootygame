@@ -27,12 +27,17 @@ public class SettingsMenuController : MonoBehaviour
         toggleInputs = new List<ToggleInputController>();
         intInputs = new List<SliderInputController>();
 
+        // TODO: There's gotta be a way to make this templated
         foreach (var entry in boolVals.Values)
         {
+            if (!entry._midgame_ok)
+                continue;
             toggleInputs.Add(InstantiateToggleInput(entry).GetComponent<ToggleInputController>());
         }
         foreach (var entry in stringVals.Values)
         {
+            if (!entry._midgame_ok)
+                continue;
             textInputs.Add(InstantiateStringInput(entry).GetComponent<TextInputController>());
         }
         foreach (var entry in floatVals.Values)
@@ -51,6 +56,7 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnApply()
     {
+        // TODO: There's gotta be a way to make this templated
         foreach (SliderInputController slider in sliderInputs)
         {
             floatVals[slider.key]._val = slider.value;
@@ -72,6 +78,7 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnCancel()
     {
+        // TODO: There's gotta be a way to make this templated
         foreach (SliderInputController slider in sliderInputs)
         {
             slider.value = floatVals[slider.key]._val;
@@ -92,6 +99,7 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnResetToDefaults()
     {
+        // TODO: There's gotta be a way to make this templated
         foreach (SliderInputController slider in sliderInputs)
         {
             slider.value = floatVals[slider.key]._default_val;
@@ -117,6 +125,7 @@ public class SettingsMenuController : MonoBehaviour
 
     void OnDisable() { OnCancel(); }
 
+    // TODO: Can we template the instantiation methods?
     GameObject InstantiateFloatInput(UserDefinedConstants.RangeEntry<float> entry)
     {
         var obj = Instantiate(sliderInputPrefab, settingsContainer.transform);

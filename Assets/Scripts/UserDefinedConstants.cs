@@ -73,7 +73,8 @@ public static class UserDefinedConstants
     private static Dictionary<string, Entry<bool>> boolEntries = new Dictionary<string, Entry<bool>>
     {
         {"chargeMode", new Entry<bool>(false, "chargeMode", "Charge mode")},
-        {"weaponLockMode", new Entry<bool>(true, "weaponLockMode", "Weapon lock mode")} // TODO: these modes are mutually exclusive, make a dropdown thing
+        {"weaponLockMode", new Entry<bool>(true, "weaponLockMode", "Weapon lock mode")}, // TODO: these modes are mutually exclusive, make a dropdown thing
+        {"spawnDummyPlayer", new Entry<bool>(false, "spawnDummyPlayer", "Spawn dummy player", false)}
     };
     private static Dictionary<string, RangeEntry<int>> intEntries = new Dictionary<string, RangeEntry<int>>
     {
@@ -120,6 +121,7 @@ public static class UserDefinedConstants
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }
     public static bool weaponLockMode { get { return boolEntries["weaponLockMode"]; } set { boolEntries["weaponLockMode"]._val = value; } }
+    public static bool spawnDummyPlayer { get { return boolEntries["spawnDummyPlayer"]; } set { boolEntries["spawnDummyPlayer"]._val = value; } }
 
     public static void LoadFromPlayerPrefs(bool midGame)
     {
