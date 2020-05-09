@@ -20,6 +20,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     private bool paused;
 
     private TargetableCharacter targetedCharacter;
+    private float currentSharpestTargetAngle;
     private bool lockedOnTarget;
 
     // Start is called before the first frame update
@@ -102,20 +103,13 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             }
             // I'm not a performance expert but it may be best to just iterate over all players and see who's in scope.
             // Any targetable object will have an angle less than 1+maxAngle anyway, so this is like setting it to infinity:
-            float sharpestAngle = 1 + MaxAngleToBeTargeted();
+            currentSharpestTargetAngle = 1 + MaxAngleToBeTargeted();
             foreach (Player player in PhotonNetwork.PlayerList)
             {
                 if (NetworkCharacter.IsLocalPlayer(player) || !NetworkCharacter.IsPlayerAlive(player))
                     continue;
                 TargetableCharacter playerTarget = NetworkCharacter.GetPlayerGameObject(player).GetComponent<TargetableCharacter>();
-                float targetSightAngle = TargetSightAngle(playerTarget.centerTransform.position);
-                bool canBeTargeted = CanBeTargeted(targetSightAngle);
-                // If several enemy players are in scope, choose the player closest to the center of the scope.
-                if (canBeTargeted && targetSightAngle < sharpestAngle)
-                {
-                    targetedCharacter = playerTarget;
-                    sharpestAngle = targetSightAngle;
-                }
+                SwitchToTargetIfCloserToCenter(playerTarget);
             }
 
             if (targetedCharacter != null)
@@ -170,6 +164,17 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         //    locking mechanism is idle.
     }
 
+    void SwitchToTargetIfCloserToCenter(TargetableCharacter candidate)
+    {
+        float targetSightAngle = TargetSightAngle(candidate.centerTransform.position);
+        bool canBeTargeted = CanBeTargeted(targetSightAngle);
+        // If several enemy players are in scope, choose the player closest to the center of the scope.
+        if (canBeTargeted && targetSightAngle < currentSharpestTargetAngle)
+        {
+            targetedCharacter = candidate;
+            currentSharpestTargetAngle = targetSightAngle;
+        }
+    }
     float TargetSightAngle(Vector3 target)
     {
         // To check if player 2 is in player 1's scope, we ensure the angle between p1's line of sight and p2's location is bounded above
