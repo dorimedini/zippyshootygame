@@ -225,6 +225,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // we get A=arctan(radius) and the radius can be computed by:
         float radius = 0.17f * UserDefinedConstants.lockScopeRadius;
         return Mathf.Rad2Deg * Mathf.Atan(radius);
+        // TODO: Test if this works for all resolutions. The magic number 0.17 scares me
     }
     bool CanBeTargeted(TargetableCharacter target) { return CanBeTargeted(target, TargetSightAngle(target.centerTransform.position)); }
     bool CanBeTargeted(TargetableCharacter target, float targetSightAngle)
