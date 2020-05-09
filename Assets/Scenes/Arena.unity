@@ -2438,6 +2438,7 @@ GameObject:
   - component: {fileID: 1326363885}
   - component: {fileID: 1326363887}
   - component: {fileID: 1326363886}
+  - component: {fileID: 1326363888}
   m_Layer: 5
   m_Name: Messages
   m_TagString: Untagged
@@ -2493,6 +2494,18 @@ MonoBehaviour:
   background: {fileID: 482945080}
   textComponent: {fileID: 1511937512}
   canvasGroup: {fileID: 1326363886}
+--- !u!114 &1326363888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1326363884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1334825165
 GameObject:
   m_ObjectHideFlags: 0
