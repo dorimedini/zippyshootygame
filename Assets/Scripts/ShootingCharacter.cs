@@ -232,10 +232,10 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             Debug.LogError("Target character has no TargetableCharacter component!");
             return;
         }
-        targetChar.BecameTargeted();
+        targetChar.BroadcastBecameTargeted(UserId());
         lockingImageCtrl.StartTargeting(NetworkCharacter.GetPlayerCenter(player), () =>
         {
-            targetChar.BecameLockedOn();
+            targetChar.BroadcastBecameLockedOn(UserId());
             lockedOnTarget = true;
         });
     }
@@ -252,7 +252,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
             Debug.LogError("Target character has no TargetableCharacter component (how did we START targeting this guy?)");
             return;
         }
-        targetChar.BecameUntargeted();
+        targetChar.BroadcastBecameUntargeted(UserId());
     }
 
     void UpdateInstafire()
@@ -272,7 +272,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     void FireProjectile(float charge)
     {
         Vector3 force = charge * cam.transform.forward * UserDefinedConstants.projectileImpulse;
-        projectileCtrl.BroadcastFireProjectile(ProjectileSource(), force, rb.velocity, photonView.Owner.UserId);
+        projectileCtrl.BroadcastFireProjectile(ProjectileSource(), force, rb.velocity, UserId());
     }
 
     void FireSeekingProjectile()
@@ -288,10 +288,12 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
         // eventually, I think, so that's enough).
         // Note that a seeking projectile shouldn't take the current player speed into account
         Vector3 force = cam.transform.forward * UserDefinedConstants.projectileImpulse;
-        projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, photonView.Owner.UserId, targetedPlayer.UserId);
+        projectileCtrl.BroadcastFireSeekingProjectile(ProjectileSource(), force, UserId(), targetedPlayer.UserId);
     }
 
     Vector3 ProjectileSource() { return cam.transform.position + cam.transform.forward; }
 
     public void Pause(bool pause) { paused = pause; }
+
+    string UserId() { return photonView.Owner.UserId; }
 }

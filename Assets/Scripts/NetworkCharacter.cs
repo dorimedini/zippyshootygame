@@ -187,6 +187,15 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         return obj.GetComponent<NetworkCharacter>().characterCenter;
     }
 
+    public static Player GetPlayerByUserID(string userId)
+    {
+        foreach (Player player in PhotonNetwork.PlayerList)
+            if (player.UserId == userId)
+                return player;
+        Debug.LogWarning("No player with user ID " + userId + " found");
+        return null;
+    }
+
     public static bool IsLocalPlayer(Player player)
     {
         return player.UserId == PhotonNetwork.LocalPlayer.UserId;
