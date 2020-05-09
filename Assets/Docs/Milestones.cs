@@ -57,7 +57,7 @@
  *          Periodic sunray blasts to all player locations          (keep moving, mark)
  *          Hanzo-vision powerup                                    (clue)
  *          Sun-pointers powerup (color arrows toward each player)  (clue)
- *          Heat-seeking missiles with lock-on time?                (reward)
+ *   V      Heat-seeking missiles with lock-on time?                (reward)
  *          Powerup mechanic idea: 3 collectables, have X seconds to collect all of them (from the moment the first was collected)
  * <   > Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Really need ambient music...
