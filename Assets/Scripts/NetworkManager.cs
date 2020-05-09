@@ -119,7 +119,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        msg.AppendMessage("Left room");
+        if (msg != null)
+            msg.AppendMessage("Left room");
         base.OnLeftRoom();
         if (standbyCamera != null) // Player didn't quit, just left the room
             standbyCamera.SetActive(true);
@@ -127,7 +128,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        msg.AppendMessage("Disconnected");
+        if (msg != null)
+            msg.AppendMessage("Disconnected");
         base.OnDisconnected(cause);
         DestroyArena();
         if (mainMenu != null && mainMenu.gameObject != null)
