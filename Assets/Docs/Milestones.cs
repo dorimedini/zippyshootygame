@@ -80,5 +80,6 @@
  * <   > Check the isMasterClient thing in Photon, maybe makes the projectile management better?
  * <   > Moon: make some hard-to-hit, syncronized, random-orbit "moon" around the sun; players get rewarded / punished for hitting it directly, depending on
  *       current health maybe..?
+ * <   > Research: can player's ping values be used to implement good speculative syncing?
  * <   > Make new list
  */
