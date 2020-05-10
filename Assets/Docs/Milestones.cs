@@ -55,11 +55,27 @@
  *   X      Larger models?                                          (mark)              --> I think just setting smaller radius does the trick
  *   V      Trail of smoke behind projectiles?                      (mark)
  *          Periodic sunray blasts to all player locations          (keep moving, mark)
- *          Hanzo-vision powerup                                    (clue)
+ *          Hanzo-vision powerup (orbit around the sun?)            (clue)
  *          Sun-pointers powerup (color arrows toward each player)  (clue)
  *   V      Heat-seeking missiles with lock-on time?                (reward)
+ *          Powerup mechanic idea: orbit around the sun
  *          Powerup mechanic idea: 3 collectables, have X seconds to collect all of them (from the moment the first was collected)
- * <   > Also on this subject, bring the camera to where the head is (rotation should be handled automatically by mouselook)
+ *          Powerup mechanic idea: the sun advertises where it's gonna fall, but it's going to land on a pillar face
+ * <   > Weapon cooldown doesn't seem to be in effect for lock-on mode
+ * <   > Don't start by playing a sound at target player when targeting starts, if the enemy is single-click firing it's annoying
+ * <   > During grapple, bring the camera to where the head is (rotation should be handled automatically by mouselook)
+ * <   > Sunshoe mode: press a button to reverse gravity and walk on the sun
+ * <   > Max height of pillar isn't working, small radius --> hits the sun
+ * <   > Smaller projectile collider, so it passes through tight spaces
+ * <   > Wall grab? When close to a wall and not on the ground, grab a wall while jump is pressed
+ * <   > Camera still falls through pillar mesh
+ * <   > Who died, who killed who
+ * <   > Game modes:
+ *          Respawn mode
+ *          U ded u ded mode (kill cam?)
+ *          Initial pillar heights (doesn't have to be all at zero at the beginning)
+ * <   > Leaderboard, stats
+ * <   > Gravity gun: player points and shoots, that's where gravity is... for...?
  * <   > Really need ambient music...
  * <   > Still a bit jerky when exploding a remote player and the remote starts sending the updates. Maybe use an even system, on ACK from remote player re-activate motion sync?
  * <   > Pentagon hit should expand pentagon to the max, and any hex in an EHN-depth BFS from the pentagon should expand by min(maxheight, height+maxheight/(deg+1))
