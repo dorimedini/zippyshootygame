@@ -70,6 +70,7 @@
  * <   > Wall grab? When close to a wall and not on the ground, grab a wall while jump is pressed
  * <   > Camera still falls through pillar mesh
  * <   > Who died, who killed who
+ * <   > Speculative explosion force looks bad. Try without it?
  * <   > Game modes:
  *          Respawn mode
  *          U ded u ded mode (kill cam?)
