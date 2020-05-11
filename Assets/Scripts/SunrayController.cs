@@ -1,9 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
+using Unity.Jobs;
+using System.Linq;
 
 public class SunrayController : MonoBehaviour
 {
+    private enum SunrayState { IDLE, WARMUP, LOCKED, FIRED }
+
+    public ExplosionController explosionCtrl;
     public LineRenderer sunrayLine;
     public float initialLineWidth, maxLineWidth;
     public SunrayCageController cageCtrl;
@@ -11,10 +17,8 @@ public class SunrayController : MonoBehaviour
     private Transform target;
     private string shooterId;
     private float timeActiveInCurrentState;
-
-    private enum SunrayState { IDLE, WARMUP, LOCKED, FIRED }
-
     private SunrayState currentState;
+    private Vector3[] explosionPositions;
 
     void Start()
     {
@@ -52,7 +56,8 @@ public class SunrayController : MonoBehaviour
                 if (timeActiveInCurrentState > UserDefinedConstants.sunrayWarningTime)
                 {
                     AdvanceToState(SunrayState.LOCKED);
-                    // TODO: On a separate thread, decide on explosion locations
+                    ComputeExplosionPositions();
+                    // Cage should disappear on it's own
                     break;
                 }
                 sunrayLine.transform.rotation = Quaternion.LookRotation(target.position);
@@ -61,8 +66,7 @@ public class SunrayController : MonoBehaviour
                 if (timeActiveInCurrentState > UserDefinedConstants.sunrayFireDelay)
                 {
                     AdvanceToState(SunrayState.FIRED);
-                    // TODO: Trigger explosions (broadcast them if this is the shooter, we have a shooter ID).
-                    // TODO: Explosions should occur at the top of the hit pillar, and all players in between.
+                    TriggerExplosions();
                     // TODO: Also at this point maybe add a flash of light...?
                     // TODO: Also at this point play a sound
                     break;
@@ -103,5 +107,30 @@ public class SunrayController : MonoBehaviour
     void SetRayWidth(float width)
     {
         sunrayLine.endWidth = sunrayLine.startWidth = width;
+    }
+
+    void ComputeExplosionPositions()
+    {
+        // TODO: Do a RaycastAll and choose relevant hits. For now, just hit the one position
+        RaycastHit hit;
+        if (!Physics.Raycast(Vector3.zero, target.position, out hit))
+        {
+            Debug.LogError("Sunray found nothing to hit with explosion! Exploding in the sun...");
+            explosionPositions = new Vector3[1] { Vector3.zero };
+            return;
+        }
+        explosionPositions = new Vector3[1] { hit.collider.transform.position };
+    }
+
+    void TriggerExplosions()
+    {
+        foreach (var position in explosionPositions)
+        {
+            // TODO: Trigger explosion at position, with given shooter ID.
+            // FIXME: Currently, broadcasting an explosion doesn't take care of the graphic elements (handled by projectile controller right now).
+            // FIXME: To continue, this logic needs to move from projectile controller to explosion controller (makes sense).
+            // FIXME: Also, the explosion controller should be able to handle the case where the explosion has "friendly fire" enabled (like in this case)
+        }
+
     }
 }

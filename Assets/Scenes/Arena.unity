@@ -6173,6 +6173,16 @@ PrefabInstance:
       propertyPath: m_Positions.Array.data[1].z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4760037501278060929, guid: 0006783708a423c4fa7437f908d2b611,
+        type: 3}
+      propertyPath: m_UseWorldSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4760037501403513600, guid: 0006783708a423c4fa7437f908d2b611,
+        type: 3}
+      propertyPath: explosionCtrl
+      value: 
+      objectReference: {fileID: 1790121268}
     - target: {fileID: 8601932681132344085, guid: 0006783708a423c4fa7437f908d2b611,
         type: 3}
       propertyPath: dmgCtrl
