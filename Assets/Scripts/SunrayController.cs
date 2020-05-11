@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Linq;
+using Photon.Pun;
 
 public class SunrayController : MonoBehaviour
 {
@@ -111,6 +112,9 @@ public class SunrayController : MonoBehaviour
 
     void ComputeExplosionPositions()
     {
+        // We're in RPC context here (some broadcasted a sun hit). We only broadcast an explosion if we're the shooter so otherwise we don't care
+        if (shooterId != Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId))
+            return;
         // TODO: Do a RaycastAll and choose relevant hits. For now, just hit the one position
         RaycastHit hit;
         if (!Physics.Raycast(Vector3.zero, target.position, out hit))
@@ -124,10 +128,11 @@ public class SunrayController : MonoBehaviour
 
     void TriggerExplosions()
     {
+        // We're in RPC context here (some broadcasted a sun hit). Only broadcast an explosion if we're the shooter
+        if (shooterId != Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId))
+            return;
+        // Trigger explosions on all locations
         foreach (var position in explosionPositions)
-        {
-            // TODO: Trigger explosion at position, with given shooter ID.
-        }
-
+            explosionCtrl.BroadcastExplosion(position, shooterId, true);
     }
 }
