@@ -32,7 +32,6 @@ public class SunrayController : MonoBehaviour
     public void GetAngryAt(Transform target, string shooterId)
     {
         // FIXME: Current design direction may trigger explosion in location not consistent with remote player's sunray target graphic. Is this bad?
-        // FIXME: Current design doesn't damage the shooter with explosions, even if shooter is targeted
         if (currentState != SunrayState.IDLE)
         {
             // Do nothing if sun is already firing a sunray
