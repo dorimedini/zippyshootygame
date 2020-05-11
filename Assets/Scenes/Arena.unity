@@ -3582,6 +3582,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dmgCtrl: {fileID: 1178146673}
   localUserId: 
+  explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
+    type: 3}
+  explosionSound: {fileID: 8300000, guid: 3b15d24133ec0de438a3e3b65c6938c7, type: 3}
 --- !u!114 &1790121269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3937,9 +3940,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 1540206479081241125, guid: f2f73766787649841818ba67582be9cc,
     type: 3}
-  explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
-    type: 3}
-  explosionSound: {fileID: 8300000, guid: 3b15d24133ec0de438a3e3b65c6938c7, type: 3}
   fireSounds:
   - {fileID: 8300000, guid: 92043e3148e0e294687789b9f97d5175, type: 3}
   - {fileID: 8300000, guid: 097f84d904ca68440aab55c9240b5606, type: 3}
@@ -6183,6 +6183,11 @@ PrefabInstance:
       propertyPath: explosionCtrl
       value: 
       objectReference: {fileID: 1790121268}
+    - target: {fileID: 4760037501403513600, guid: 0006783708a423c4fa7437f908d2b611,
+        type: 3}
+      propertyPath: pillarCtrl
+      value: 
+      objectReference: {fileID: 1213035195}
     - target: {fileID: 8601932681132344085, guid: 0006783708a423c4fa7437f908d2b611,
         type: 3}
       propertyPath: dmgCtrl

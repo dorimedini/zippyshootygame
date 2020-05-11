@@ -11,6 +11,7 @@ public class SunrayController : MonoBehaviour
     private enum SunrayState { IDLE, WARMUP, LOCKED, FIRED }
 
     public ExplosionController explosionCtrl;
+    public PillarExtensionController pillarCtrl;
     public LineRenderer sunrayLine;
     public float initialLineWidth, maxLineWidth;
     public SunrayCageController cageCtrl;
@@ -20,6 +21,7 @@ public class SunrayController : MonoBehaviour
     private float timeActiveInCurrentState;
     private SunrayState currentState;
     private List<Vector3> explosionPositions;
+    private int hitPillarId;
 
     void Start()
     {
@@ -144,6 +146,7 @@ public class SunrayController : MonoBehaviour
 
         // Add the hit pillar location to the explosion list, and find all hit players above the pillar
         explosionPositions = new List<Vector3> { hitPillarPosition };
+        hitPillarId = hitPillar.id;
         foreach (var hit in hits)
         {
             // Ignore the sun itself, and all objects below the height of the hit pillar
@@ -167,5 +170,7 @@ public class SunrayController : MonoBehaviour
         // Trigger explosions on all locations
         foreach (var position in explosionPositions)
             explosionCtrl.BroadcastExplosion(position, shooterId, true);
+        // Trigger pillar extension on hit pillar
+        pillarCtrl.BroadcastHitPillar(hitPillarId);
     }
 }
