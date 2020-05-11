@@ -9,6 +9,8 @@ public class SunController : MonoBehaviourPun
     public Material mat;
     public Color originalColor;
     public GameObject shockwavePrefab;
+    public SunrayController sunray;
+    public SunIsAngryController angrySun;
     public DamageController dmgCtrl;
 
     private int chargeStage;
@@ -21,18 +23,27 @@ public class SunController : MonoBehaviourPun
 
     public void BroadcastHit(string shooterId)
     {
-        photonView.RPC("Hit", RpcTarget.Others, shooterId);
-        Hit(shooterId);  // Do this locally so player gets quick feedback
+        string targetUserId = PhotonNetwork.PlayerList[(new System.Random()).Next(0, PhotonNetwork.PlayerList.Length)].UserId;
+        photonView.RPC("Hit", RpcTarget.Others, shooterId, targetUserId);
+        Hit(shooterId, targetUserId);  // Do this locally so player gets quick feedback
+        // TODO: Should the sunray really be fired locally...?
     }
 
     [PunRPC]
-    public void Hit(string shooterId)
+    public void Hit(string shooterId, string targetUserId)
     {
         IncrementColor();
         if (chargeStage == chargeStages)
         {
             Overcharge(shooterId);
         }
+        SunAngryAt(NetworkCharacter.GetPlayerCenter(NetworkCharacter.GetPlayerByUserID(targetUserId)), shooterId);
+    }
+
+    void SunAngryAt(Transform target, string shooterId)
+    {
+        angrySun.Play();
+        sunray.GetAngryAt(target, shooterId, 1.5f);
     }
 
     void Overcharge(string shooterId)

@@ -117,7 +117,7 @@ public class Projectile : MonoBehaviour
         // Did we hit the sun?
         SunController sun = obj.GetComponent<SunController>();
         if (sun != null)
-            sun.Hit(shooterId);
+            sun.BroadcastHit(shooterId);
 
         // In any case, all collisions destroy the projectile
         explosionCtrl.BroadcastExplosion(transform.position, shooterId);
