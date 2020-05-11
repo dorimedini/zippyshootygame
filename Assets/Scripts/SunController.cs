@@ -43,7 +43,7 @@ public class SunController : MonoBehaviourPun
     void SunAngryAt(Transform target, string shooterId)
     {
         angrySun.Play();
-        sunray.GetAngryAt(target, shooterId, 1.5f);
+        sunray.GetAngryAt(target, shooterId);
     }
 
     void Overcharge(string shooterId)

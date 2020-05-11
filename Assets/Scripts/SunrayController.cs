@@ -6,34 +6,102 @@ public class SunrayController : MonoBehaviour
 {
     public LineRenderer sunrayLine;
     public float initialLineWidth, maxLineWidth;
+    public SunrayCageController cageCtrl;
 
     private Transform target;
     private string shooterId;
-    private float timeActive, targetingTime;
+    private float timeActiveInCurrentState;
 
-    public void GetAngryAt(Transform target, string shooterId, float targetingTime)
+    private enum SunrayState { IDLE, WARMUP, LOCKED, FIRED }
+
+    private SunrayState currentState;
+
+    void Start()
+    {
+        AdvanceToState(SunrayState.IDLE);
+        HideRay();
+    }
+
+    public void GetAngryAt(Transform target, string shooterId)
     {
         // FIXME: Current design direction may trigger explosion in location not consistent with remote player's sunray target graphic. Is this bad?
+        // FIXME: Current design doesn't damage the shooter with explosions, even if shooter is targeted
+        if (currentState != SunrayState.IDLE)
+        {
+            // Do nothing if sun is already firing a sunray
+            return;
+        }
 
         this.target = target;
         this.shooterId = shooterId;
-        this.targetingTime = targetingTime;
-        timeActive = 0;
+        InitRay();
+        AdvanceToState(SunrayState.WARMUP);
 
-        // Stretch to maximal length, graphic should pass all the way to the edge
+        // Activate cage lines. Give it a little extra time, the cage disappears immediately after the time given
+        cageCtrl.CageForDuration(target, UserDefinedConstants.sunrayWarningTime + 0.05f);
+    }
+
+    void Update()
+    {
+        timeActiveInCurrentState += Time.deltaTime;
+        switch (currentState)
+        {
+            case SunrayState.IDLE:
+                break;
+            case SunrayState.WARMUP:
+                if (timeActiveInCurrentState > UserDefinedConstants.sunrayWarningTime)
+                {
+                    AdvanceToState(SunrayState.LOCKED);
+                    // TODO: On a separate thread, decide on explosion locations
+                    break;
+                }
+                sunrayLine.transform.rotation = Quaternion.LookRotation(target.position);
+                break;
+            case SunrayState.LOCKED:
+                if (timeActiveInCurrentState > UserDefinedConstants.sunrayFireDelay)
+                {
+                    AdvanceToState(SunrayState.FIRED);
+                    // TODO: Trigger explosions (broadcast them if this is the shooter, we have a shooter ID).
+                    // TODO: Explosions should occur at the top of the hit pillar, and all players in between.
+                    // TODO: Also at this point maybe add a flash of light...?
+                    // TODO: Also at this point play a sound
+                    break;
+                }
+                SetRayWidth(Mathf.Lerp(initialLineWidth, maxLineWidth, timeActiveInCurrentState / UserDefinedConstants.sunrayFireDelay));
+                break;
+            case SunrayState.FIRED:
+                // Give, say, 1 second decay. It's just a graphic, no issue
+                if (timeActiveInCurrentState > 1)
+                {
+                    AdvanceToState(SunrayState.IDLE);
+                    HideRay();
+                    break;
+                }
+                SetRayWidth(Mathf.Lerp(maxLineWidth, 0, timeActiveInCurrentState));
+                break;
+        }
+    }
+
+    void InitRay()
+    {
+        SetRayWidth(0);
         sunrayLine.SetPosition(1, new Vector3(0, 0, UserDefinedConstants.sphereRadius + 10));
+        sunrayLine.transform.rotation = Quaternion.LookRotation(target.position);
+    }
 
-        // TODO: Start closing a cage of lines around the target to indicate he's being targeted by the sun.
-        // TODO: Do this for targetingTime time
+    void HideRay()
+    {
+        sunrayLine.SetPosition(1, Vector3.zero);
+    }
 
-        // TODO: After that, stop changing location. We've locked a direction.
-        // TODO: At this point, display a thin line that rapidly expands.
-        
-        // TODO: After expansion is done, trigger explosions (broadcast them if this is the shooter, we have a shooter ID).
-        // TODO: Explosions should occur at the top of the hit pillar, and all players in between.
-        // TODO: Also at this point maybe add a flash of light...?
-        // TODO: Also at this point play a sound
+    void AdvanceToState(SunrayState state)
+    {
+        timeActiveInCurrentState = 0;
+        currentState = state;
+    }
 
-        //sunrayLine.startWidth = initialLineWidth;
+    void SetRayWidth(float width)
+    {
+        sunrayLine.endWidth = sunrayLine.startWidth = width;
     }
 }
