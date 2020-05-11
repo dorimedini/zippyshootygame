@@ -9,7 +9,7 @@ public class ExplosionController : MonoBehaviourPun
     public DamageController dmgCtrl;
     public string localUserId;
 
-    public void BroadcastExplosion(Vector3 position, string shooterId)
+    public void BroadcastExplosion(Vector3 position, string shooterId, bool friendlyFire)
     {
         // Send a message to each remote player containing relevant explosion data.
         // We do these calculations here because we're applying the same force both on the remote player (via RPC) and locally (to give immediate feedback).
@@ -33,6 +33,8 @@ public class ExplosionController : MonoBehaviourPun
 
         // Get players and send RPCs
         Dictionary<int, Player> playerDict = PhotonNetwork.CurrentRoom.Players;
+        // TODO: Iterate over ALL players (including local player) and call a tailored RPC depending on whether or not the player was hit.
+        // TODO: When calling the RPC for the local player (the shooter), check if friendly fire is on before passing the shouldDamage parameter
         foreach (string targetUserId in userIdsTohits.Keys)
         {
             Vector3 force = userIdsTohits[targetUserId];
@@ -41,7 +43,7 @@ public class ExplosionController : MonoBehaviourPun
                 Player player = playerDict[playerIdx];
                 if (player.UserId == targetUserId)
                 {
-                    photonView.RPC("RemoteExplosion", player, userIdsTohits[targetUserId], userIdsToDistances[targetUserId], shooterId);
+                    photonView.RPC("RemoteExplosion", player, userIdsTohits[targetUserId], userIdsToDistances[targetUserId], shooterId, true);
                     break;
                 }
             }
@@ -49,17 +51,20 @@ public class ExplosionController : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void RemoteExplosion(Vector3 explosionForce, float dist, string shooterId)
+    public void RemoteExplosion(Vector3 explosionForce, float dist, string shooterId, bool shouldDamage)
     {
         // We only reach this method if this local player was hit by an explosive force.
         // Apply force (disable root motion for a bit):
-        Player player = PhotonNetwork.LocalPlayer;
-        GameObject playerObj = NetworkCharacter.GetPlayerGameObject(player);
-        playerObj.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.explosionParalysisTime);
-        playerObj.GetComponent<Rigidbody>().AddForce(explosionForce, ForceMode.Impulse);
-        // Do damage (to self):
-        float damage = UserDefinedConstants.projectileHitDamage * (1 - Mathf.Clamp01(dist / UserDefinedConstants.explosionRadius));
-        dmgCtrl.BroadcastInflictDamage(shooterId, damage, player.UserId);
+        if (shouldDamage)
+        {
+            Player player = PhotonNetwork.LocalPlayer;
+            GameObject playerObj = NetworkCharacter.GetPlayerGameObject(player);
+            playerObj.GetComponent<PlayerMovementController>().DisableRootMotionFor(UserDefinedConstants.explosionParalysisTime);
+            playerObj.GetComponent<Rigidbody>().AddForce(explosionForce, ForceMode.Impulse);
+            // Do damage (to self):
+            float damage = UserDefinedConstants.projectileHitDamage * (1 - Mathf.Clamp01(dist / UserDefinedConstants.explosionRadius));
+            dmgCtrl.BroadcastInflictDamage(shooterId, damage, player.UserId);
+        }
     }
 
     List<Collider> OtherPlayersInExplosion(Vector3 position, string shooterId, bool localOnly)

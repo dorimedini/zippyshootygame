@@ -120,7 +120,7 @@ public class Projectile : MonoBehaviour
             sun.BroadcastHit(shooterId);
 
         // In any case, all collisions destroy the projectile
-        explosionCtrl.BroadcastExplosion(transform.position, shooterId);
+        explosionCtrl.BroadcastExplosion(transform.position, shooterId, false);
         projectileCtrl.BroadcastDestroyProjectile(projectileId);
         destroyed = true;
     }
