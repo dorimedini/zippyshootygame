@@ -93,7 +93,7 @@ public class Projectile : MonoBehaviour
         if (hitPlayer)
         {
             // Is this the shooter?
-            if (obj.GetComponent<PhotonView>().Owner.UserId == shooterId)
+            if (Tools.NullToEmptyString(obj.GetComponent<PhotonView>().Owner.UserId) == shooterId)
                 return;
         }
 

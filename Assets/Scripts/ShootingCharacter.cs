@@ -298,5 +298,5 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
     public void Pause(bool pause) { paused = pause; }
 
-    string UserId() { return photonView.Owner.UserId; }
+    string UserId() { return Tools.NullToEmptyString(photonView.Owner.UserId); }
 }

@@ -9,8 +9,6 @@ public class ProjectileController : MonoBehaviourPun
     public static int projectileIdLength = 10;
 
     public GameObject projectilePrefab;
-    public GameObject explosionPrefab;
-    public AudioClip explosionSound;
     public AudioClip[] fireSounds;
     public AudioSource localFireSoundSource;
 
@@ -66,11 +64,8 @@ public class ProjectileController : MonoBehaviourPun
     [PunRPC]
     void DestroyProjectile(string projectileId)
     {
-        var explosion = Instantiate(explosionPrefab, activeProjectiles[projectileId].transform.position, activeProjectiles[projectileId].transform.rotation);
-        AudioSource.PlayClipAtPoint(explosionSound, activeProjectiles[projectileId].transform.position);
         Destroy(activeProjectiles[projectileId]);
         activeProjectiles.Remove(projectileId);
-        Destroy(explosion, 3f);
     }
 
     GameObject InstantiateProjectileWithoutCollider(Vector3 source, Vector3 force, Vector3 currentShooterSpeed, string shooterId, string projectileId, bool seeking, string targetUserId)

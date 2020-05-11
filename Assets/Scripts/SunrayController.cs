@@ -127,9 +127,6 @@ public class SunrayController : MonoBehaviour
         foreach (var position in explosionPositions)
         {
             // TODO: Trigger explosion at position, with given shooter ID.
-            // FIXME: Currently, broadcasting an explosion doesn't take care of the graphic elements (handled by projectile controller right now).
-            // FIXME: To continue, this logic needs to move from projectile controller to explosion controller (makes sense).
-            // FIXME: Also, the explosion controller should be able to handle the case where the explosion has "friendly fire" enabled (like in this case)
         }
 
     }

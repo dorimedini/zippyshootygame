@@ -46,6 +46,8 @@ public static class Tools
         return "[" + string.Join(",", kvps) + "]";
     }
 
+    public static string NullToEmptyString(string s) { return s == null ? "" : s; }
+
     public static class Geometry
     {
         public static Vector3 RandomDirectionOnPlane(Vector3 normal)
