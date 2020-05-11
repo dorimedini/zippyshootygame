@@ -33,7 +33,9 @@ public class ExplosionController : MonoBehaviourPun
                 userIdsTohits[hitUserId] = ExplosionForce(hitPosition, position, dist);
                 userIdsToDistances[hitUserId] = dist;
                 // While we're here, apply the force locally to the network character
-                remotePlayerCol.GetComponent<NetworkCharacter>().ApplyLocalForce(userIdsTohits[hitUserId], ForceMode.Impulse);
+                // If this is the local player, skip this part. Local force is handled in the next loop
+                if (hitUserId != shooterId)
+                    remotePlayerCol.GetComponent<NetworkCharacter>().ApplyLocalForce(userIdsTohits[hitUserId], ForceMode.Impulse);
             }
         }
 
@@ -41,15 +43,23 @@ public class ExplosionController : MonoBehaviourPun
         foreach (Player player in PhotonNetwork.PlayerList)
         {
             string userId = Tools.NullToEmptyString(player.UserId);
+            bool isLocalPlayer = userId == Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId);
             if (userIdsTohits.ContainsKey(userId))
             {
-                // Trigger a damaging explosion
-                photonView.RPC("RemoteExplosion", player, position, userIdsTohits[userId], userIdsToDistances[userId], shooterId);
+                // Trigger a damaging explosion.
+                // If this is the local player do it locally to get instance force feedback
+                if (isLocalPlayer)
+                    RemoteExplosion(position, userIdsTohits[userId], userIdsToDistances[userId], shooterId);
+                else
+                    photonView.RPC("RemoteExplosion", player, position, userIdsTohits[userId], userIdsToDistances[userId], shooterId);
             }
             else
             {
-                // Trigger the graphic, no damage
-                photonView.RPC("RemoteExplosionFriendly", player, position);
+                // Trigger the graphic, no damage. For the local player do this locally
+                if (isLocalPlayer)
+                    RemoteExplosionFriendly(position);
+                else
+                    photonView.RPC("RemoteExplosionFriendly", player, position);
             }
         }
     }
