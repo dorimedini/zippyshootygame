@@ -19,7 +19,7 @@ public class SunrayController : MonoBehaviour
     private string shooterId;
     private float timeActiveInCurrentState;
     private SunrayState currentState;
-    private Vector3[] explosionPositions;
+    private List<Vector3> explosionPositions;
 
     void Start()
     {
@@ -112,23 +112,56 @@ public class SunrayController : MonoBehaviour
 
     void ComputeExplosionPositions()
     {
-        // We're in RPC context here (some broadcasted a sun hit). We only broadcast an explosion if we're the shooter so otherwise we don't care
+        // We're in RPC context here (someone broadcasted a sun hit). We only broadcast an explosion if we're the shooter so otherwise we don't care
         if (shooterId != Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId))
             return;
-        // TODO: Do a RaycastAll and choose relevant hits. For now, just hit the one position
-        RaycastHit hit;
-        if (!Physics.Raycast(Vector3.zero, target.position, out hit))
+
+        // Find all objects in the sunray. Should always hit a pillar, at least.
+        RaycastHit[] hits = Physics.RaycastAll(Vector3.zero, target.position);
+        if (hits.Length == 0)
         {
             Debug.LogError("Sunray found nothing to hit with explosion! Exploding in the sun...");
-            explosionPositions = new Vector3[1] { Vector3.zero };
+            explosionPositions = new List<Vector3> { Vector3.zero };
             return;
         }
-        explosionPositions = new Vector3[1] { hit.collider.transform.position };
+
+        // Find the highest hit pillar
+        PillarBehaviour hitPillar = null;
+        Vector3 hitPillarPosition = Vector3.zero;
+        foreach (var hit in hits)
+        {
+            // Ignore non-pillar objects
+            PillarBehaviour pillar = hit.collider.GetComponent<PillarBehaviour>();
+            if (pillar == null)
+                continue;
+            // Only take the highest hit pillar (with hitpoint closest to (0,0,0))
+            if (hitPillar == null || hitPillarPosition.magnitude > hit.point.magnitude)
+            {
+                hitPillar = pillar;
+                hitPillarPosition = hit.point;
+            }
+        }
+
+        // Add the hit pillar location to the explosion list, and find all hit players above the pillar
+        explosionPositions = new List<Vector3> { hitPillarPosition };
+        foreach (var hit in hits)
+        {
+            // Ignore the sun itself, and all objects below the height of the hit pillar
+            if (hit.point.magnitude > hitPillarPosition.magnitude || hit.collider.gameObject.name == "Sun")
+                continue;
+            // If this is a network character closer to the sun than the top of the pillar, add the hitpoint.
+            // However, if player is grounded, don't trigger an explosion; player should be taking damage from the explosion on the pillar
+            bool isNetChar = hit.collider.GetComponent<NetworkCharacter>() != null;
+            Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
+            bool grounded = rb != null && GeoPhysics.IsPlayerGrounded(rb);
+            if (isNetChar && !grounded)
+                explosionPositions.Add(hit.point);
+        }
     }
 
     void TriggerExplosions()
     {
-        // We're in RPC context here (some broadcasted a sun hit). Only broadcast an explosion if we're the shooter
+        // We're in RPC context here (someone broadcasted a sun hit). Only broadcast an explosion if we're the shooter
         if (shooterId != Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId))
             return;
         // Trigger explosions on all locations
