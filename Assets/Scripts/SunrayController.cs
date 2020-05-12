@@ -16,13 +16,14 @@ public class SunrayController : MonoBehaviour
     public float initialLineWidth, maxLineWidth;
     public SunrayCageController cageCtrl;
     public AudioClip fireSunraySound;
+    public Light[] lights;
 
     private Transform target;
     private string shooterId;
     private float timeActiveInCurrentState;
     private SunrayState currentState;
     private List<Vector3> explosionPositions;
-    private Vector3 hitPillarPosition { get { return explosionPositions[0]; } }
+    private Vector3 hitPillarPosition { get { return explosionPositions[0]; } } // FIXME: Returning null sometimes. How?
     private int hitPillarId;
 
     void Start()
@@ -71,21 +72,23 @@ public class SunrayController : MonoBehaviour
                 {
                     AdvanceToState(SunrayState.FIRED);
                     TriggerExplosions();
-                    // TODO: Also at this point maybe add a flash of light...?
                     AudioSource.PlayClipAtPoint(fireSunraySound, hitPillarPosition);
                     break;
                 }
+                SetLightIntensity(Mathf.Lerp(0, 1, timeActiveInCurrentState / UserDefinedConstants.sunrayFireDelay));
                 SetRayWidth(Mathf.Lerp(initialLineWidth, maxLineWidth, timeActiveInCurrentState / UserDefinedConstants.sunrayFireDelay));
                 break;
             case SunrayState.FIRED:
                 // Give, say, 1 second decay. It's just a graphic, no issue
-                if (timeActiveInCurrentState > 1)
+                float delay = 1;
+                if (timeActiveInCurrentState > delay)
                 {
                     AdvanceToState(SunrayState.IDLE);
                     HideRay();
                     break;
                 }
-                SetRayWidth(Mathf.Lerp(maxLineWidth, 0, timeActiveInCurrentState));
+                SetLightIntensity(Mathf.Lerp(1, 0, timeActiveInCurrentState / delay));
+                SetRayWidth(Mathf.Lerp(maxLineWidth, 0, timeActiveInCurrentState / delay));
                 break;
         }
     }
@@ -95,11 +98,13 @@ public class SunrayController : MonoBehaviour
         SetRayWidth(0);
         sunrayLine.SetPosition(1, new Vector3(0, 0, UserDefinedConstants.sphereRadius + 10));
         sunrayLine.transform.rotation = Quaternion.LookRotation(target.position);
+        ResetLights(true);
     }
 
     void HideRay()
     {
         sunrayLine.SetPosition(1, Vector3.zero);
+        ResetLights(false);
     }
 
     void AdvanceToState(SunrayState state)
@@ -111,6 +116,26 @@ public class SunrayController : MonoBehaviour
     void SetRayWidth(float width)
     {
         sunrayLine.endWidth = sunrayLine.startWidth = width;
+    }
+
+    void ResetLights(bool on)
+    {
+        for (int i=0; i<lights.Length; ++i)
+        {
+            lights[i].enabled = on;
+            lights[i].transform.localPosition = on ?
+                new Vector3(0, 0, UserDefinedConstants.sphereRadius * (i + 1) / lights.Length) :
+                Vector3.zero;
+        }
+        SetLightIntensity(0);
+    }
+
+    void SetLightIntensity(float intensity)
+    {
+        foreach (var light in lights)
+        {
+            light.intensity = intensity;
+        }
     }
 
     void ComputeExplosionPositions()
