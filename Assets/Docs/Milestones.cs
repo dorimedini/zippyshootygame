@@ -54,7 +54,7 @@
  * <   > Hard to see other players. Make the "find the line of sight" game fun!
  *   X      Larger models?                                          (mark)              --> I think just setting smaller radius does the trick
  *   V      Trail of smoke behind projectiles?                      (mark)
- *          Periodic sunray blasts to all player locations          (keep moving, mark)
+ *   V      Activate sunray blasts to random player location        (keep moving, mark)
  *          Hanzo-vision powerup (orbit around the sun?)            (clue)
  *          Sun-pointers powerup (color arrows toward each player)  (clue)
  *   V      Heat-seeking missiles with lock-on time?                (reward)
