@@ -15,12 +15,14 @@ public class SunrayController : MonoBehaviour
     public LineRenderer sunrayLine;
     public float initialLineWidth, maxLineWidth;
     public SunrayCageController cageCtrl;
+    public AudioClip fireSunraySound;
 
     private Transform target;
     private string shooterId;
     private float timeActiveInCurrentState;
     private SunrayState currentState;
     private List<Vector3> explosionPositions;
+    private Vector3 hitPillarPosition { get { return explosionPositions[0]; } }
     private int hitPillarId;
 
     void Start()
@@ -70,7 +72,7 @@ public class SunrayController : MonoBehaviour
                     AdvanceToState(SunrayState.FIRED);
                     TriggerExplosions();
                     // TODO: Also at this point maybe add a flash of light...?
-                    // TODO: Also at this point play a sound
+                    AudioSource.PlayClipAtPoint(fireSunraySound, hitPillarPosition);
                     break;
                 }
                 SetRayWidth(Mathf.Lerp(initialLineWidth, maxLineWidth, timeActiveInCurrentState / UserDefinedConstants.sunrayFireDelay));

@@ -5,6 +5,7 @@ using UnityEngine;
 public class SunIsAngryController : MonoBehaviour
 {
     public ParticleSystem[] particleSystems;
+    public AudioSource sunWarmupSound;
 
     public void Play()
     {
@@ -12,5 +13,7 @@ public class SunIsAngryController : MonoBehaviour
         {
             particles.Play();
         }
+        // FIXME: This should depend on the user-constant defining the warmup time
+        sunWarmupSound.Play();
     }
 }
