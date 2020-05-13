@@ -67,7 +67,9 @@ public static class UserDefinedConstants
         {"missileTurnSpeed", new RangeEntry<float>(2f, "missileTurnSpeed", "Missile turn speed", 0f, 10)},
         {"sunrayWarningTime", new RangeEntry<float>(1.5f, "sunrayWarningTime", "Sunray warning time", 0, 5)},
         {"sunrayFireDelay", new RangeEntry<float>(0.5f, "sunrayFireDelay", "Sunray delay before firing", 0, 5)},
-        {"chanceForSunToGivePowerup", new RangeEntry<float>(0.2f, "chanceForSunToGivePowerup", "Chance for sun to give powerup on hit", 0, 1)}
+        {"chanceForSunToGivePowerup", new RangeEntry<float>(0.2f, "chanceForSunToGivePowerup", "Chance for sun to give powerup on hit", 0, 1)},
+        {"powerupDuration", new RangeEntry<float>(10f, "powerupDuration", "Powerup duration (seconds)", 1, 2 * 60)},
+        {"powerupPrewarm", new RangeEntry<float>(0.5f, "powerupPrewarm", "Time from collection until powerup is active", 0.1f, 2)}
     };
     private static Dictionary<string, Entry<string>> stringEntries = new Dictionary<string, Entry<string>>
     {
@@ -124,6 +126,8 @@ public static class UserDefinedConstants
     public static float sunrayWarningTime { get { return floatEntries["sunrayWarningTime"]; } set { floatEntries["sunrayWarningTime"]._val = value; } }
     public static float sunrayFireDelay { get { return floatEntries["sunrayFireDelay"]; } set { floatEntries["sunrayFireDelay"]._val = value; } }
     public static float chanceForSunToGivePowerup { get { return floatEntries["chanceForSunToGivePowerup"]; } set { floatEntries["chanceForSunToGivePowerup"]._val = value; } }
+    public static float powerupPrewarm { get { return floatEntries["powerupPrewarm"]; } set { floatEntries["powerupPrewarm"]._val = value; } }
+    public static float powerupDuration { get { return floatEntries["powerupDuration"]; } set { floatEntries["powerupDuration"]._val = value; } }
 
 
     public static bool chargeMode { get { return boolEntries["chargeMode"]; } set { boolEntries["chargeMode"]._val = value; } }

@@ -206,6 +206,10 @@ public class NetworkCharacter : MonoBehaviourPun, IPunObservable, IPunInstantiat
         return player.UserId == PhotonNetwork.LocalPlayer.UserId;
     }
 
+    public bool IsLocalPlayer() { return photonView.IsMine; }
+
+    public string UserId() { return photonView.Owner.UserId; }
+
     void DestroyActiveHookshot()
     {
         if (activeHookshot != null)

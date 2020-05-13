@@ -111,6 +111,7 @@ public class SpawnManager : MonoBehaviour
         player.GetComponentInChildren<GrapplingCharacter>().enabled = true;
         player.GetComponentInChildren<GravityAffected>().enabled = true;
         player.GetComponentInChildren<ShootingCharacter>().enabled = true;
+        player.GetComponentInChildren<PowerupableCharacter>().enabled = true;
         player.GetComponent<PausingPlayer>().enabled = true;
         player.GetComponentInChildren<HeadTowardsOrigin>().enabled = true;
         player.transform.Find("UI").gameObject.SetActive(true);
