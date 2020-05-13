@@ -36,7 +36,7 @@ public class ProjectileController : MonoBehaviourPun
     {
         // The local player instantiates a projectile with a collider, the rest don't. So, fire the RPC first, then instantiate
         // our own copy (we'll instantiate faster than the rest anyway)
-        string projectileId = RandomStrings.Generate(projectileIdLength);
+        string projectileId = Tools.GenerateRandomString(projectileIdLength);
         photonView.RPC("FireProjectile", RpcTarget.Others, source, force, currentShooterSpeed, shooterId, projectileId, seeking, targetUserId);
         GameObject projectile = InstantiateProjectileWithoutCollider(source, force, currentShooterSpeed, shooterId, projectileId, seeking, targetUserId);
         projectile.GetComponent<MeshCollider>().enabled = true;

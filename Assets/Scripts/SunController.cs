@@ -29,7 +29,7 @@ public class SunController : MonoBehaviourPun
             // Choose a random direction in which to drop the powerup
             Vector3 direction = Random.onUnitSphere;
             int powerupIdx = powerupCtrl.RandomPowerupIdx();
-            string powerupId = RandomStrings.Generate(16);
+            string powerupId = Tools.GenerateRandomString(16);
             photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction, powerupIdx, powerupId);
             HitAndPowerup(shooterId, direction, powerupIdx, powerupId);  // Do this locally so player gets quick feedback
         }

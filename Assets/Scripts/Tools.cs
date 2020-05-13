@@ -1,9 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class Tools
 {
+    private static System.Random random = new System.Random();
+    private static string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static string GenerateRandomString(int length)
+    {
+        return new string(Enumerable.Repeat(charset, length)
+          .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
     public static long IntPow(long x, long e)
     {
         if (e == 0)
