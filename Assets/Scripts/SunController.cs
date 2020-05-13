@@ -23,21 +23,47 @@ public class SunController : MonoBehaviourPun
 
     public void BroadcastHit(string shooterId)
     {
-        string targetUserId = PhotonNetwork.PlayerList[(new System.Random()).Next(0, PhotonNetwork.PlayerList.Length)].UserId;
-        photonView.RPC("Hit", RpcTarget.Others, shooterId, targetUserId);
-        Hit(shooterId, targetUserId);  // Do this locally so player gets quick feedback
-        // TODO: Should the sunray really be fired locally...?
+        if (Random.Range(0, 1) <= UserDefinedConstants.chanceForSunToGivePowerup)
+        {
+            // Choose a random direction in which to drop the powerup
+            Vector3 direction = Random.onUnitSphere;
+            photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction);
+            // TODO: Pick which powerup spawns before sending the RPC
+            HitAndPowerup(shooterId, direction);  // Do this locally so player gets quick feedback
+        }
+        else
+        {
+            string targetUserId = PhotonNetwork.PlayerList[(new System.Random()).Next(0, PhotonNetwork.PlayerList.Length)].UserId;
+            photonView.RPC("HitAndTarget", RpcTarget.Others, shooterId, targetUserId);
+            HitAndTarget(shooterId, targetUserId);  // Do this locally so player gets quick feedback
+            // TODO: Should the sunray really be fired locally...?
+        }
     }
 
     [PunRPC]
-    public void Hit(string shooterId, string targetUserId)
+    public void HitAndTarget(string shooterId, string targetUserId)
+    {
+        GeneralSunHit(shooterId);
+        SunAngryAt(NetworkCharacter.GetPlayerCenter(NetworkCharacter.GetPlayerByUserID(targetUserId)), shooterId);
+    }
+
+    [PunRPC]
+    public void HitAndPowerup(string shooterId, Vector3 direction)
+    {
+        GeneralSunHit(shooterId);
+        // TODO: Spawn a powerup close to the sun. Colliders on everyone.
+        // TODO: Any player who picks up a powerup: display pickup graphics, but delay giving the player the benefits for half a second.
+        // TODO: During that time fire an RPC to a powerup controller with the timestamp at time of powerup pickup.
+        // TODO: The powerup controller should handle a list of power
+    }
+
+    void GeneralSunHit(string shooterId)
     {
         IncrementColor();
         if (chargeStage == chargeStages)
         {
             Overcharge(shooterId);
         }
-        SunAngryAt(NetworkCharacter.GetPlayerCenter(NetworkCharacter.GetPlayerByUserID(targetUserId)), shooterId);
     }
 
     void SunAngryAt(Transform target, string shooterId)
