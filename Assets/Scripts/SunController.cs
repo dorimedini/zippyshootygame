@@ -9,6 +9,7 @@ public class SunController : MonoBehaviourPun
     public Material mat;
     public Color originalColor;
     public GameObject shockwavePrefab;
+    public GameObject[] powerupPrefabs;
     public SunrayController sunray;
     public SunIsAngryController angrySun;
     public DamageController dmgCtrl;
@@ -27,9 +28,9 @@ public class SunController : MonoBehaviourPun
         {
             // Choose a random direction in which to drop the powerup
             Vector3 direction = Random.onUnitSphere;
-            photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction);
-            // TODO: Pick which powerup spawns before sending the RPC
-            HitAndPowerup(shooterId, direction);  // Do this locally so player gets quick feedback
+            int powerupIdx = (new System.Random()).Next(0, powerupPrefabs.Length - 1);
+            photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction, powerupIdx);
+            HitAndPowerup(shooterId, direction, powerupIdx);  // Do this locally so player gets quick feedback
         }
         else
         {
@@ -48,7 +49,7 @@ public class SunController : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void HitAndPowerup(string shooterId, Vector3 direction)
+    public void HitAndPowerup(string shooterId, Vector3 direction, int powerupIdx)
     {
         GeneralSunHit(shooterId);
         // TODO: Spawn a powerup close to the sun. Colliders on everyone.
