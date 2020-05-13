@@ -9,10 +9,10 @@ public class SunController : MonoBehaviourPun
     public Material mat;
     public Color originalColor;
     public GameObject shockwavePrefab;
-    public GameObject[] powerupPrefabs;
     public SunrayController sunray;
     public SunIsAngryController angrySun;
     public DamageController dmgCtrl;
+    public PowerupController powerupCtrl;
 
     private int chargeStage;
 
@@ -28,9 +28,10 @@ public class SunController : MonoBehaviourPun
         {
             // Choose a random direction in which to drop the powerup
             Vector3 direction = Random.onUnitSphere;
-            int powerupIdx = (new System.Random()).Next(0, powerupPrefabs.Length - 1);
-            photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction, powerupIdx);
-            HitAndPowerup(shooterId, direction, powerupIdx);  // Do this locally so player gets quick feedback
+            int powerupIdx = powerupCtrl.RandomPowerupIdx();
+            string powerupId = RandomStrings.Generate(16);
+            photonView.RPC("HitAndPowerup", RpcTarget.Others, shooterId, direction, powerupIdx, powerupId);
+            HitAndPowerup(shooterId, direction, powerupIdx, powerupId);  // Do this locally so player gets quick feedback
         }
         else
         {
@@ -49,13 +50,10 @@ public class SunController : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void HitAndPowerup(string shooterId, Vector3 direction, int powerupIdx)
+    public void HitAndPowerup(string shooterId, Vector3 direction, int powerupIdx, string powerupId)
     {
         GeneralSunHit(shooterId);
-        // TODO: Spawn a powerup close to the sun. Colliders on everyone.
-        // TODO: Any player who picks up a powerup: display pickup graphics, but delay giving the player the benefits for half a second.
-        // TODO: During that time fire an RPC to a powerup controller with the timestamp at time of powerup pickup.
-        // TODO: The powerup controller should handle a list of power
+        powerupCtrl.SpawnPowerup(direction, powerupIdx, powerupId);
     }
 
     void GeneralSunHit(string shooterId)
