@@ -1,10 +1,14 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PowerupableCharacter : MonoBehaviour
 {
+    public Material originalPlayerMaterial;
+    public Material xRayMaterial;
+
     private Dictionary<string, int> registeredPowerups;
     private HashSet<string> deniedPowerups;
     private HashSet<string> activePowerups;
@@ -140,13 +144,32 @@ public class PowerupableCharacter : MonoBehaviour
     void Empower(int powerupIdx)
     {
         Debug.Log("Empowering (id " + powerupIdx + ")");
-        // TODO: Give player power
+        SetPower(powerupIdx, true);
     }
 
     void Depower(int powerupIdx)
     {
         Debug.Log("Depowering (id " + powerupIdx + ")");
-        // TODO: Revoke player power
+        SetPower(powerupIdx, false);
+    }
+
+    void SetPower(int powerupIdx, bool empower)
+    {
+        switch(powerupIdx)
+        {
+            case 0:
+                // Xray-vision! Swap shaders on all other players
+                foreach(Player player in PhotonNetwork.PlayerListOthers)
+                {
+                    NetworkCharacter
+                        .GetPlayerGameObject(player)
+                        .GetComponentInChildren<SkinnedMeshRenderer>()
+                        .sharedMaterial = empower ?
+                            xRayMaterial :
+                            originalPlayerMaterial;
+                }
+                break;
+        }
     }
 
     void ShowDeniedIndication()

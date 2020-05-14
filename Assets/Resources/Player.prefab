@@ -1429,6 +1429,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2be2988aed382e44953272de3181fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originalPlayerMaterial: {fileID: 2100000, guid: 1ce663bab6e62b14d8d854d56c0e4f53,
+    type: 2}
+  xRayMaterial: {fileID: 2100000, guid: 18e522852b9821541b44caa319632772, type: 2}
 --- !u!1 &1246874328460490531
 GameObject:
   m_ObjectHideFlags: 0
