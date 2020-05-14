@@ -62,7 +62,6 @@ public class TargetableCharacter : MonoBehaviourPun
     [PunRPC]
     public void BecameUntargeted(string enemyUserId)
     {
-        // FIXME: This is fired when shooting player shoots the missile. The lock-on danger sound should continue as long as the projectile hasn't been destroyed!
         targetingEnemyIds.Remove(enemyUserId);
         lockedEnemyIds.Remove(enemyUserId);
         UpdateTargetedFeedbackState();
