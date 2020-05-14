@@ -56,7 +56,7 @@
  *   V      Trail of smoke behind projectiles?                      (mark)
  *   V      Activate sunray blasts to random player location        (keep moving, mark)
  *   V      Hanzo-vision powerup (fired from the sun, pending test) (clue)
- *          Sun-pointers powerup (color arrows toward each player)  (clue)
+ *   V      Sun-pointers powerup (color arrows toward each player)  (clue)
  *   V      Heat-seeking missiles with lock-on time?                (reward)
  *          Powerup mechanic idea: orbit around the sun
  *          Powerup mechanic idea: 3 collectables, have X seconds to collect all of them (from the moment the first was collected)
