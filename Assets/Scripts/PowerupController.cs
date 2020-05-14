@@ -58,6 +58,7 @@ public class PowerupController : MonoBehaviourPun
         powerups[powerupId].direction = direction;
         powerups[powerupId].powerupCtrl = this;
         powerups[powerupId].powerupId = powerupId;
+        powerups[powerupId].powerupIdx = powerupIdx;
     }
 
     public void BroadcastPickupPowerup(string powerupId)
@@ -76,6 +77,12 @@ public class PowerupController : MonoBehaviourPun
         // OK, it's available. Add it to the dictionaries and tell other players who picked it up and when
         UpdateData(powerupId, userIdOfPickerUpper, timestamp);
         photonView.RPC("PickupPowerup", RpcTarget.Others, powerupId, userIdOfPickerUpper, timestamp);
+
+        // Grant the player the actual power
+        NetworkCharacter
+            .GetPlayerGameObject(PhotonNetwork.LocalPlayer)
+            .GetComponent<PowerupableCharacter>()
+            .GrantPower(powerupId, powerups[powerupId].powerupIdx);
     }
 
     [PunRPC]
@@ -126,7 +133,10 @@ public class PowerupController : MonoBehaviourPun
     [PunRPC]
     public void DenyPowerup(string powerupId)
     {
-        NetworkCharacter.GetPlayerGameObject(PhotonNetwork.LocalPlayer).GetComponent<PowerupableCharacter>().DenyPower(powerupId);
+        NetworkCharacter
+            .GetPlayerGameObject(PhotonNetwork.LocalPlayer)
+            .GetComponent<PowerupableCharacter>()
+            .DenyPower(powerupId);
     }
 
     public void PowerupPickedUp(string powerupId)

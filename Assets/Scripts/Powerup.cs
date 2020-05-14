@@ -8,6 +8,7 @@ public class Powerup : MonoBehaviour
 {
     public Vector3 direction;
     public string powerupId;
+    public int powerupIdx;
     public PowerupController powerupCtrl;
 
     private bool grounded, locallyPickedUp;
