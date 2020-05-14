@@ -25,7 +25,7 @@ public class PowerupController : MonoBehaviourPun
         powerups = new Dictionary<string, Powerup>();
     }
 
-    public int RandomPowerupIdx() { return rnd.Next(0, powerupPrefabs.Length - 1); }
+    public int RandomPowerupIdx() { return rnd.Next(0, powerupPrefabs.Length); }
 
     public void SpawnPowerup(Vector3 direction, int powerupIdx, string powerupId)
     {
