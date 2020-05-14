@@ -55,7 +55,7 @@
  *   X      Larger models?                                          (mark)              --> I think just setting smaller radius does the trick
  *   V      Trail of smoke behind projectiles?                      (mark)
  *   V      Activate sunray blasts to random player location        (keep moving, mark)
- *          Hanzo-vision powerup (orbit around the sun?)            (clue)
+ *   V      Hanzo-vision powerup (fired from the sun, pending test) (clue)
  *          Sun-pointers powerup (color arrows toward each player)  (clue)
  *   V      Heat-seeking missiles with lock-on time?                (reward)
  *          Powerup mechanic idea: orbit around the sun
