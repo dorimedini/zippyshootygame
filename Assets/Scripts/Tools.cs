@@ -72,6 +72,11 @@ public static class Tools
             } while (randomPoint == Vector3.zero);
             return randomPoint.normalized;
         }
+
+        public static Quaternion UpRotation(Vector3 up)
+        {
+            return Quaternion.LookRotation(RandomDirectionOnPlane(up), up);
+        }
     }
 
 }

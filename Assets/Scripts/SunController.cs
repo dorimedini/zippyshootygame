@@ -56,6 +56,8 @@ public class SunController : MonoBehaviourPun
         powerupCtrl.SpawnPowerup(direction, powerupIdx, powerupId);
     }
 
+    public float Radius() { return GetComponent<SphereCollider>().radius * transform.localScale.x; }
+
     void GeneralSunHit(string shooterId)
     {
         IncrementColor();

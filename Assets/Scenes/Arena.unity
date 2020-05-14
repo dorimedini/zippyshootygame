@@ -1001,6 +1001,8 @@ MonoBehaviour:
   - {fileID: 100008, guid: 879451a5e2214f143a7edf5dd3e32020, type: 3}
   - {fileID: 100012, guid: f9f38f77edcc4364bbe69808863d0c83, type: 3}
   - {fileID: 100012, guid: f832b09c86bd81e4f91beb978de1ae75, type: 3}
+  pickupSound: {fileID: 8300000, guid: 269857f86c234fe4bbed25d5f54997d4, type: 3}
+  sun: {fileID: 945425446}
 --- !u!114 &566679408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1678,6 +1680,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917927985}
   m_CullTransparentMesh: 0
+--- !u!114 &945425446 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8601932681132344085, guid: 0006783708a423c4fa7437f908d2b611,
+    type: 3}
+  m_PrefabInstance: {fileID: 8623038837500012816}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8df6bfb104710e44a55de1c6b78ba82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &980827316
 GameObject:
   m_ObjectHideFlags: 0

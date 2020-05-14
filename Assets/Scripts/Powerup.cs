@@ -10,16 +10,15 @@ public class Powerup : MonoBehaviour
     public string powerupId;
     public PowerupController powerupCtrl;
 
-    private bool grounded;
+    private bool grounded, locallyPickedUp;
 
     void Start()
     {
-        grounded = false;
+        locallyPickedUp = grounded = false;
     }
 
     void Update()
     {
-        // FIXME: Make sure powerup always remains in the correct direction! It shouldn't be able to move other than up/down
         if (grounded)
         {
             // TODO: Make the powerup bob up and down (sin/cos style)
@@ -28,10 +27,14 @@ public class Powerup : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // If the powerup hit a pillar, it's now grounded
+        if (locallyPickedUp) return;
+
+        // If the powerup hit a pillar, it's now grounded. Shouldn't move anymore
         if (collision.collider.GetComponent<PillarBehaviour>() != null)
         {
             grounded = true;
+            GetComponent<Rigidbody>().isKinematic = true;
+            GetComponent<GravityAffected>().enabled = false;
             return;
         }
 
@@ -41,7 +44,10 @@ public class Powerup : MonoBehaviour
         {
             powerupCtrl.BroadcastPickupPowerup(powerupId);
             powerupCtrl.PowerupPickedUp(powerupId);
+            locallyPickedUp = true;
             return;
         }
     }
+
+    public float Radius() { return GetComponent<SphereCollider>().radius * transform.localScale.x; }
 }

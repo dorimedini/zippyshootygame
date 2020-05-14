@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System.Linq;
 
 public class PowerupController : MonoBehaviourPun
 {
     public GameObject[] powerupPrefabs;
+    public AudioClip pickupSound;
+    public SunController sun;
 
     private System.Random rnd;
 
@@ -26,20 +29,42 @@ public class PowerupController : MonoBehaviourPun
 
     public void SpawnPowerup(Vector3 direction, int powerupIdx, string powerupId)
     {
-        // TODO: Spawn a powerup at origin. Add a collider (for everyone, this method is called via RPC).
-        // TODO: Any LOCAL player who picks up a powerup: give him the powerup, but maybe revoke it later.
-        // TODO: During that time fire an RPC to all powerup controllers with the timestamp at time of powerup pickup (and locally call the same RPC).
-        // TODO: The other (remote) powerup controllers remove the powerup from the active powerup data structure.
-        // TODO: If a powerup pickup request is recieved for a powerup that no longer exists, but the timestamp is lower than that of the original
-        // TODO: powered-up player, revoke the powered-up player's power via RPC call and give the earlier player the powerup.
-        // TODO: Revoke silently (or maybe give some "DENIED" feedback like rumor has that Quake did)
+        // Spawn a powerup s.t. it's contained in the sun but "touches" it from within:
+        //              ______
+        //          ___/      \___
+        //        _/              \_
+        //       /                  \
+        //      |                    |
+        //     / __                   \
+        // /__ |/  \                  |
+        // \   |\__/                  |
+        //     \                      /
+        //      |                    |
+        //       \_                _/
+        //         \___        ___/
+        //             \______/
+        //
+        GameObject powerupObj = Instantiate(
+            powerupPrefabs[powerupIdx],
+            Vector3.zero,
+            Tools.Geometry.UpRotation(-direction));
+        powerups[powerupId] = powerupObj.GetComponentInChildren<Powerup>();
+
+        // We need the powerup to be offset some positive value in the direction, so gravity takes effect
+        float offset = Mathf.Max(0.1f, sun.Radius() - powerups[powerupId].Radius());
+        powerupObj.transform.position = direction.normalized * offset;
+
+        // Init field values
+        powerups[powerupId].direction = direction;
+        powerups[powerupId].powerupCtrl = this;
+        powerups[powerupId].powerupId = powerupId;
     }
 
     public void BroadcastPickupPowerup(string powerupId)
     {
         // If someone already beat us to it, do nothing. This counts as buggy, because it means the local clock is laggy...
         long timestamp = Tools.Timestamp();
-        string userIdOfPickerUpper = PhotonNetwork.LocalPlayer.UserId;
+        string userIdOfPickerUpper = Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId);
         if (!UserWinsFightForPowerup(powerupId, userIdOfPickerUpper, timestamp))
         {
             Debug.LogError("Current timestamp is " + timestamp + "," +
@@ -77,7 +102,7 @@ public class PowerupController : MonoBehaviourPun
 
         // In any case, from here only the local player has stuff to do
         string currentPoweredUpUser = powerupPickedUpBy[powerupId];
-        if (currentPoweredUpUser != PhotonNetwork.LocalPlayer.UserId)
+        if (currentPoweredUpUser != Tools.NullToEmptyString(PhotonNetwork.LocalPlayer.UserId))
             return;
 
         if (UserWinsFightForPowerup(powerupId, userId, timestamp))
@@ -106,12 +131,43 @@ public class PowerupController : MonoBehaviourPun
 
     public void PowerupPickedUp(string powerupId)
     {
-        // TODO: Destroy local instance of the powerup (if still exists).
-        // TODO: Play a sound, dissolve all fancy-like (maybe logic and assets exist in the prefab?)
+        // If gameobject is destroyed or already picked up (can happen if a remote user didn't get the RPC that the powerup
+        // was picked up before sending his own) just return
+        if (!powerups.ContainsKey(powerupId))
+            return;
+        Powerup powerup = powerups[powerupId];
+
+        // Play pickup sound
+        AudioSource.PlayClipAtPoint(pickupSound, powerup.transform.position);
+
+        // Disable colliders so players can walk through the powerup
+        SphereCollider[] cols = powerup.GetComponentsInChildren<SphereCollider>();
+        foreach (var col in cols)
+            col.enabled = false;
+
+        // Hide all graphics except the particles
+        powerup.GetComponentInChildren<Light>().enabled = false;
+        MeshRenderer[] meshes = powerup.GetComponentsInChildren<MeshRenderer>();
+        foreach (var mesh in meshes)
+            mesh.enabled = false;
+
+        // Disable looping on the partical system so the particles dissipate instead of suddenly disappearing
+        var main = powerup.GetComponentInChildren<ParticleSystem>().main;
+        main.loop = false;
+
+        // Destroy instance after timeout
+        Destroy(powerup.gameObject, 1.5f);
     }
 
     bool UserWinsFightForPowerup(string powerupId, string userId, long timestamp)
     {
+        // We shouldn't be picking things up twice!
+        if (powerupPickedUpBy.ContainsKey(powerupId) && powerupPickedUpBy[powerupId] == userId)
+        {
+            Debug.LogError("User " + userId + " picked up powerup " + powerupId + " twice");
+            return false;
+        }
+
         // If it's up for grabs, yeah totally take it
         if (!powerupPickedUpAt.ContainsKey(powerupId))
             return true;
