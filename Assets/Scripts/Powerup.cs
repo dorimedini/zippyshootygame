@@ -11,17 +11,21 @@ public class Powerup : MonoBehaviour
     public PowerupController powerupCtrl;
 
     private bool grounded, locallyPickedUp;
+    private Vector3 groundedBaseLocation;
+    private float bobDegree;
+    private const float bobRadius = 0.5f;
 
     void Start()
     {
         locallyPickedUp = grounded = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (grounded)
         {
-            // TODO: Make the powerup bob up and down (sin/cos style)
+            bobDegree += Time.deltaTime;
+            transform.position = groundedBaseLocation + bobRadius * Mathf.Cos(bobDegree) * direction.normalized;
         }
     }
 
@@ -35,6 +39,10 @@ public class Powerup : MonoBehaviour
             grounded = true;
             GetComponent<Rigidbody>().isKinematic = true;
             GetComponent<GravityAffected>().enabled = false;
+            // For bobbing motion, set current counter (degree) to minimal bob value (close to ground) and set the center of
+            // the bob motion to current position plus bobbing radius
+            bobDegree = 0;
+            groundedBaseLocation = transform.position - bobRadius * direction.normalized;
             return;
         }
 
