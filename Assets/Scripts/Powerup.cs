@@ -39,8 +39,8 @@ public class Powerup : MonoBehaviour
         NetworkCharacter netChar = collision.collider.GetComponent<NetworkCharacter>();
         if (netChar != null && netChar.IsLocalPlayer())
         {
-            powerupCtrl.BroadcastPickupPowerup(powerupId, netChar.UserId());
-            // TODO: Destroy powerup and play a sound, all fancy-like (maybe logic and assets exist in the prefab?)
+            powerupCtrl.BroadcastPickupPowerup(powerupId);
+            powerupCtrl.PowerupPickedUp(powerupId);
             return;
         }
     }

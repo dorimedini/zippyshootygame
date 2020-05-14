@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -58,6 +59,8 @@ public static class Tools
 
     public static string NullToEmptyString(string s) { return s == null ? "" : s; }
 
+    public static long Timestamp() { return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); }
+
     public static class Geometry
     {
         public static Vector3 RandomDirectionOnPlane(Vector3 normal)
@@ -65,7 +68,7 @@ public static class Tools
             Vector3 randomPoint;
             do
             {
-                randomPoint = Vector3.Cross(Random.insideUnitSphere, normal);
+                randomPoint = Vector3.Cross(UnityEngine.Random.insideUnitSphere, normal);
             } while (randomPoint == Vector3.zero);
             return randomPoint.normalized;
         }
