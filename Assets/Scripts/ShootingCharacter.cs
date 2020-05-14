@@ -21,12 +21,12 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
     private TargetableCharacter targetedCharacter;
     private float currentSharpestTargetAngle;
-    private bool lockedOnTarget;
+    private bool lockedOnTarget, fireOnButtonUp;
 
     // Start is called before the first frame update
     void Start()
     {
-        lockedOnTarget = paused = charging = false;
+        fireOnButtonUp = lockedOnTarget = paused = charging = false;
         targetedCharacter = null;
         projectileCtrl = GameObject.Find("_GLOBAL_VIEWS").GetComponentInChildren<ProjectileController>();
         if (projectileCtrl == null)
@@ -93,7 +93,7 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
     void UpdateLockFire()
     {
         // Initial lock-on check
-        if (buttonDown)
+        if (Tools.NearlyEqual(weaponCooldownCounter, 0, 0.01f) && buttonDown)
         {
             if (targetedCharacter != null)
             {
@@ -118,10 +118,14 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
                 SwitchToTargetIfCloserToCenter(playerTarget);
             }
 
+            // Lock on to found character, if found
             if (targetedCharacter != null)
             {
                 StartTargeting(targetedCharacter);
             }
+
+            // In any case, player will now fire on button release
+            fireOnButtonUp = true;
         }
 
         // Stop targeting if:
@@ -132,9 +136,11 @@ public class ShootingCharacter : MonoBehaviourPun, Pausable
 
         // When targeting completes it's handled in the Action passed to StartTargeting
 
-        // Fire on button up!
-        if (buttonUp)
+        // If user pressed the button after weapon cooldown and we got button up, now fire
+        if (fireOnButtonUp && buttonUp)
         {
+            fireOnButtonUp = false;
+            weaponCooldownCounter = UserDefinedConstants.weaponCooldown;
             if (lockedOnTarget)
             {
                 FireSeekingProjectile();
