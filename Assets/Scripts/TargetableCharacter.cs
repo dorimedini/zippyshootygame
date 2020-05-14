@@ -83,8 +83,9 @@ public class TargetableCharacter : MonoBehaviourPun
             case TargetState.TARGET:
                 if (lockedSound.isPlaying)
                     lockedSound.Stop();
+                // Delay a bit before starting to play the targeting sound, otherwise single-click shooting triggers noises at the remote player
                 if (!targetedSound.isPlaying)
-                    targetedSound.Play();
+                    targetedSound.PlayDelayed(0.5f);
                 // TODO: Show a flashing yellow exclamation mark somewhere
                 break;
             case TargetState.LOCK:

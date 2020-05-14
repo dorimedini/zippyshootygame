@@ -62,7 +62,7 @@
  *          Powerup mechanic idea: 3 collectables, have X seconds to collect all of them (from the moment the first was collected)
  *          Powerup mechanic idea: the sun advertises where it's gonna fall, but it's going to land on a pillar face
  * < V > Weapon cooldown doesn't seem to be in effect for lock-on mode
- * <   > Don't start by playing a sound at target player when targeting starts, if the enemy is single-click firing it's annoying
+ * < V > Don't start by playing a sound at target player when targeting starts, if the enemy is single-click firing it's annoying
  * <   > During grapple, bring the camera to where the head is (rotation should be handled automatically by mouselook)
  * <   > Sunshoe mode: press a button to reverse gravity and walk on the sun
  * <   > Max height of pillar isn't working, small radius --> hits the sun

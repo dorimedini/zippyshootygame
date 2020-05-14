@@ -150,8 +150,10 @@ public class LockingTargetImageBehaviour : MonoBehaviour
             lockStateSquares[activeBorderImageIdx].color.b,
             borderAlpha);
 
-        // If we passed a phase but haven't reached the last phase yet, play a targeting sound
-        if (targetingStage % 3 == 0 && targetingStage != totalStates)
+        // If we passed a phase but haven't reached the last phase yet, play a targeting sound.
+        // Don't play the first targetting sound, otherwise single-click firing will beep all the time
+        // TODO: In stages not divisible by 3, from stage 1 onwards, maybe play a much quieter sound...? BEEP tick tick BEEP tick tick... etc
+        if (targetingStage != 0 && targetingStage % 3 == 0 && targetingStage != totalStates)
             targetingSound.Play();
     }
 
