@@ -24,7 +24,7 @@ public class SunController : MonoBehaviourPun
 
     public void BroadcastHit(string shooterId)
     {
-        if (Random.Range(0, 1) <= UserDefinedConstants.chanceForSunToGivePowerup)
+        if (Random.value <= UserDefinedConstants.chanceForSunToGivePowerup)
         {
             // Choose a random direction in which to drop the powerup
             Vector3 direction = Random.onUnitSphere;
