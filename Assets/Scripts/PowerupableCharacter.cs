@@ -161,6 +161,22 @@ public class PowerupableCharacter : MonoBehaviour
                             originalPlayerMaterial;
                 }
                 break;
+            case 1:
+                // Sun markers! Show / hide the sun markers on everyone
+                foreach (Player player in PhotonNetwork.PlayerListOthers)
+                {
+                    SunMarkedCharacter sunChar = NetworkCharacter.GetPlayerGameObject(player).GetComponentInChildren<SunMarkedCharacter>();
+                    if (sunChar == null)
+                    {
+                        Debug.LogError("Player " + player.UserId + " cannot be marked!");
+                        continue;
+                    }
+                    if (empower)
+                        sunChar.Show();
+                    else
+                        sunChar.Hide();
+                }
+                break;
         }
     }
 
