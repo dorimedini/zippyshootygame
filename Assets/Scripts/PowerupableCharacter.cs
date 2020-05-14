@@ -24,6 +24,10 @@ public class PowerupableCharacter : MonoBehaviour
 
     void Update()
     {
+        // Cleanup the relevant powerups after iterating over their container
+        List<string> powerupIdsToRemove = new List<string>();
+
+        // Handle all powerups we know about
         foreach (var kvp in registeredPowerups)
         {
             string powerupId = kvp.Key;
@@ -46,7 +50,7 @@ public class PowerupableCharacter : MonoBehaviour
                     }
                 }
                 deniedPowerups.Remove(powerupId);
-                registeredPowerups.Remove(powerupId);
+                powerupIdsToRemove.Add(powerupId);
             }
             // Are we still in the warmup time before power is granted?
             else if (timeUntilActive.ContainsKey(powerupId))
@@ -68,11 +72,15 @@ public class PowerupableCharacter : MonoBehaviour
                 {
                     // Time's up.
                     activePowerups.Remove(powerupId);
-                    registeredPowerups.Remove(powerupId);
+                    powerupIdsToRemove.Add(powerupId);
                     DecrementPower(powerupIdx);
                 }
             }
         }
+
+        // Out of registeredPowerups iteration, can now edit contents
+        foreach (string powerupId in powerupIdsToRemove)
+            registeredPowerups.Remove(powerupId);
     }
 
     public void GrantPower(string powerupId, int powerupIdx)
