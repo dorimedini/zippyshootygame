@@ -141,17 +141,9 @@ public class PowerupableCharacter : MonoBehaviour
         }
     }
 
-    void Empower(int powerupIdx)
-    {
-        Debug.Log("Empowering (id " + powerupIdx + ")");
-        SetPower(powerupIdx, true);
-    }
+    void Empower(int powerupIdx) { SetPower(powerupIdx, true); }
 
-    void Depower(int powerupIdx)
-    {
-        Debug.Log("Depowering (id " + powerupIdx + ")");
-        SetPower(powerupIdx, false);
-    }
+    void Depower(int powerupIdx) { SetPower(powerupIdx, false); }
 
     void SetPower(int powerupIdx, bool empower)
     {
