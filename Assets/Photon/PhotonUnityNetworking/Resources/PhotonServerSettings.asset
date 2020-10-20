@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 5c63eba9-69ef-48aa-a365-347b06d1bc77
-    AppIdChat: f6dba698-67c5-467c-a910-76a99ed25362
+    AppIdRealtime: f1520d8a-0769-4b59-9cd9-2ac4df31a699
+    AppIdChat: 
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 1
@@ -24,36 +24,29 @@ MonoBehaviour:
     Protocol: 0
     AuthMode: 0
     EnableLobbyStatistics: 0
-    NetworkLogging: 2
-  DevRegion: 
+    NetworkLogging: 1
+  DevRegion: ru
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
-  - ClickRpc
-  - DestroyRpc
-  - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - HitPillar
-  - FireProjectile
-  - InflictDamage
-  - DestroyProjectile
-  - Explosion
-  - Ragdoll
-  - RemoteExplosion
-  - Hit
   - BecameLockedOn
   - BecameTargeted
   - BecameUntargeted
-  - RemoteExplosionFriendly
+  - ClickRpc
+  - DenyPowerup
+  - DestroyProjectile
+  - DestroyRpc
+  - FireProjectile
   - HitAndPowerup
   - HitAndTarget
-  - Deny
-  - Pickup
-  - DenyPowerup
+  - HitPillar
+  - InflictDamage
   - PickupPowerup
+  - Ragdoll
+  - RemoteExplosion
+  - RemoteExplosionFriendly
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
+  ShowSettings: 0
   DevRegionSetOnce: 1
